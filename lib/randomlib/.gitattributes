@@ -1,0 +1,24 @@
+INSTALL ident text
+NEWS ident text
+Doxyfile ident text
+*.bib ident text
+*.cmake ident text
+*.cpp ident text
+*.h ident text
+*.h.in ident text
+*.h.template ident text
+*.cmake.in ident text
+*.hpp ident text
+*.html ident text
+*.m ident text
+*.tex ident text
+*.txt ident text
+makefile-admin ident eol=lf
+*.mk ident eol=lf
+*.sh ident eol=lf
+*.eps -text
+*.pdf -text
+*.png -text
+*.sln eol=crlf
+*.vcproj eol=crlf
+*.vcxproj eol=crlf

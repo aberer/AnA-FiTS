@@ -1,0 +1,29 @@
+# $Id$
+include Makefile.mk
+
+# ssh -t karney,randomlib@shell.sourceforge.net create
+
+USER=karney
+STAGE=$(HOME)/web
+WEBSTAGE=$(STAGE)/random-web
+DATASTAGE=$(STAGE)/random-files
+
+distrib-html:
+	rsync -av --exclude .svn --exclude '*~' --exclude '#*' --delete --delete-excluded index.html $(WEBSTAGE)/htdocs/
+	rsync --delete -av -e ssh $(WEBSTAGE)/htdocs $(USER),randomlib@web.sourceforge.net:./
+
+distrib-doc:
+	rsync -av --exclude .svn --exclude '*~' --exclude '#*' --delete --delete-excluded doc/html $(WEBSTAGE)/htdocs/
+	rsync --delete -av -e ssh $(WEBSTAGE)/htdocs $(USER),randomlib@web.sourceforge.net:./
+
+distrib-files:
+	rsync -av --exclude .svn --delete distrib $(DATASTAGE)/
+	rsync --exclude '*~' --exclude '#*' --exclude .svn --delete --delete-excluded -av -e ssh $(DATASTAGE)/distrib $(USER)@frs.sourceforge.net:/home/frs/project/randomlib/
+
+TAGS:
+	for d in include src examples; do \
+	  $(MAKE) -s -C $$d list | tr ' ' '\n' | grep -v '/Config\.h$$' | \
+	  while read f; do echo $$d/$$f; done; \
+	done | xargs etags
+
+.PHONY: distrib-html distrib-doc distrib-files TAGS
