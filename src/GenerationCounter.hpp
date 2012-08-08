@@ -13,7 +13,7 @@ public:
   GenerationCounter(nat totalNumGen, string memLimit); 
   
   // OPERATORS
-  void determineNextSection(const PopulationManager &popMan, nat numChrom);
+  void determineNextSection(const PopulationManager &popMan, vector<Chromosome*> chromosomes);
   bool hasNext();
   void next();
 
@@ -23,12 +23,14 @@ public:
   nat getCurrentGeneration() const {return(currentGen);}
   nat getTotalNumGen() const {return(totalNum);}
   bool hasToSimulate() const { return currentGen != totalNum; }
-  
+
 private:
+  constexpr static int memPotency = 1024;  
+  
   nat currentGen;
   nat totalNum;
   nat startOfSection;
   nat endOfSection;
-  long long int memLimit; 
+  MEM_TYPE memLimit; 
 }; 
 

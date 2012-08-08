@@ -52,8 +52,6 @@ nat Ancestry::initMemBlock(const PopulationManager &popMan)
       assert(NOT MODULO_16(totalByteNeeded)); 
     }
 
-  cout << totalByteNeeded  << " bytes needed for the ancestry "<< endl; 
-
   // reserve mem block 
   memoryBlockIndi = (uint8_t*)malloc_aligned(totalByteNeeded, 16); 
 

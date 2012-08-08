@@ -225,7 +225,7 @@ void FractionalSimulation::simulate()
 {
   while(genCnt.hasToSimulate())
     {
-      genCnt.determineNextSection(*popMan, chromosomes.size());
+      genCnt.determineNextSection(*popMan, chromosomes);
       cout << "GenerationCounter: simulating from " << genCnt.getStartOfSection() << " until " << genCnt.getEndOfSection() << endl; 
       
       // set up ancestry 
@@ -355,7 +355,7 @@ void FractionalSimulation::finalize()
 
 inline void FractionalSimulation::cleanFixed()
 {
-  nat parNum = popMan->getTotalNumHaploByGen(genCnt.getCurrentGeneration()); 
+  nat parNum = popMan->getTotalNumHaploByGen(genCnt.getCurrentGeneration());
 
   // reset mutation references 
   nat numChrom = chromosomes.size();

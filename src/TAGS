@@ -21,17 +21,17 @@ template<class VALUE, bool ALLOC_CLEAN>void AddrArray<VALUE, ALLOC_CLEAN>::resiz
 template<class VALUE, bool ALLOC_CLEAN> VALUE* AddrArray<VALUE, ALLOC_CLEAN>::getNext(nat num)getNext144,3032
 template<class VALUE, bool ALLOC_CLEAN> VALUE* AddrArray<VALUE,ALLOC_CLEAN>::getNext()getNext156,3283
 
-Ancestry.cpp,1238
+Ancestry.cpp,1237
 Ancestry::Ancestry(ThreadPool &tp, vector<Chromosome*> chromosomes, GenerationCounter &genCnt, const PopulationManager &popMan) Ancestry6,60
 Ancestry::~Ancestry()~Ancestry29,1033
 nat Ancestry::initMemBlock(const PopulationManager &popMan)initMemBlock39,1201
-void Ancestry::fillWithRandomIndividuals_parallel(ThreadPool &tp, nat tid)fillWithRandomIndividuals_parallel70,2156
-void Ancestry::fillWithRandomIndividuals_parallel(ThreadPool &tp, nat tid)fillWithRandomIndividuals_parallel100,3393
-void Ancestry::fillWithRandomIndividuals(ThreadPool &tp)fillWithRandomIndividuals126,4158
-void Ancestry::printGenerations()printGenerations136,4404
-void Ancestry::insertNeutralMutations(ThreadPool& tp,  Graph &graph, const Survivors &survivors, const PopulationManager &popMan, Chromosome &chrom , const RegionManager &regMan, const nat genNum ) insertNeutralMutations149,4702
-void Ancestry::updateGraph_inner(ThreadPool &tp, Survivors &survivors, Chromosome &chromosome, const PopulationManager &popMan, Graph &graph, nat maxPopSize)updateGraph_inner186,6126
-void Ancestry::updateGraph(ThreadPool &tp, Chromosome &chromosome, Graph &graph, const PopulationManager &popMan, const GenerationCounter &genCnt)updateGraph317,10884
+void Ancestry::fillWithRandomIndividuals_parallel(ThreadPool &tp, nat tid)fillWithRandomIndividuals_parallel68,2082
+void Ancestry::fillWithRandomIndividuals_parallel(ThreadPool &tp, nat tid)fillWithRandomIndividuals_parallel98,3319
+void Ancestry::fillWithRandomIndividuals(ThreadPool &tp)fillWithRandomIndividuals124,4084
+void Ancestry::printGenerations()printGenerations134,4330
+void Ancestry::insertNeutralMutations(ThreadPool& tp,  Graph &graph, const Survivors &survivors, const PopulationManager &popMan, Chromosome &chrom , const RegionManager &regMan, const nat genNum ) insertNeutralMutations147,4628
+void Ancestry::updateGraph_inner(ThreadPool &tp, Survivors &survivors, Chromosome &chromosome, const PopulationManager &popMan, Graph &graph, nat maxPopSize)updateGraph_inner184,6052
+void Ancestry::updateGraph(ThreadPool &tp, Chromosome &chromosome, Graph &graph, const PopulationManager &popMan, const GenerationCounter &genCnt)updateGraph315,10810
 
 Ancestry.hpp,1053
 class Ancestry : private TimeSectionAncestry21,402
@@ -142,7 +142,7 @@ template<nat PLOIDY> ChromConfig<PLOIDY>::~ChromConfig()~ChromConfig75,1871
 template<nat PLOIDY> void ChromConfig<PLOIDY>::initRandom(Randomness &rng)initRandom82,1994
 template<> inline nat ChromConfig<2>::getConfig(nat gen, haploAddr haploNr)getConfig88,2135
 
-Chromosome.cpp,703
+Chromosome.cpp,870
 Chromosome::Chromosome(seqLen_t seqLen, FitnessFunction fFun, nat _id)Chromosome6,48
 Chromosome::~Chromosome()~Chromosome19,323
 void Chromosome::init(Randomness &rng)init26,405
@@ -150,26 +150,28 @@ void Chromosome::updateUniqueHaplotypes(SelectedArray** seqBegin,SelectedArray**
 #define CURRENT_HAS_MUTATION CURRENT_HAS_MUTATION46,774
 #define CURRENT_IS_GREATER CURRENT_IS_GREATER47,834
 #define CURRENT_IS_LESS CURRENT_IS_LESS48,918
-void Chromosome::cleanFixedMutations(SelectedArray** seqBegin,SelectedArray** seqEnd, nat popId, ThreadPool &tp)cleanFixedMutations51,1003
-void Chromosome::insertFixedMutation(SelectedMutation *mut, nat popId)insertFixedMutation162,3757
+#define OLD OLD51,1003
+void Chromosome::cleanFixedMutations(SelectedArray** seqBegin,SelectedArray** seqEnd, nat popId, ThreadPool &tp)cleanFixedMutations54,1029
+void Chromosome::cleanFixedMutations(SelectedArray** seqBegin,SelectedArray** seqEnd, nat popId, ThreadPool &tp)cleanFixedMutations202,4914
+void Chromosome::insertFixedMutation(SelectedMutation *mut, nat popId)insertFixedMutation320,7735
 
 Chromosome.hpp,1205
 class ChromosomeChromosome21,394
   seqLen_t getSeqLen() const { return seqLen; }getSeqLen34,813
   const SeqRep& getSeqRep() const { return seqRep; }getSeqRep35,861
-  float getSelectProb(){ assert(mutMan.getSelectProb() <= 1) ; return  mutMan.getSelectProb(); } // getSelectProb37,986
-  float getNeutralProb(){ assert(mutMan.getSelectProb() <= 1) ;  return 1 - mutMan.getSelectProb(); }getNeutralProb38,1087
-  nat getId(){return id; }getId39,1189
-  SelectedArray* getFixedMutations(nat popId) {return fixedMutations[popId];} getFixedMutations42,1251
-  Base mutateSite(Randomness &rng, seqLen_t pos){  return mutMan.drawBase(rng, seqRep.getBase(pos)) ; }mutateSite43,1330
-  seqLen_t seqLen; seqLen46,1444
-  DynArraySequential<SelectedArray*> uniqueHaplotypes;uniqueHaplotypes47,1464
-  SeqRep seqRep;seqRep48,1519
-  MutationManager mutMan; mutMan49,1536
-  nat id;   id51,1610
-  vector<SelectedArray*> fixedMutations; // for each population fixedMutations52,1623
-inline SelectedMutation& Chromosome::getSelectedMutation(ResizMemArena<SelectedMutation>&mem, Randomness &rng)getSelectedMutation65,2149
-inline bool Chromosome::locusIsNeutral(seqLen_t locus )locusIsNeutral73,2374
+  float getSelectProb(){ assert(mutMan.getSelectProb() <= 1) ; return  mutMan.getSelectProb(); } // getSelectProb36,914
+  float getNeutralProb(){ assert(mutMan.getSelectProb() <= 1) ;  return 1 - mutMan.getSelectProb(); }getNeutralProb37,1015
+  nat getId(){return id; }getId38,1117
+  SelectedArray* getFixedMutations(nat popId) {return fixedMutations[popId];} getFixedMutations41,1179
+  Base mutateSite(Randomness &rng, seqLen_t pos){  return mutMan.drawBase(rng, seqRep.getBase(pos)) ; }mutateSite42,1258
+  seqLen_t seqLen; seqLen45,1372
+  DynArraySequential<SelectedArray*> uniqueHaplotypes;uniqueHaplotypes46,1392
+  SeqRep seqRep;seqRep47,1447
+  MutationManager mutMan; mutMan48,1464
+  nat id;   id49,1491
+  vector<SelectedArray*> fixedMutations; // for each population fixedMutations50,1504
+inline SelectedMutation& Chromosome::getSelectedMutation(ResizMemArena<SelectedMutation>&mem, Randomness &rng)getSelectedMutation63,2030
+inline bool Chromosome::locusIsNeutral(seqLen_t locus )locusIsNeutral71,2255
 
 CycleCounter.hpp,336
 class CycleCounterCycleCounter8,86
@@ -263,10 +265,10 @@ void FractionalSimulation::createRecombinants(ThreadPool &tp)createRecombinants
 void FractionalSimulation::updateFitness()updateFitness130,4308
 void FractionalSimulation::mutateSelectedSites(ThreadPool &tp)  mutateSelectedSites178,5611
 void FractionalSimulation::simulate() simulate224,7105
-void FractionalSimulation::printArgs(string id)printArgs270,8441
-void FractionalSimulation::printSequencesRaw(string id)printSequencesRaw286,8815
-void FractionalSimulation::finalize()finalize341,10340
-inline void FractionalSimulation::cleanFixed()cleanFixed356,10773
+void FractionalSimulation::printArgs(string id)printArgs270,8434
+void FractionalSimulation::printSequencesRaw(string id)printSequencesRaw286,8808
+void FractionalSimulation::finalize()finalize341,10333
+inline void FractionalSimulation::cleanFixed()cleanFixed356,10766
 
 FractionalSimulation.hpp,523
 class FractionalSimulation FractionalSimulation15,352
@@ -293,25 +295,26 @@ class FreeRingFreeRing6,46
   SelectedArray **lastAllocatedPtr;lastAllocatedPtr15,193
   nat capacity;  capacity16,229
 
-GenerationCounter.cpp,357
-#define MEM_LOAD_FACTOR MEM_LOAD_FACTOR7,95
-GenerationCounter::GenerationCounter(nat totalNumGen, string _memLimit)GenerationCounter10,126
-void GenerationCounter::determineNextSection(const PopulationManager &popMan, nat numChrom)determineNextSection39,774
-void GenerationCounter::next()next65,1480
-bool GenerationCounter::hasNext()hasNext72,1597
+GenerationCounter.cpp,391
+void protMult(MEM_TYPE& num, int factor)protMult10,156
+GenerationCounter::GenerationCounter(nat totalNumGen, string _memLimit)GenerationCounter23,403
+void GenerationCounter::determineNextSection(const PopulationManager &popMan,  vector<Chromosome*> chromosomes)determineNextSection60,1320
+void GenerationCounter::next()next112,3040
+bool GenerationCounter::hasNext()hasNext119,3157
 
-GenerationCounter.hpp,644
+GenerationCounter.hpp,701
 class GenerationCounterGenerationCounter9,101
-  nat getStartOfSection() const {return(startOfSection);}getStartOfSection21,351
-  nat getEndOfSection() const {return(endOfSection);}getEndOfSection22,409
-  nat getCurrentGeneration() const {return(currentGen);}getCurrentGeneration23,463
-  nat getTotalNumGen() const {return(totalNum);}getTotalNumGen24,520
-  bool hasToSimulate() const { return currentGen != totalNum; }hasToSimulate25,569
-  nat currentGen;currentGen28,645
-  nat totalNum;totalNum29,663
-  nat startOfSection;startOfSection30,679
-  nat endOfSection;endOfSection31,701
-  long long int memLimit; memLimit32,721
+  nat getStartOfSection() const {return(startOfSection);}getStartOfSection21,370
+  nat getEndOfSection() const {return(endOfSection);}getEndOfSection22,428
+  nat getCurrentGeneration() const {return(currentGen);}getCurrentGeneration23,482
+  nat getTotalNumGen() const {return(totalNum);}getTotalNumGen24,539
+  bool hasToSimulate() const { return currentGen != totalNum; }hasToSimulate25,588
+  constexpr static int memPotency = 1024;  memPotency28,662
+  nat currentGen;currentGen30,709
+  nat totalNum;totalNum31,727
+  nat startOfSection;startOfSection32,743
+  nat endOfSection;endOfSection33,765
+  MEM_TYPE memLimit; memLimit34,785
 
 Graph.cpp,1078
 Graph::Graph(nat initSize)Graph13,210
@@ -579,10 +582,10 @@ inline __m128i tamper(__m128i part)tamper6,48
 template<typename TYPE> void Randomness::IntegerArray(TYPE *array, nat length, nat upperBound)IntegerArray21,514
 template<> inline void Randomness::IntegerArray(uint8_t *array, nat length, nat upperBound)IntegerArray56,1572
 
-Recombination.hpp,108
-struct RecombinationRecombination4,44
-  seqLen_t  absPos;absPos6,67
-  nat haploIndiNr;haploIndiNr7,87
+Recombination.hpp,110
+struct RecombinationRecombination7,60
+  seqLen_t  absPos;absPos9,83
+  nat haploIndiNr;haploIndiNr10,103
 
 RecombinationManager.cpp,649
 int sortByAbsPos(const void* t1, const void* t2) { return ((Recombination*)t1)->absPos - ((Recombination*)t2)->absPos; }sortByAbsPos8,148
@@ -919,13 +922,13 @@ config.hpp,195
 #define INFO_GENERALINFO_GENERAL11,143
 #define FITNESS_TYPE FITNESS_TYPE15,202
 #define EFFICIENCY_INIT_MEMBLOCKEFFICIENCY_INIT_MEMBLOCK23,335
-#define DEBUG_SHOW_GENSDEBUG_SHOW_GENS39,680
+#define DEBUG_SHOW_GENSDEBUG_SHOW_GENS38,646
 
 main.cpp,144
-void playground(ProgramOptions &progOpt){  cerr << "PLAYGROUND MODE " << endl;   playground14,248
-int main(int argc, char **argv)main26,543
+void playground(ProgramOptions &progOpt){  cerr << "PLAYGROUND MODE " << endl;   playground13,217
+int main(int argc, char **argv)main25,512
 
-types.hpp,392
+types.hpp,481
 typedef unsigned int  nat ; nat5,54
 typedef uint32_t seqLen_t; seqLen_t6,83
 typedef unsigned long long popSize_t; popSize_t7,111
@@ -934,4 +937,6 @@ union pun_tpun_t11,220
   LARGE whole; whole13,234
   PART part[sizeof(LARGE) / sizeof(PART)]; part14,250
 typedef std::function<void(unsigned int)> pFun; pFun19,322
-typedef uint32_t haploAddr; haploAddr24,375
+typedef uint32_t haploAddr; haploAddr21,372
+typedef uint32_t MEM_TYPE ; MEM_TYPE24,420
+typedef uint64_t MEM_TYPE; MEM_TYPE26,456

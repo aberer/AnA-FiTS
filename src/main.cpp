@@ -1,6 +1,5 @@
 #include "config.hpp"
 #include "Simulation.hpp"
-// #include "CycleCounter.hpp"
 #include "StopWatch.hpp"
 #include "System.hpp"
 #include "ProgramOptions.hpp"

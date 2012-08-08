@@ -33,7 +33,6 @@ public:
   // ACCESSORS 
   seqLen_t getSeqLen() const { return seqLen; }
   const SeqRep& getSeqRep() const { return seqRep; }
-  // RecombinationManager& getRecombinationManager() {return *recMan; }
   float getSelectProb(){ assert(mutMan.getSelectProb() <= 1) ; return  mutMan.getSelectProb(); } // 
   float getNeutralProb(){ assert(mutMan.getSelectProb() <= 1) ;  return 1 - mutMan.getSelectProb(); }
   nat getId(){return id; }
@@ -47,7 +46,6 @@ private:
   DynArraySequential<SelectedArray*> uniqueHaplotypes;
   SeqRep seqRep;
   MutationManager mutMan; 
-  // unique_ptr<RecombinationManager> recMan; 
   nat id;   
   vector<SelectedArray*> fixedMutations; // for each population 
   

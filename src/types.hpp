@@ -18,7 +18,10 @@ union pun_t
 #include <functional>
 typedef std::function<void(unsigned int)> pFun; 
 
-
-
-
 typedef uint32_t haploAddr; 
+
+#ifdef HAVE_64BIT
+typedef uint32_t MEM_TYPE ; 
+#else 
+typedef uint64_t MEM_TYPE; 
+#endif
