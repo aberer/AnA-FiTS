@@ -22,14 +22,14 @@ LFLAGS_OPTPARS = -lboost_program_options
 LFLAGS_GTEST = -Llib/gtest/lib/.libs -lgtest_main -lgtest
 LFLAGS_GPROF = -lprofiler
 LFLAGS_ASMLIB =  -lasmlib
-LFLAGS =  -L./lib -lJudy $(LFLAGS_RAND) $(LFLAGS_OPTPARS) $(LFLAGS_LIKWID) $(LFLAGS_ASMLIB)  # -lpthread -ltcmalloc -ljemalloc #  $(LFLAGS_PANTH)   $(LFLAGS_GPROF) 
+LFLAGS =  -L./lib  $(LFLAGS_RAND) $(LFLAGS_OPTPARS) $(LFLAGS_LIKWID) $(LFLAGS_ASMLIB)  # -lpthread -ltcmalloc -ljemalloc #  $(LFLAGS_PANTH)   $(LFLAGS_GPROF) 
 
 RAND_INCLUDE=-Ilib/RandomLib/include
 INCLUDES = $(RAND_INCLUDE) -Ilib/gtest/include
 
 #  -flto
 # -DNDEBUG
-LANG =    -Wno-sign-compare -Wall -std=c++0x  -Wno-unused-variable -Wextra -Wno-unused-parameter -fpermissive #  -Wstrict-aliasing=2  -Wfloat-equal # is permissive a prolem?  
+LANG =  -DNDEBUG  -Wno-sign-compare -Wall -std=c++0x  -Wno-unused-variable -Wextra -Wno-unused-parameter -fpermissive #  -Wstrict-aliasing=2  -Wfloat-equal # is permissive a prolem?  
 OPT = -O3 -march=native -mtune=native -funroll-all-loops 
 OPT_UNKNOWN = -D_HAS_EXCEPTIONS=0  -D_STATIC_CPPLIB -ffast-math -fno-common
 

@@ -100,13 +100,10 @@ void* myRealloc(void *ptr, size_t num);
 #define NODE_IS_RELEVANT(x,start,end) (start <= x && x <= end)
 
 
-
 FILE* openFile(string name, string mode); 
 
-
-#define SEQ_FILE_NAME "sequences"
-#define ARG_FILE_NAME "eventGraph"
-
+#define SEQ_FILE_NAME "anafits_polymorphisms"
+#define ARG_FILE_NAME "anafits_graph"
 
 #define INIT_FITNESS  1.0
 

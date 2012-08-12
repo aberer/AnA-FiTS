@@ -11,7 +11,6 @@
 
 using namespace RandomLib; 
 
-
 class Randomness : public RandomLib::Random
 {  
 public: 

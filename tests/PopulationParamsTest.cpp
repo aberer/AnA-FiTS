@@ -81,13 +81,13 @@ TEST(PopulationParamsTest, testExponentialGrowth)
 }
 
 
-TEST(PopulationParamsTest, testPopSpecific)
-{  
-  ProgramOptions *progOpt = stringHelper("./progname -s 1 -T c 100 P 0 2 -T c 120 P 1 2");
+// TEST(PopulationParamsTest, testPopSpecific)
+// {  
+//   ProgramOptions *progOpt = stringHelper("./progname -s 1 -T c 100 P 0 2 -T c 120 P 1 2");
 
-  nat popSize = 100; 
-  PopulationParams popParam(0, popSize * 10 , popSize, *progOpt);  
+//   nat popSize = 100; 
+//   PopulationParams popParam(0, popSize * 10 , popSize, *progOpt);  
 
-  ASSERT_EQ(200U, popParam.getPopSizeByGeneration(100)); 
-  ASSERT_EQ(200U, popParam.getPopSizeByGeneration(120)); 
-}
+//   ASSERT_EQ(200U, popParam.getPopSizeByGeneration(100)); 
+//   ASSERT_EQ(200U, popParam.getPopSizeByGeneration(120)); 
+// }

@@ -7,8 +7,7 @@
 
 int sortByAbsPos(const void* t1, const void* t2) { return ((Recombination*)t1)->absPos - ((Recombination*)t2)->absPos; }
 
-template<>
-void RecombinationManager::precompute_helper<uint16_t>(ThreadPool &tp, uint32_t*& numRecPerIndi, nat numRec, nat maxIndi);
+
 
 RecombinationManager::RecombinationManager(nat _seqLen, nat _startGen, nat _endGen)  
   : TimeSection(_startGen, _endGen)
@@ -51,7 +50,7 @@ ostream& operator<<(ostream &stream, const RecombinationManager &rhs)
       for(nat j = 0; j < rhs.numRecPerGen[i]; ++j)
 	{
 	  Recombination *rec = rhs.firstRecPerGen[i] + j ; 
-	  cout << "[" << rec->absPos << "," << rec->haploIndiNr << "],"  ; 
+	  // cout << "[" << rec->absPos << "," << rec->haploIndiNr << "],"  ; 
 	}
       stream << endl;  
     }
@@ -174,7 +173,7 @@ void RecombinationManager::precompute(ThreadPool &tp, const PopulationManager &p
 	  // compute recombinations
 	  for(nat i = 0; i < popSizeL ; ++i) 
 	    { 
-	      nat numRecHere =  numRecPerIndi[i]; 
+	      nat numRecHere = numRecPerIndi[i];
 	      for(nat numRecIndi = 0 ; numRecIndi <  numRecHere ; ++numRecIndi)
 		{
 		  Recombination& rec = recombs[recC++]; 
@@ -182,6 +181,8 @@ void RecombinationManager::precompute(ThreadPool &tp, const PopulationManager &p
 		  
 		  rec.absPos = rng.Integer(seqLen); 
 		  rec.haploIndiNr = i;
+
+		  // cout << "\t" << rec.haploIndiNr << endl; 
 		}
 	    }
 	} 

@@ -58,7 +58,6 @@ float parseRate(vector<string> args, nat id )
 
 PopulationParams::PopulationParams(nat id, nat numberOfGenerations, popSize_t initSize, const ProgramOptions &progOpt)  
   : initSize(initSize)  
-
   , correction(1)
   // , correction(progOpt.get<nat>("ploidy") - 1 )
   , isNeutral(false)
@@ -70,40 +69,23 @@ PopulationParams::PopulationParams(nat id, nat numberOfGenerations, popSize_t in
   // parse rates 
   recombinationRate = parseRate(progOpt.get<vector<string> >("recRate"),id);
   // geneConversionRate = parseRate(progOpt.get<vector<string> >("mutRate"), id);
-  mutationRate = parseRate(progOpt.get<vector<string> >("mutRate"), id);
+  mutationRate = parseRate(progOpt.get<vector<string> >("mutRate"), id);  
 
-  // maximumPopsize = initSize; 
   if(NOT stringEvents.empty())
     {
-      parseEvents(stringEvents, id);
-      
-      // determine the maximum population size 
+      parseEvents(stringEvents,id);
       nat lastPopSize = initSize; 
-      judyKey genNum = 0;
-      judyKey genNumOfNext = 0;
-      Event *event = nullptr; 
 
-      events.first(genNum,event);
-
-      Event *nextEvent = nullptr; 
-
-      events.next(genNumOfNext, nextEvent);
-
-      while(event)
+      // for(auto event : events)
+      for(auto eventI = events.begin(); eventI  !=  events.end(); ++eventI)
 	{
-	  event->init(lastPopSize);	  
-	  while(genNum < genNumOfNext && genNum < numberOfGenerations)
+	  (*eventI)->init(lastPopSize); 
+
+	  if(eventI+1 != events.end())
 	    {
-	      lastPopSize = event->getByTime(genNum);
-
-	      // if(lastPopSize > maximumPopsize)
-	      // 	maximumPopsize = lastPopSize;
-	      genNum++; 
+	      nat whenIsNext = (*(eventI+1))->getWhen(); 
+	      lastPopSize = (*eventI)->getByTime(whenIsNext-1); 
 	    }
-
-	  event = nextEvent; 
-	  nextEvent = nullptr; 
-	  events.next(genNum, nextEvent);  
 	}
     }
 }
@@ -201,28 +183,34 @@ void PopulationParams::parseEvents(vector<string> stringEvents, nat id)
 	  }
 	default: 
 	  formatComplainEnd();
-	}
-      
-      // insert event: 
-      Event **eventPtr = events.get(event->getWhen());
-      if(eventPtr)
+	}      
+
+      // finally insert the event 
+      bool wasInserted = false; 
+      for(auto eventI = events.begin(); eventI < events.end(); ++eventI)
 	{
-	  cerr <<  "You cannot specify two distinct events affecting the population size in the same generation. " << endl; 
-	  abort(); 
+	  if(event->getWhen() < (*eventI)->getWhen())
+	    {
+	      events.insert(eventI, event); 
+	      wasInserted = true; 
+	      break; 
+	    }
 	}
-      else
-	events.set(event->getWhen(), event); 
-    }  
+      if(NOT wasInserted)
+	events.push_back(event);
+    }
 }
 
 
-nat PopulationParams::getPopSizeByGeneration(const nat genNum)   const 
+nat PopulationParams::getPopSizeByGeneration(const nat genNum)   const // 
 {
-  Event *event = nullptr;
-  if(NOT events.searchLastEqualOrLess(static_cast<judyKey>(genNum), event))
-    return initSize; 
-  else
-    return event->getByTime(genNum); 
+  auto end = events.end(); 
+  for(auto eventI = events.begin(); eventI != end; ++eventI )
+    if((*eventI)->getWhen() <= genNum 
+       && (eventI+1 == end ||  genNum < (*(eventI+1))->getWhen() ))
+      return (*eventI)->getByTime(genNum);
+  
+  return initSize; 
 }
 
 

@@ -5,31 +5,31 @@
 
 #include <fstream>
 
-
-enum Base : uint8_t    {     A = 0, C = 1 , G = 2 , T = 3       }; 
-
+enum Base : uint8_t    { A = 0, C = 1 , G = 2 , T = 3 }; 
 
 // INSTANCES 
 struct SelectedMutation
 {
   seqLen_t absPos;
   nat generation;
+  Base base;  
   FITNESS_TYPE fitness;
   nat indiNr;
-  Base base;
   bool inUse; 
 
   bool isClaimed() {return inUse; }
   void claim() { inUse = true; }
   void unclaim() { inUse = false; }
+  void printRaw(FILE *fh); 
 };
 
 
 struct NeutralMutation
 {
   seqLen_t absPos;
-  nat generation; 
-  Base base;
+  nat generation;
+  Base base;  
+  void printRaw(FILE *fh); 
 };  
 
 

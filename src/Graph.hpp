@@ -31,7 +31,7 @@ public:
 
   // OBSERVERS
   nat getNumberOfMutations() {return mutNodes.getNumberUsed(); }
-  vector<Node*>& getState(){return previousState; }
+  vector<Node*>& getState() {return previousState; }
   NeutralArray* getSequenceFromNode(Node *node){ return nodMan.getInfo(node->id)->sequence; }
   void printArg(FILE *fh);
   void printNeutrals(FILE *fh);

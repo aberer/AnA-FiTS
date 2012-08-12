@@ -33,6 +33,8 @@ Ancestry::~Ancestry()
   for(nat i = 0; i < numChrom; ++i)
     delete chromConfig[i];  
   free( memoryBlockIndi );
+  for(auto rec : recMans)
+    delete rec ; 
 }
 
 
@@ -44,7 +46,7 @@ nat Ancestry::initMemBlock(const PopulationManager &popMan)
 
   nat endGen = this->getEndGen();
   for(nat i = this->getStartGen(); i < endGen; ++i)
-    {
+    { 
       nat numIndi = popMan.getTotalNumHaploByGen(i);
       length[getGenIdx(i)] = numIndi; 
       totalNumIndi += numIndi; 
@@ -53,7 +55,7 @@ nat Ancestry::initMemBlock(const PopulationManager &popMan)
     }
 
   // reserve mem block 
-  memoryBlockIndi = (uint8_t*)malloc_aligned(totalByteNeeded, 16); 
+  memoryBlockIndi = (uint8_t*) malloc_aligned(totalByteNeeded, 16); 
 
   // initialize offset-array
   genStartIndi[0] = memoryBlockIndi; 
@@ -82,15 +84,17 @@ void Ancestry::fillWithRandomIndividuals_parallel(ThreadPool &tp, nat tid)
       	{
       	  nat numInPrev = (i == 0) ? DIVIDE_2(length[0]) : DIVIDE_2(length[i-1]);
 	  uint32_t lengthHere = length[i];
-
+	  
       	  if(numInPrev <= numeric_limits<uint8_t>::max())
 	    rng.IntegerArray<uint8_t>(static_cast<uint8_t*>(this->genStartIndi[i]), lengthHere, numInPrev); 
       	  else if(numInPrev <= numeric_limits<uint16_t>::max()) 
-	    rng.IntegerArray<uint16_t>(reinterpret_cast<uint16_t*>(this->genStartIndi[i]), lengthHere, numInPrev); 	  
+	    rng.IntegerArray<uint16_t>(reinterpret_cast<uint16_t*>(this->genStartIndi[i]), lengthHere, numInPrev);
       	  else if(numInPrev <= numeric_limits<uint32_t>::max())
 	    rng.IntegerArray<uint32_t>(reinterpret_cast<uint32_t*>(this->genStartIndi[i]), lengthHere, numInPrev); 
-      	  else 
-      	    assert(0);	  
+      	  else
+      	    assert(0);
+
+	  // cout << "initialized " << i << endl; 
       	}
     }
 }
@@ -98,6 +102,8 @@ void Ancestry::fillWithRandomIndividuals_parallel(ThreadPool &tp, nat tid)
 void Ancestry::fillWithRandomIndividuals_parallel(ThreadPool &tp, nat tid)
 {
   cout << "alternative sampling"   << endl; 
+  
+  assert(0); 
 
   Randomness &rng = tp[tid].getRNG();
   nat perThread = numGen / tp.getLoadBalancer().getTotalJobs();  
@@ -301,10 +307,9 @@ void Ancestry::updateGraph_inner(ThreadPool &tp, Survivors &survivors, Chromosom
 #endif
 	    }
 	} // END  SURVIVOR ITER 
-
       
       insertNeutralMutations(tp, graph, survivors, popMan, chromosome, regMan, curGenIdx); 
-      survivors.prepareNextGenBackwards();
+      survivors.prepareNextGenBackwards();      
       regMan.nextGenBackwards();
     } // END backwards generation iter
 

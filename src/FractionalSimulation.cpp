@@ -2,6 +2,7 @@
 #include "ProgramOptions.hpp"
 #include "SequenceArray.hpp"
 #include "Ancestry.hpp"
+#include "BinaryWriter.hpp"
 
 #include  <fstream>
 #include <functional>
@@ -59,6 +60,10 @@ void FractionalSimulation::sampleParentsByFitness(ThreadPool &tp)
   nat currentGen = genCnt.getCurrentGeneration();
   nat numHaploPrev = popMan->getTotalNumIndiByGen(currentGen);
 
+#ifdef DEBUG_SHOW_POPSIZE
+  cout << "gen " << genCnt.getCurrentGeneration() << "\t" << numHaploPrev  << endl; 
+#endif
+
   // resample 
   CHOOSE_IMPLEMENTATION_BY_TYPE(numHaploPrev, ancestry->resampleParentsByFitness, tp, *popMan, currentGen);
 
@@ -104,11 +109,13 @@ void FractionalSimulation::createRecombinants(ThreadPool &tp)
 	      assert(length == 0); 
 	      break; 
 	    }
-
-	  nat ancestorA = ancestry->getAddrOfParent(currentGen, chromId,start->haploIndiNr);	  
+	  
+	  nat ancestorA = ancestry->getAddrOfParent(currentGen, chromId,start->haploIndiNr); 
 	  SelectedArray *anc1 = haplos.getPreviousConfiguration(ancestorA),
-	    *anc2 = haplos.getPreviousConfiguration(GET_OTHER_ANCESTOR(ancestorA));
-      
+	    *anc2 = haplos.getPreviousConfiguration(GET_OTHER_ANCESTOR(ancestorA));	  
+
+	  assert( genCnt.getCurrentGeneration() == 0 ||  ancestorA < popMan->getTotalNumHaploByGen(genCnt.getCurrentGeneration()-1)); 
+
 	  if(anc1 != anc2)
 	    {
 	      SelectedArray *recombinant = fr.allocate(currentGen);
@@ -265,15 +272,13 @@ void FractionalSimulation::simulate()
 }
 
 
-
-
 void FractionalSimulation::printArgs(string id)
 {  
+  stringstream fileName; 
+  fileName << ARG_FILE_NAME  << "." << id ; 
   nat c = 0; 
   for(auto chrom : chromosomes)
     {
-      stringstream fileName; 
-      fileName << ARG_FILE_NAME  <<  ".chrom"  <<  c <<  "." << id ; 
       FILE *fh = openFile(fileName.str(), "w"); 
       Graph &graph = *(graphs[chrom->getId()]);
       graph.printArg(fh); 
@@ -281,59 +286,19 @@ void FractionalSimulation::printArgs(string id)
 }
 
 
-
-// :TRICKY: depends on finalize 
 void FractionalSimulation::printSequencesRaw(string id)
-{  
-  // selected mutations 
+{
+  nat numHaplo = popMan->getTotalNumHaploByGen(genCnt.getCurrentGeneration() - 1); 
+  BinaryWriter writer(id, numHaplo);
+
   nat numChrom = chromosomes.size();  
+  writer.writeInt(numChrom); 
   for(nat i = 0; i < numChrom; ++i)
     {
-      // create file 
-      stringstream fileName; 
-      fileName << SEQ_FILE_NAME << ".chrom" << i  << "." << id ; 
-      FILE *fh = openFile(fileName.str(), "w"); 
-      
-      // print non-neutral sequences 
+      Graph &graph = *(graphs[i]);
       HaploTimeWindow &w = *(haplotypesWindows[i]);
-      nat number = popMan->getTotalNumHaploByGen(genCnt.getCurrentGeneration()-1); 
-      BIN_WRITE(number, fh);
-      for(nat i = 0; i < number; ++i)
-	{
-	  const SelectedArray *seq = w.at(i); 
-	  seq->printSeq(fh); 
-	}
-
-
-      // create sequences in graph  
-      // Graph &graph = ancestry->getGraph(i); 
-      Graph &graph = *(graphs[i]); 
-      if( graph.getNumberOfMutations())
-	graph.createSequencesInGraph(*(chromosomes[i]));
-      else 
-	cerr << "WARNING: no neutral mutations occurred, no graph produced." << endl; 
-      
-      // print neutral sequences in graph  
-      // :TODO: must be more resilient to errors: what if a "no-node" survived until present?
-      vector<Node*> nodes = graph.getState();
-      nat number2 = nodes.size();
-      BIN_WRITE(number2,fh); 
-
-      nat c = 0; 
-      for(auto node : nodes)
-  	{	  
-	  if(NOT node)
-	    {	      
-	      cerr << c  << " \"no-node\" found, aborting graph construction" << endl; 
-	      break; 
-	    }
-	  
-	  NeutralArray *seq = graph.getSequenceFromNode(node);
-	  seq->printSeq(fh); 
-	  c++; 
-  	}
-
-      fclose(fh);
+      Chromosome &chrom = *(chromosomes[i]); 
+      writer.write(graph, w, chrom); 
     }
 }
 
@@ -349,7 +314,18 @@ void FractionalSimulation::finalize()
       
       auto curSeqIter = h.start();
       chromosomes[i]->cleanFixedMutations(curSeqIter, curSeqIter + parNum, 0, tp); // :TODO: for all popultaions
-    }  
+    }
+
+  // neutral part 
+  nat numChrom = chromosomes.size();
+  for(nat i = 0; i < numChrom; ++i)
+    {
+      Graph &graph = *(graphs[i]); 
+      if( graph.getNumberOfMutations())
+	graph.createSequencesInGraph(*(chromosomes[i]));
+      else 
+	cerr << "NOTICE: no neutral mutations can occur (because of -W), no graph produced." << endl; 
+    }
 }
 
 
@@ -365,4 +341,3 @@ inline void FractionalSimulation::cleanFixed()
       chromosomes[i]->cleanFixedMutations(begin , begin + parNum, 0 , tp ); // :TODO: for all populations
     }
 }
-

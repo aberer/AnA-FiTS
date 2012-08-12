@@ -35,7 +35,6 @@ public:
   void determineNextSection(GenerationCounter &genCnt, const PopulationManager &popMan);  
 
   // ACCESSORS
-  // nat getNumParentsByGen(nat gen) const { return length[gen]; }
   template<typename TYPE> void initAddrArray (nat generation, nat chromId, nat total, uint32_t *array) const;
   RecombinationManager& getRecombinationManager(nat chromId){return *(recMans[chromId]);}
 
@@ -90,6 +89,7 @@ private:
 haploAddr inline Ancestry::getAddrOfParent(nat generation, nat chromId, haploAddr haploNr) const
 {
   nat numInPrev = this->getGenIdx(generation) == 0 ? initNum : DIVIDE_2( length[this->getGenIdx(generation-1)]);
+  // cout <<"numInPrev=" << numInPrev << endl; 
 
   if(numInPrev <= numeric_limits<uint8_t>::max())
     return MULT_2(reinterpret_cast<uint8_t*>(genStartIndi[this->getGenIdx(generation)])[haploNr]) + chromConfig[chromId]->getConfig(generation, haploNr); 

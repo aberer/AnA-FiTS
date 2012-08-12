@@ -10,14 +10,22 @@
 
 #ifdef _TEST
 #include "Randomness.hpp"
-void playground(ProgramOptions &progOpt){  cerr << "PLAYGROUND MODE " << endl;   
-  Randomness rng(123); 
+void playground(ProgramOptions &progOpt){  cerr << "PLAYGROUND MODE " << endl;
+  vector<nat> bla;
+  bla.push_back(3); 
+
+  nat next = 0; 
   
-  uint16_t *buf = (uint16_t*)malloc(100000 * sizeof(uint16_t));  
-  rng.IntegerArray(buf, 100000, 500);
-  
-  for(nat i = 0; i < 100000; ++i)
-    cout << int(buf[i]) << endl; 
+  for(auto iter = bla.begin(); iter != bla.end(); ++iter)
+    if(next < *iter)
+      {
+	bla.insert(iter, next);
+	break; 
+      }
+
+  for(auto tmp : bla )
+    cout << tmp << "," ;   
+  cout << endl; 
 }
 #endif
 

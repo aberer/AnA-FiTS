@@ -8,12 +8,10 @@ Chromosome::Chromosome(seqLen_t seqLen, FitnessFunction fFun, nat _id)
   , uniqueHaplotypes(1000) // :MAGIC:
   , seqRep(seqLen)
   , mutMan(seqLen,fFun)
-  // , recMan(unique_ptr<RecombinationManager>(new RecombinationManager(seqLen)))
   , id(_id)
 {
   
 }
-
 
 
 Chromosome::~Chromosome()
@@ -48,8 +46,8 @@ void Chromosome::updateUniqueHaplotypes(SelectedArray** seqBegin,SelectedArray**
 #define CURRENT_IS_LESS ( currentMut->absPos < seq.at(currentIndex[i])->absPos   )
 
 
-#define OLD 
-
+// #define OLD 
+// :BUG: 
 #ifdef OLD 
 void Chromosome::cleanFixedMutations(SelectedArray** seqBegin,SelectedArray** seqEnd, nat popId, ThreadPool &tp)
 {

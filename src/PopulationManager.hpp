@@ -3,6 +3,7 @@
 #include "PopulationParams.hpp"
 #include "common.hpp"
 
+#include <cassert>
 
 class PopulationManager
 {

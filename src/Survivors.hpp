@@ -93,8 +93,9 @@ inline void Survivors::setFirstSuvivorRelativeToNow(nat fromLastGeneration, nat 
 
 inline void Survivors::prepareNextGenBackwards()
 {
+  // cout << highestIndex - currentGenerationBackwards  << "\t" << setMaker.count() << endl;
   currentGenerationBackwards++; 
-  survivorAccCountByGen[currentGenerationBackwards] = nextSurvivor - survivors; 
+  survivorAccCountByGen[currentGenerationBackwards] = nextSurvivor - survivors;   
   setMaker.reset();
 }
 

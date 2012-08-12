@@ -21,32 +21,46 @@ template<class VALUE, bool ALLOC_CLEAN>void AddrArray<VALUE, ALLOC_CLEAN>::resiz
 template<class VALUE, bool ALLOC_CLEAN> VALUE* AddrArray<VALUE, ALLOC_CLEAN>::getNext(nat num)getNext144,3032
 template<class VALUE, bool ALLOC_CLEAN> VALUE* AddrArray<VALUE,ALLOC_CLEAN>::getNext()getNext156,3283
 
-Ancestry.cpp,1237
+Ancestry.cpp,1238
 Ancestry::Ancestry(ThreadPool &tp, vector<Chromosome*> chromosomes, GenerationCounter &genCnt, const PopulationManager &popMan) Ancestry6,60
 Ancestry::~Ancestry()~Ancestry29,1033
-nat Ancestry::initMemBlock(const PopulationManager &popMan)initMemBlock39,1201
-void Ancestry::fillWithRandomIndividuals_parallel(ThreadPool &tp, nat tid)fillWithRandomIndividuals_parallel68,2082
-void Ancestry::fillWithRandomIndividuals_parallel(ThreadPool &tp, nat tid)fillWithRandomIndividuals_parallel98,3319
-void Ancestry::fillWithRandomIndividuals(ThreadPool &tp)fillWithRandomIndividuals124,4084
-void Ancestry::printGenerations()printGenerations134,4330
-void Ancestry::insertNeutralMutations(ThreadPool& tp,  Graph &graph, const Survivors &survivors, const PopulationManager &popMan, Chromosome &chrom , const RegionManager &regMan, const nat genNum ) insertNeutralMutations147,4628
-void Ancestry::updateGraph_inner(ThreadPool &tp, Survivors &survivors, Chromosome &chromosome, const PopulationManager &popMan, Graph &graph, nat maxPopSize)updateGraph_inner184,6052
-void Ancestry::updateGraph(ThreadPool &tp, Chromosome &chromosome, Graph &graph, const PopulationManager &popMan, const GenerationCounter &genCnt)updateGraph315,10810
+nat Ancestry::initMemBlock(const PopulationManager &popMan)initMemBlock41,1245
+void Ancestry::fillWithRandomIndividuals_parallel(ThreadPool &tp, nat tid)fillWithRandomIndividuals_parallel70,2128
+void Ancestry::fillWithRandomIndividuals_parallel(ThreadPool &tp, nat tid)fillWithRandomIndividuals_parallel102,3405
+void Ancestry::fillWithRandomIndividuals(ThreadPool &tp)fillWithRandomIndividuals130,4187
+void Ancestry::printGenerations()printGenerations140,4433
+void Ancestry::insertNeutralMutations(ThreadPool& tp,  Graph &graph, const Survivors &survivors, const PopulationManager &popMan, Chromosome &chrom , const RegionManager &regMan, const nat genNum ) insertNeutralMutations153,4731
+void Ancestry::updateGraph_inner(ThreadPool &tp, Survivors &survivors, Chromosome &chromosome, const PopulationManager &popMan, Graph &graph, nat maxPopSize)updateGraph_inner190,6155
+void Ancestry::updateGraph(ThreadPool &tp, Chromosome &chromosome, Graph &graph, const PopulationManager &popMan, const GenerationCounter &genCnt)updateGraph320,10918
 
 Ancestry.hpp,1053
 class Ancestry : private TimeSectionAncestry21,402
-  RecombinationManager& getRecombinationManager(nat chromId){return *(recMans[chromId]);}getRecombinationManager40,1481
-  uint8_t *memoryBlockIndi;memoryBlockIndi44,1621
-  uint8_t **genStartIndi;	// per gen genStartIndi45,1649
-  uint32_t *length; 		// per gen length46,1687
-  nat numChrom;numChrom47,1721
-  vector<ChromConfig<2>*> chromConfig;chromConfig48,1737
-  vector<RecombinationManager*> recMans; recMans49,1776
-  nat initNum;			// we have to remember, how many individuals we had in the prev gen initNum50,1818
-haploAddr inline Ancestry::getAddrOfParent(nat generation, nat chromId, haploAddr haploNr) constgetAddrOfParent90,2977
-template<typename TYPE> void Ancestry::initAddrArray(nat generation, nat chromId, nat total, uint32_t *array) constinitAddrArray106,3862
-#define FIX_NUM_ALIGN FIX_NUM_ALIGN115,4204
-template<typename TYPE> void Ancestry::resampleParentsByFitness(ThreadPool &tp, PopulationManager& popMan, nat generationNum)resampleParentsByFitness117,4230
+  RecombinationManager& getRecombinationManager(nat chromId){return *(recMans[chromId]);}getRecombinationManager39,1414
+  uint8_t *memoryBlockIndi;memoryBlockIndi43,1554
+  uint8_t **genStartIndi;	// per gen genStartIndi44,1582
+  uint32_t *length; 		// per gen length45,1620
+  nat numChrom;numChrom46,1654
+  vector<ChromConfig<2>*> chromConfig;chromConfig47,1670
+  vector<RecombinationManager*> recMans; recMans48,1709
+  nat initNum;			// we have to remember, how many individuals we had in the prev gen initNum49,1751
+haploAddr inline Ancestry::getAddrOfParent(nat generation, nat chromId, haploAddr haploNr) constgetAddrOfParent89,2910
+template<typename TYPE> void Ancestry::initAddrArray(nat generation, nat chromId, nat total, uint32_t *array) constinitAddrArray106,3843
+#define FIX_NUM_ALIGN FIX_NUM_ALIGN115,4185
+template<typename TYPE> void Ancestry::resampleParentsByFitness(ThreadPool &tp, PopulationManager& popMan, nat generationNum)resampleParentsByFitness117,4211
+
+BinaryWriter.cpp,665
+BinaryWriter::BinaryWriter(string id, nat _numHaplo)BinaryWriter4,31
+BinaryWriter::~BinaryWriter()~BinaryWriter14,241
+void BinaryWriter::write(Graph &graph, HaploTimeWindow &w, Chromosome &chrom)write20,291
+ostream& BinaryWriter::printMutations(ostream &rhs , FILE *fh, vector<NeutralMutation*> &neutralMutations, vector<SelectedMutation*> &selMutations)printMutations120,2638
+void BinaryWriter::convertToBitSet(BitSet<uint32_t> &bs, NeutralArray *nSeq, SelectedArray *sSeq,  const vector<NeutralMutation*> &neutralMutations, const vector<SelectedMutation*> &selMutations) convertToBitSet170,3643
+void BinaryWriter::writeInt(nat theInt)writeInt237,5021
+
+BinaryWriter.hpp,247
+class BinaryWriterBinaryWriter10,122
+  FILE *fh; fh19,320
+  nat numHaplo; numHaplo20,333
+template<class TYPE> void BinaryWriter::getSortedMutations(vector<TYPE*> &result, const vector<SequenceArray<TYPE>*> &arrays)getSortedMutations31,860
 
 BitSet.cpp,1938
 #define COUNT_WIDTH COUNT_WIDTH4,24
@@ -71,59 +85,60 @@ template<> uint8_t* BitSet<uint8_t>::mask = reinterpret_cast<uint8_t*>(new recMa
 template<> uint8_t* BitSet<uint8_t>::countMask = reinterpret_cast<uint8_t*>(new lookup<uint8_t,COUNT_WIDTH>());countMask61,2134
 template<>  nat BitSet<uint8_t>::countOneElement(uint8_t element) constcountOneElement62,2246
 
-BitSet.hpp,3280
+BitSet.hpp,3361
 class BitSetBitSet13,186
   T getPart (nat num) const { return bv[num]; }getPart40,648
   friend ostream& operator<<(ostream &stream, const BitSet &rhs)    operator <<47,805
-  T *bv;bv55,1004
-  uint64_t length; length56,1013
-  uint64_t numElems; numElems57,1033
-  static const nat maskLength = sizeof(T) * CHAR_BIT; maskLength60,1066
-  static const nat maxElem = maskLength - 1;maxElem61,1121
-  static T allOne; allOne63,1167
-  static uint8_t divOp;divOp64,1187
-  static T* mask;mask66,1212
-  static T* countMask; countMask67,1230
-template<typename T> BitSet<T>::BitSet(nat _numElems)BitSet84,1569
-template<typename T> BitSet<T>::~BitSet() ~BitSet93,1829
-template<typename T> uint64_t BitSet<T>::convertToInternalSize(uint64_t size)convertToInternalSize98,1890
-template<typename T> void BitSet<T>::set()set104,2035
-template<typename T> void BitSet<T>::unset()unset110,2132
-template<typename T> BitSet<T>::BitSet(const BitSet & rhs) BitSet116,2235
-template<typename T> void BitSet<T>::reset()reset124,2435
-template<typename T> inline void BitSet<T>::copyFromToHelper(T *donor, T *result, nat start, nat end)copyFromToHelper131,2539
-template<typename T> inline void BitSet<T>::copyFromStart(T *donor, T *result, nat end)copyFromStart137,2755
-template<typename T> inline void BitSet<T>::copyToEnd(T *donor, T *result, nat start)copyToEnd144,2935
-template<typename T> void BitSet<T>::copyRange( BitSet *donor, nat begin, nat end )  copyRange150,3122
-template<typename T> nat BitSet<T>::count() const count177,3777
-template<typename T> void BitSet<T>::resize(uint64_t size)resize186,3946
-template<typename T> BitSet<T>& BitSet<T>::operator=(const BitSet<T>& rhs )operator =204,4409
-template<typename T> void BitSet<T>::set(nat pos)set219,4699
-template<typename T> bool BitSet<T>::test(nat pos)  const test226,4831
-template<typename T> void BitSet<T>::flip(nat pos)  flip233,4978
-template<typename T> void BitSet<T>::unset(nat pos)  unset240,5115
-template<typename T> uint64_t BitSet<T>::internalSize() constinternalSize246,5251
-template<typename T> uint64_t BitSet<T>::size() const size251,5335
-template<typename T > void BitSet<T>::andify(const BitSet &rhs)andify257,5416
-template<typename T> void BitSet<T>::orify(const BitSet &rhs)orify265,5596
-template <typename T, nat  I> struct recMask recMask274,5805
-  recMask<T,I - 1> rest;rest276,5853
-  T RES;RES277,5878
-  recMask() : RES(1ul << (I-1)) {} recMask278,5887
-template <typename T> struct recMask<T, 1> recMask281,5927
-  T RES;RES283,5973
-  recMask() : RES(1) {}  recMask284,5982
-template<nat N> struct BitCount{ enum { RES = ( N & 1 ? 1 : 0 )  + BitCount< (N>>1) >::RES   }; }; BitCount289,6030
-template<nat N> struct BitCount{ enum { RES = ( N & 1 ? 1 : 0 )  + BitCount< (N>>1) >::RES   }; }; RES289,6030
-template<> struct BitCount<0> { enum {  RES = 0};  }; BitCount290,6130
-template<> struct BitCount<0> { enum {  RES = 0};  }; RES290,6130
-template<typename T, nat I > struct lookuplookup294,6208
-  lookup<T,I-1> rest;rest296,6253
-  T RES; RES297,6275
-  lookup() : RES(BitCount<I>::RES) {} lookup298,6285
-template<typename T> struct lookup<T,0> lookup302,6330
-  T RES;    RES304,6375
-  lookup() : RES(0) {} lookup305,6388
+  T *bv;bv57,1038
+  uint64_t length; length58,1047
+  uint64_t numElems; numElems59,1067
+  static const nat maskLength = sizeof(T) * CHAR_BIT; maskLength62,1100
+  static const nat maxElem = maskLength - 1;maxElem63,1155
+  static T allOne; allOne65,1201
+  static uint8_t divOp;divOp66,1221
+  static T* mask;mask68,1246
+  static T* countMask; countMask69,1264
+template<typename T> BitSet<T>::BitSet(nat _numElems)BitSet86,1603
+template<typename T> BitSet<T>::~BitSet() ~BitSet95,1863
+template<typename T> uint64_t BitSet<T>::convertToInternalSize(uint64_t size)convertToInternalSize100,1924
+template<typename T> void BitSet<T>::set()set106,2069
+template<typename T> void BitSet<T>::unset()unset112,2166
+template<typename T> BitSet<T>::BitSet(const BitSet & rhs) BitSet118,2269
+template<typename T> void BitSet<T>::reset()reset126,2469
+template<typename T> inline void BitSet<T>::copyFromToHelper(T *donor, T *result, nat start, nat end)copyFromToHelper133,2573
+template<typename T> inline void BitSet<T>::copyFromStart(T *donor, T *result, nat end)copyFromStart139,2789
+template<typename T> inline void BitSet<T>::copyToEnd(T *donor, T *result, nat start)copyToEnd146,2969
+template<typename T> void BitSet<T>::copyRange( BitSet *donor, nat begin, nat end )  copyRange152,3156
+template<typename T> nat BitSet<T>::count() const count179,3811
+template<typename T> void BitSet<T>::resize(uint64_t size)resize188,3980
+template<typename T> BitSet<T>& BitSet<T>::operator=(const BitSet<T>& rhs )operator =206,4443
+template<typename T> void BitSet<T>::set(nat pos)set221,4733
+template<typename T> bool BitSet<T>::test(nat pos)  const test228,4865
+template<typename T> void BitSet<T>::flip(nat pos)  flip235,5012
+template<typename T> void BitSet<T>::unset(nat pos)  unset242,5149
+template<typename T> uint64_t BitSet<T>::internalSize() constinternalSize248,5285
+template<typename T> uint64_t BitSet<T>::size() const size253,5369
+template<typename T > void BitSet<T>::andify(const BitSet &rhs)andify259,5450
+template<typename T> void BitSet<T>::orify(const BitSet &rhs)orify267,5630
+template <typename T, nat  I> struct recMask recMask276,5839
+  recMask<T,I - 1> rest;rest278,5887
+  T RES;RES279,5912
+  recMask() : RES(1ul << (I-1)) {} recMask280,5921
+template <typename T> struct recMask<T, 1> recMask283,5961
+  T RES;RES285,6007
+  recMask() : RES(1) {}  recMask286,6016
+template<nat N> struct BitCount{ enum { RES = ( N & 1 ? 1 : 0 )  + BitCount< (N>>1) >::RES   }; }; BitCount291,6064
+template<nat N> struct BitCount{ enum { RES = ( N & 1 ? 1 : 0 )  + BitCount< (N>>1) >::RES   }; }; RES291,6064
+template<> struct BitCount<0> { enum {  RES = 0};  }; BitCount292,6164
+template<> struct BitCount<0> { enum {  RES = 0};  }; RES292,6164
+template<typename T, nat I > struct lookuplookup296,6242
+  lookup<T,I-1> rest;rest298,6287
+  T RES; RES299,6309
+  lookup() : RES(BitCount<I>::RES) {} lookup300,6319
+template<typename T> struct lookup<T,0> lookup304,6364
+  T RES;    RES306,6409
+  lookup() : RES(0) {} lookup307,6422
+template<typename T> void BitSet<T>::printRaw(FILE *fh) constprintRaw312,6453
 
 ChromConfig.cpp,119
 const uint8_t ChromConfig<2>::mask[8] =   mask7,151
@@ -142,36 +157,35 @@ template<nat PLOIDY> ChromConfig<PLOIDY>::~ChromConfig()~ChromConfig75,1871
 template<nat PLOIDY> void ChromConfig<PLOIDY>::initRandom(Randomness &rng)initRandom82,1994
 template<> inline nat ChromConfig<2>::getConfig(nat gen, haploAddr haploNr)getConfig88,2135
 
-Chromosome.cpp,870
+Chromosome.cpp,844
 Chromosome::Chromosome(seqLen_t seqLen, FitnessFunction fFun, nat _id)Chromosome6,48
-Chromosome::~Chromosome()~Chromosome19,323
-void Chromosome::init(Randomness &rng)init26,405
-void Chromosome::updateUniqueHaplotypes(SelectedArray** seqBegin,SelectedArray** seqEnd)updateUniqueHaplotypes32,480
-#define CURRENT_HAS_MUTATION CURRENT_HAS_MUTATION46,774
-#define CURRENT_IS_GREATER CURRENT_IS_GREATER47,834
-#define CURRENT_IS_LESS CURRENT_IS_LESS48,918
-#define OLD OLD51,1003
-void Chromosome::cleanFixedMutations(SelectedArray** seqBegin,SelectedArray** seqEnd, nat popId, ThreadPool &tp)cleanFixedMutations54,1029
-void Chromosome::cleanFixedMutations(SelectedArray** seqBegin,SelectedArray** seqEnd, nat popId, ThreadPool &tp)cleanFixedMutations202,4914
-void Chromosome::insertFixedMutation(SelectedMutation *mut, nat popId)insertFixedMutation320,7735
+Chromosome::~Chromosome()~Chromosome17,240
+void Chromosome::init(Randomness &rng)init24,322
+void Chromosome::updateUniqueHaplotypes(SelectedArray** seqBegin,SelectedArray** seqEnd)updateUniqueHaplotypes30,397
+#define CURRENT_HAS_MUTATION CURRENT_HAS_MUTATION44,691
+#define CURRENT_IS_GREATER CURRENT_IS_GREATER45,751
+#define CURRENT_IS_LESS CURRENT_IS_LESS46,835
+void Chromosome::cleanFixedMutations(SelectedArray** seqBegin,SelectedArray** seqEnd, nat popId, ThreadPool &tp)cleanFixedMutations52,958
+void Chromosome::cleanFixedMutations(SelectedArray** seqBegin,SelectedArray** seqEnd, nat popId, ThreadPool &tp)cleanFixedMutations200,4843
+void Chromosome::insertFixedMutation(SelectedMutation *mut, nat popId)insertFixedMutation318,7664
 
-Chromosome.hpp,1205
+Chromosome.hpp,1317
 class ChromosomeChromosome21,394
   seqLen_t getSeqLen() const { return seqLen; }getSeqLen34,813
   const SeqRep& getSeqRep() const { return seqRep; }getSeqRep35,861
   float getSelectProb(){ assert(mutMan.getSelectProb() <= 1) ; return  mutMan.getSelectProb(); } // getSelectProb36,914
   float getNeutralProb(){ assert(mutMan.getSelectProb() <= 1) ;  return 1 - mutMan.getSelectProb(); }getNeutralProb37,1015
   nat getId(){return id; }getId38,1117
-  SelectedArray* getFixedMutations(nat popId) {return fixedMutations[popId];} getFixedMutations41,1179
-  Base mutateSite(Randomness &rng, seqLen_t pos){  return mutMan.drawBase(rng, seqRep.getBase(pos)) ; }mutateSite42,1258
-  seqLen_t seqLen; seqLen45,1372
-  DynArraySequential<SelectedArray*> uniqueHaplotypes;uniqueHaplotypes46,1392
-  SeqRep seqRep;seqRep47,1447
-  MutationManager mutMan; mutMan48,1464
-  nat id;   id49,1491
-  vector<SelectedArray*> fixedMutations; // for each population fixedMutations50,1504
-inline SelectedMutation& Chromosome::getSelectedMutation(ResizMemArena<SelectedMutation>&mem, Randomness &rng)getSelectedMutation63,2030
-inline bool Chromosome::locusIsNeutral(seqLen_t locus )locusIsNeutral71,2255
+  SelectedArray* getFixedMutations(nat popId) {return popId >= fixedMutations.size() ? nullptr :  fixedMutations[popId]; } // :KLUDE: this actually belongs to some population-specific objectgetFixedMutations41,1179
+  Base mutateSite(Randomness &rng, seqLen_t pos){  return mutMan.drawBase(rng, seqRep.getBase(pos)) ; }mutateSite42,1370
+  seqLen_t seqLen; seqLen45,1484
+  DynArraySequential<SelectedArray*> uniqueHaplotypes;uniqueHaplotypes46,1504
+  SeqRep seqRep;seqRep47,1559
+  MutationManager mutMan; mutMan48,1576
+  nat id;   id49,1603
+  vector<SelectedArray*> fixedMutations; // for each population fixedMutations50,1616
+inline SelectedMutation& Chromosome::getSelectedMutation(ResizMemArena<SelectedMutation>&mem, Randomness &rng)getSelectedMutation63,2142
+inline bool Chromosome::locusIsNeutral(seqLen_t locus )locusIsNeutral71,2367
 
 CycleCounter.hpp,336
 class CycleCounterCycleCounter8,86
@@ -208,33 +222,34 @@ T* DynArraySequential<T>::end() constend81,1317
 T& DynArraySequential<T>::getNext()getNext88,1409
 T& DynArraySequential<T>::pop()pop98,1558
 
-Events.hpp,1703
+Events.hpp,1798
 class EventEvent3,23
   double sizeAtBegin; sizeAtBegin6,51
   nat when; when7,74
   nat correction;correction8,87
-  nat getWhen(){return when; }getWhen12,194
-class DiscreteChange : public  EventDiscreteChange16,231
-  float rate;  rate19,281
-  DiscreteChange(nat when, float rate, nat correction ) : rate(rate) DiscreteChange20,297
-  virtual void init(nat lastSize){ sizeAtBegin = (nat(lastSize * rate) | correction) - correction  ; }  init26,439
-  virtual nat getByTime(nat time) {return  sizeAtBegin;  }getByTime27,544
-class LogisticGrowth : public EventLogisticGrowth31,609
-  float rate; rate34,656
-  nat capacity; capacity35,671
-  LogisticGrowth(nat when, float rate, nat capacity, nat correction ) :  rate(rate), capacity(capacity) { this->when = when; this->correction  = correction; } LogisticGrowth36,688
-  virtual void init(nat lastSize) {  sizeAtBegin = lastSize;  }init38,849
-  virtual nat getByTime(nat time)getByTime39,913
-class ExponentialGrowth : public EventExponentialGrowth50,1231
-  float rate ; rate53,1283
-  ExponentialGrowth(nat when, float rate, nat correction) : rate(rate){this->when = when; this->correction = correction;  }ExponentialGrowth54,1299
-  virtual void init(nat lastTime) { sizeAtBegin = lastTime; }init55,1423
-  virtual nat getByTime(nat time) getByTime56,1485
-class ExponentialDecay : public EventExponentialDecay63,1658
- float rate ; rate66,1710
- ExponentialDecay(nat when, float rate, nat correction) : rate(rate){this->when = when; this->correction = correction;  }ExponentialDecay67,1725
-  virtual void init(nat lastTime) { sizeAtBegin = lastTime; }init68,1847
-  virtual nat getByTime(nat time) getByTime69,1909
+  nat getWhen() const {return when; } getWhen12,194
+  friend ostream& operator<<(ostream &stream, const Event &rhs)  operator <<14,234
+class DiscreteChange : public  EventDiscreteChange22,395
+  float rate;  rate25,445
+  DiscreteChange(nat when, float rate, nat correction ) : rate(rate) DiscreteChange26,461
+  virtual void init(nat lastSize){ sizeAtBegin = (nat(lastSize * rate) | correction) - correction  ; }  init32,603
+  virtual nat getByTime(nat time) {return  sizeAtBegin;  }getByTime33,708
+class LogisticGrowth : public EventLogisticGrowth37,773
+  float rate; rate40,820
+  nat capacity; capacity41,835
+  LogisticGrowth(nat when, float rate, nat capacity, nat correction ) :  rate(rate), capacity(capacity) { this->when = when; this->correction  = correction; } LogisticGrowth42,852
+  virtual void init(nat lastSize) {  sizeAtBegin = lastSize;  }init44,1013
+  virtual nat getByTime(nat time)getByTime45,1077
+class ExponentialGrowth : public EventExponentialGrowth56,1395
+  float rate ; rate59,1447
+  ExponentialGrowth(nat when, float rate, nat correction) : rate(rate){this->when = when; this->correction = correction;  }ExponentialGrowth60,1463
+  virtual void init(nat lastTime) { sizeAtBegin = lastTime; }init61,1587
+  virtual nat getByTime(nat time) getByTime62,1649
+class ExponentialDecay : public EventExponentialDecay69,1822
+ float rate ; rate72,1874
+ ExponentialDecay(nat when, float rate, nat correction) : rate(rate){this->when = when; this->correction = correction;  }ExponentialDecay73,1889
+  virtual void init(nat lastTime) { sizeAtBegin = lastTime; }init74,2011
+  virtual nat getByTime(nat time) getByTime75,2073
 
 FitnessFunction.cpp,167
 FitnessFunction::FitnessFunction(vector<string> args)FitnessFunction6,72
@@ -257,18 +272,18 @@ class FitnessFunctionFitnessFunction16,249
   float sd; sd37,717
 inline float FitnessFunction::drawSelectionCoefficient(Randomness &rng)drawSelectionCoefficient41,735
 
-FractionalSimulation.cpp,957
-FractionalSimulation::FractionalSimulation(ThreadPool &_tp, const ProgramOptions &progOpt, nat _numGen, vector<Chromosome*> _chromosomes, vector<PopulationParams> popParams) FractionalSimulation11,185
-FractionalSimulation::~FractionalSimulation()~FractionalSimulation44,1895
-void FractionalSimulation::sampleParentsByFitness(ThreadPool &tp)sampleParentsByFitness57,2227
-void FractionalSimulation::createRecombinants(ThreadPool &tp)createRecombinants77,2843
-void FractionalSimulation::updateFitness()updateFitness130,4308
-void FractionalSimulation::mutateSelectedSites(ThreadPool &tp)  mutateSelectedSites178,5611
-void FractionalSimulation::simulate() simulate224,7105
-void FractionalSimulation::printArgs(string id)printArgs270,8434
-void FractionalSimulation::printSequencesRaw(string id)printSequencesRaw286,8808
-void FractionalSimulation::finalize()finalize341,10333
-inline void FractionalSimulation::cleanFixed()cleanFixed356,10766
+FractionalSimulation.cpp,956
+FractionalSimulation::FractionalSimulation(ThreadPool &_tp, const ProgramOptions &progOpt, nat _numGen, vector<Chromosome*> _chromosomes, vector<PopulationParams> popParams) FractionalSimulation12,213
+FractionalSimulation::~FractionalSimulation()~FractionalSimulation45,1923
+void FractionalSimulation::sampleParentsByFitness(ThreadPool &tp)sampleParentsByFitness58,2255
+void FractionalSimulation::createRecombinants(ThreadPool &tp)createRecombinants82,2990
+void FractionalSimulation::updateFitness()updateFitness137,4582
+void FractionalSimulation::mutateSelectedSites(ThreadPool &tp)  mutateSelectedSites185,5885
+void FractionalSimulation::simulate() simulate231,7379
+void FractionalSimulation::printArgs(string id)printArgs275,8706
+void FractionalSimulation::printSequencesRaw(string id)printSequencesRaw289,9017
+void FractionalSimulation::finalize()finalize306,9489
+inline void FractionalSimulation::cleanFixed()cleanFixed332,10259
 
 FractionalSimulation.hpp,523
 class FractionalSimulation FractionalSimulation15,352
@@ -282,6 +297,8 @@ class FractionalSimulation FractionalSimulation15,352
   ThreadPool &tp; tp33,913
   vector<Graph*> graphs;graphs34,932
   vector<Chromosome*> chromosomes;chromosomes35,957
+
+FractionalSimulation_flymake.h,0
 
 FreeRing.cpp,191
 FreeRing::FreeRing(nat initNum)FreeRing5,46
@@ -325,19 +342,19 @@ Node* Graph::hookRecombinations(Node *anc1, Node *anc2)hookRecombinations80,18
 void Graph::insertMutEvents(nat genC, AddrArrayBackwardIter<Node,true> &mutBackIter, Node** nodeBufferNowGen, Chromosome &chrom, Randomness &rng)insertMutEvents106,2640
 void Graph::hookup(const Survivors &survivors, const Ancestry &ancestry, const PopulationManager &popMan, Chromosome &chrom, Randomness &rng, nat startGen, nat endGen)hookup137,3775
 void Graph::printArg(FILE *fh)printArg189,5561
-void Graph::createSequencesInGraph(const Chromosome &chromo)createSequencesInGraph208,5869
-void Graph::insertRecEvents(nat genC, nat chromId,  AddrArrayBackwardIter<Node,true> &recBackIter, Node** nodeBufferNowGen, Node** nodeBufferPrevGen, const Ancestry &ancestry)  insertRecEvents270,7595
+void Graph::createSequencesInGraph(const Chromosome &chromo)createSequencesInGraph209,5891
+void Graph::insertRecEvents(nat genC, nat chromId,  AddrArrayBackwardIter<Node,true> &recBackIter, Node** nodeBufferNowGen, Node** nodeBufferPrevGen, const Ancestry &ancestry)  insertRecEvents271,7617
 
-Graph.hpp,552
+Graph.hpp,553
 class GraphGraph21,312
   nat getNumberOfMutations() {return mutNodes.getNumberUsed(); }getNumberOfMutations33,714
-  vector<Node*>& getState(){return previousState; }getState34,779
-  NeutralArray* getSequenceFromNode(Node *node){ return nodMan.getInfo(node->id)->sequence; }getSequenceFromNode35,831
-  AddrArray<Node,true> mutNodes; mutNodes45,1131
-  AddrArray<Node,true> recNodes;recNodes46,1165
-  vector<Node*> previousState; previousState47,1198
-  NodeManager nodMan; nodMan48,1230
-  DynArraySequential<Node*> buffer; buffer49,1253
+  vector<Node*>& getState() {return previousState; }getState34,779
+  NeutralArray* getSequenceFromNode(Node *node){ return nodMan.getInfo(node->id)->sequence; }getSequenceFromNode35,832
+  AddrArray<Node,true> mutNodes; mutNodes45,1132
+  AddrArray<Node,true> recNodes;recNodes46,1166
+  vector<Node*> previousState; previousState47,1199
+  NodeManager nodMan; nodMan48,1231
+  DynArraySequential<Node*> buffer; buffer49,1254
 
 HaploTimeWindow.cpp,234
 HaploTimeWindow::HaploTimeWindow(nat initPopSize, SelectedArray *selectedInit)HaploTimeWindow8,200
@@ -405,31 +422,33 @@ class LoadBalancerLoadBalancer4,37
   nat currentJob; currentJob32,620
   mutex jobMutex; jobMutex33,639
 
-Mutation.cpp,240
+Mutation.cpp,355
 ostream& operator<<(ostream &stream, const Base base)operator <<6,46
-ostream& operator<<(ostream &stream, const NeutralMutation &rhs)operator <<27,401
-ostream& operator<<(ostream &stream, const SelectedMutation &rhs)operator <<35,578
+ostream& operator<<(ostream &stream, const NeutralMutation &rhs)operator <<28,402
+ostream& operator<<(ostream &stream, const SelectedMutation &rhs)operator <<35,570
+void SelectedMutation::printRaw(FILE *fh)printRaw42,763
+void NeutralMutation::printRaw(FILE *fh)printRaw54,984
 
-Mutation.hpp,909
-enum Base : uint8_t    {     A = 0, C = 1 , G = 2 , T = 3       }; uint8_t9,80
-enum Base : uint8_t    {     A = 0, C = 1 , G = 2 , T = 3       }; A9,80
-enum Base : uint8_t    {     A = 0, C = 1 , G = 2 , T = 3       }; C9,80
-enum Base : uint8_t    {     A = 0, C = 1 , G = 2 , T = 3       }; G9,80
-enum Base : uint8_t    {     A = 0, C = 1 , G = 2 , T = 3       }; T9,80
-struct SelectedMutationSelectedMutation13,164
-  seqLen_t absPos;absPos15,190
-  nat generation;generation16,209
-  FITNESS_TYPE fitness;fitness17,227
-  nat indiNr;indiNr18,251
-  Base base;base19,265
-  bool inUse; inUse20,278
-  bool isClaimed() {return inUse; }isClaimed22,294
-  void claim() { inUse = true; }claim23,330
-  void unclaim() { inUse = false; }unclaim24,363
-struct NeutralMutationNeutralMutation28,404
-  seqLen_t absPos;absPos30,429
-  nat generation; generation31,448
-  Base base;base32,467
+Mutation.hpp,862
+enum Base : uint8_t    { A = 0, C = 1 , G = 2 , T = 3 }; uint8_t8,79
+enum Base : uint8_t    { A = 0, C = 1 , G = 2 , T = 3 }; A8,79
+enum Base : uint8_t    { A = 0, C = 1 , G = 2 , T = 3 }; C8,79
+enum Base : uint8_t    { A = 0, C = 1 , G = 2 , T = 3 }; G8,79
+enum Base : uint8_t    { A = 0, C = 1 , G = 2 , T = 3 }; T8,79
+struct SelectedMutationSelectedMutation11,152
+  seqLen_t absPos;absPos13,178
+  nat generation;generation14,197
+  Base base;  base15,215
+  FITNESS_TYPE fitness;fitness16,230
+  nat indiNr;indiNr17,254
+  bool inUse; inUse18,268
+  bool isClaimed() {return inUse; }isClaimed20,284
+  void claim() { inUse = true; }claim21,320
+  void unclaim() { inUse = false; }unclaim22,353
+struct NeutralMutationNeutralMutation27,422
+  seqLen_t absPos;absPos29,447
+  nat generation;generation30,466
+  Base base;  base31,484
 
 MutationManager.cpp,315
 MutationManager::MutationManager(seqLen_t _length, FitnessFunction _fFun) MutationManager4,33
@@ -513,37 +532,37 @@ nat PopulationManager::getMaximumPopSize(nat popId, nat start, nat end) constge
 nat PopulationManager::getNumBytesForGeneration(nat gen) constgetNumBytesForGeneration41,843
 
 PopulationManager.hpp,1042
-class PopulationManagerPopulationManager7,71
-  nat getTotalNumPopulations() const {return popParams.size(); } // :TRICKY: at all times!   getTotalNumPopulations16,291
-  FITNESS_TYPE* getFitnessValues(nat popId){return fitnessValues[popId];}getFitnessValues18,449
-  void setFitnessValues(nat popId, FITNESS_TYPE *fval){fitnessValues[popId] = fval;}  setFitnessValues19,523
-  const PopulationParams& operator[](nat num) const { return popParams[num]; }  operator []20,610
-  vector<PopulationParams> popParams;popParams27,929
-  vector<FITNESS_TYPE*> fitnessValues;fitnessValues28,967
-inline nat PopulationManager::getTotalNumHaploByGen(nat num) constgetTotalNumHaploByGen36,1075
-inline nat PopulationManager::getTotalNumIndiByGen(nat num) constgetTotalNumIndiByGen41,1192
-inline double PopulationManager::getLamdbaForParam(float baseParam, seqLen_t seqLen, const PopulationManager &popMan, nat popNum, nat gen) getLamdbaForParam52,1381
-inline uint8_t PopulationManager::mapToBytesNeeded(nat number) mapToBytesNeeded58,1633
+class PopulationManagerPopulationManager8,90
+  nat getTotalNumPopulations() const {return popParams.size(); } // :TRICKY: at all times!   getTotalNumPopulations17,310
+  FITNESS_TYPE* getFitnessValues(nat popId){return fitnessValues[popId];}getFitnessValues19,468
+  void setFitnessValues(nat popId, FITNESS_TYPE *fval){fitnessValues[popId] = fval;}  setFitnessValues20,542
+  const PopulationParams& operator[](nat num) const { return popParams[num]; }  operator []21,629
+  vector<PopulationParams> popParams;popParams28,948
+  vector<FITNESS_TYPE*> fitnessValues;fitnessValues29,986
+inline nat PopulationManager::getTotalNumHaploByGen(nat num) constgetTotalNumHaploByGen37,1094
+inline nat PopulationManager::getTotalNumIndiByGen(nat num) constgetTotalNumIndiByGen42,1211
+inline double PopulationManager::getLamdbaForParam(float baseParam, seqLen_t seqLen, const PopulationManager &popMan, nat popNum, nat gen) getLamdbaForParam53,1400
+inline uint8_t PopulationManager::mapToBytesNeeded(nat number) mapToBytesNeeded59,1652
 
-PopulationParams.cpp,673
+PopulationParams.cpp,675
 void formatComplainEnd()formatComplainEnd16,358
 void saveProceed(vector<string>::iterator &iter, vector<string>::iterator end)  saveProceed22,478
 float parseRate(vector<string> args, nat id )parseRate30,619
 PopulationParams::PopulationParams(nat id, nat numberOfGenerations, popSize_t initSize, const ProgramOptions &progOpt)  PopulationParams59,1107
-void PopulationParams::parseEvents(vector<string> stringEvents, nat id) parseEvents112,2511
-nat PopulationParams::getPopSizeByGeneration(const nat genNum)   const getPopSizeByGeneration219,5017
-PopulationParams::PopulationParams(popSize_t _initSize, double _recRate, double _mutRate)PopulationParams229,5264
+void PopulationParams::parseEvents(vector<string> stringEvents, nat id) parseEvents94,2153
+nat PopulationParams::getPopSizeByGeneration(const nat genNum)   const // getPopSizeByGeneration205,4713
+PopulationParams::PopulationParams(popSize_t _initSize, double _recRate, double _mutRate)PopulationParams217,5057
 
-PopulationParams.hpp,524
-class PopulationParamsPopulationParams14,159
-  double getRecombinationRate(nat gen ) const {return recombinationRate; }getRecombinationRate25,489
-  double getMutationRate( nat gen ) const  {  return mutationRate ; ;} // is neutral ? getMutationRate27,645
-  JudyArray<judyKey,Event*> events; events32,807
-  popSize_t initSize; initSize33,844
-  nat correction; correction34,867
-  double recombinationRate ; recombinationRate37,928
-  double mutationRate; mutationRate39,991
-  bool isNeutral; isNeutral42,1040
+PopulationParams.hpp,512
+class PopulationParamsPopulationParams14,149
+  double getRecombinationRate(nat gen ) const {return recombinationRate; }getRecombinationRate25,479
+  double getMutationRate( nat gen ) const  {  return mutationRate ; ;} // is neutral ?getMutationRate27,635
+  vector<Event*> events; events31,795
+  popSize_t initSize; initSize32,821
+  nat correction; correction33,844
+  double recombinationRate ; recombinationRate36,905
+  double mutationRate; mutationRate38,968
+  bool isNeutral; isNeutral41,1017
 
 ProgramOptions.cpp,191
 void releaseText()releaseText9,73
@@ -566,13 +585,13 @@ float Randomness::gamma1(float alpha)gamma190,1733
 float Randomness::sampleGamma(float alpha, float beta)sampleGamma116,2279
 
 Randomness.hpp,464
-class Randomness : public RandomLib::RandomRandomness15,252
-  NormalDistribution<FITNESS_TYPE> nDist;  nDist28,772
-  ExponentialDistribution<float> eDist;eDist29,816
-  constexpr static float eulerNumber = 2.718281828; eulerNumber31,859
-  constexpr static double eps = 1.2e-07f; eps32,912
-inline float Randomness::sampleNormal(float mean, float sigma)sampleNormal48,1281
-template<typename TYPE> inline TYPE Randomness::getR2(uint32_t tmp)getR254,1387
+class Randomness : public RandomLib::RandomRandomness14,251
+  NormalDistribution<FITNESS_TYPE> nDist;  nDist27,771
+  ExponentialDistribution<float> eDist;eDist28,815
+  constexpr static float eulerNumber = 2.718281828; eulerNumber30,858
+  constexpr static double eps = 1.2e-07f; eps31,911
+inline float Randomness::sampleNormal(float mean, float sigma)sampleNormal47,1280
+template<typename TYPE> inline TYPE Randomness::getR2(uint32_t tmp)getR253,1386
 
 RandomnessImpl.hpp,112
 template<typename TYPE> void Randomness::IntegerArray(TYPE *array, nat length, nat upperBound)IntegerArray3,2
@@ -589,11 +608,11 @@ struct RecombinationRecombination7,60
 
 RecombinationManager.cpp,649
 int sortByAbsPos(const void* t1, const void* t2) { return ((Recombination*)t1)->absPos - ((Recombination*)t2)->absPos; }sortByAbsPos8,148
-RecombinationManager::RecombinationManager(nat _seqLen, nat _startGen, nat _endGen)  RecombinationManager13,405
-RecombinationManager::~RecombinationManager()~RecombinationManager25,649
-void RecombinationManager::determineRecsPerGen(ThreadPool &tp, const PopulationManager &popMan)determineRecsPerGen31,719
-ostream& operator<<(ostream &stream, const RecombinationManager &rhs)operator <<45,1204
-void RecombinationManager::precompute(ThreadPool &tp, const PopulationManager &popMan)precompute142,4385
+RecombinationManager::RecombinationManager(nat _seqLen, nat _startGen, nat _endGen)  RecombinationManager12,272
+RecombinationManager::~RecombinationManager()~RecombinationManager24,516
+void RecombinationManager::determineRecsPerGen(ThreadPool &tp, const PopulationManager &popMan)determineRecsPerGen30,586
+ostream& operator<<(ostream &stream, const RecombinationManager &rhs)operator <<44,1071
+void RecombinationManager::precompute(ThreadPool &tp, const PopulationManager &popMan)precompute141,4255
 
 RecombinationManager.hpp,1302
 class RecombinationManager : private TimeSectionRecombinationManager16,259
@@ -798,9 +817,9 @@ inline nat* Survivors::getFirstSurvivorBackwards(nat fromLastGeneration) constg
 inline nat* Survivors::getFirstSurvivorForward(nat genNum) constgetFirstSurvivorForward82,2244
 inline void Survivors::setFirstSuvivorRelativeToNow(nat fromLastGeneration, nat *firstSurvivor) setFirstSuvivorRelativeToNow88,2451
 inline void Survivors::prepareNextGenBackwards()prepareNextGenBackwards94,2630
-inline nat* Survivors::getLastSurvivor() const {return nextSurvivor ; } getLastSurvivor101,2818
-inline void Survivors::addSurvivor(nat idx)addSurvivor103,2892
-inline void Survivors::reserve(nat num)reserve114,3058
+inline nat* Survivors::getLastSurvivor() const {return nextSurvivor ; } getLastSurvivor102,2913
+inline void Survivors::addSurvivor(nat idx)addSurvivor104,2987
+inline void Survivors::reserve(nat num)reserve115,3153
 
 System.cpp,335
 System::System()System13,154
@@ -913,20 +932,19 @@ void intNormalizer(T number,unsigned int &m, unsigned int &r2)intNormalizer54,
 #define IS_ODD(IS_ODD95,2027
 #define BIN_WRITE(BIN_WRITE98,2053
 #define NODE_IS_RELEVANT(NODE_IS_RELEVANT100,2107
-#define SEQ_FILE_NAME SEQ_FILE_NAME107,2218
-#define ARG_FILE_NAME ARG_FILE_NAME108,2252
-#define INIT_FITNESS INIT_FITNESS111,2289
-#define NUMBER_PARENTS NUMBER_PARENTS113,2316
+#define SEQ_FILE_NAME SEQ_FILE_NAME105,2216
+#define ARG_FILE_NAME ARG_FILE_NAME106,2262
+#define INIT_FITNESS INIT_FITNESS108,2301
+#define NUMBER_PARENTS NUMBER_PARENTS110,2328
 
-config.hpp,195
+config.hpp,148
 #define INFO_GENERALINFO_GENERAL11,143
-#define FITNESS_TYPE FITNESS_TYPE15,202
-#define EFFICIENCY_INIT_MEMBLOCKEFFICIENCY_INIT_MEMBLOCK23,335
-#define DEBUG_SHOW_GENSDEBUG_SHOW_GENS38,646
+#define FITNESS_TYPE FITNESS_TYPE15,229
+#define EFFICIENCY_INIT_MEMBLOCKEFFICIENCY_INIT_MEMBLOCK23,362
 
-main.cpp,144
-void playground(ProgramOptions &progOpt){  cerr << "PLAYGROUND MODE " << endl;   playground13,217
-int main(int argc, char **argv)main25,512
+main.cpp,141
+void playground(ProgramOptions &progOpt){  cerr << "PLAYGROUND MODE " << endl;playground13,217
+int main(int argc, char **argv)main33,566
 
 types.hpp,481
 typedef unsigned int  nat ; nat5,54

@@ -9,7 +9,13 @@ protected:
 public:
   virtual nat getByTime(nat time) = 0; 
   virtual void init(nat lastSize) = 0 ; 
-  nat getWhen(){return when; }
+  nat getWhen() const {return when; } 
+
+  friend ostream& operator<<(ostream &stream, const Event &rhs)  
+  {
+    stream << "["<< rhs.getWhen() << ","<< rhs.sizeAtBegin; 
+    return stream; 
+  }
 }; 
 
 

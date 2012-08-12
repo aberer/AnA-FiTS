@@ -9,7 +9,7 @@
 // #define _TEST
 
 #define INFO_GENERAL
-
+// #define PRINT_SEQ_STDOUT
 
 // not sure, if double really works
 #define FITNESS_TYPE double
@@ -34,8 +34,10 @@
 // #define DEBUG_RECOMBINATION
 // #define DEBUG_MUT_SEL
 // #define DEBUG_PRINT_POP_EVERY_GEN
+
 // #define DEBUG_SHOW_POPSIZE
-#define DEBUG_SHOW_GENS
+// #define DEBUG_SHOW_GENS
+
 // #define DEBUG_PRECOMPUTE 
 // #define DEBUG_RECMAN
 // #define DEBUG_REPORT_FIXATIONS
@@ -52,4 +54,3 @@
 // #define DEBUG_UPDATE_GRAPH
 // #define DEBUG_HOOKUP
 // #define DEBUG_BACKTRACE
- 

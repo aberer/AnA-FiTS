@@ -51,6 +51,8 @@ public:
     return stream; 
   }
 
+  void printRaw(FILE *fh) const;
+
 protected: 
   T *bv;
   uint64_t length; 
@@ -305,3 +307,10 @@ template<typename T> struct lookup<T,0>
   lookup() : RES(0) {} 
 }; 
 
+
+
+template<typename T> void BitSet<T>::printRaw(FILE *fh) const
+{
+  for(nat i = 0; i < length; ++i)
+    BIN_WRITE(bv[i], fh); 
+}

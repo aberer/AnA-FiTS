@@ -1,10 +1,10 @@
 #pragma once
 
-#include "JudyArray.hpp"
 #include "common.hpp"
 #include "types.hpp"
 
 #include <string>
+#include <map>
 #include <vector>
 
 
@@ -24,12 +24,11 @@ public:
   // :TODO: currently gen independant  
   double getRecombinationRate(nat gen ) const {return recombinationRate; }
   // double getGeneConverBsionRate(nat gen ) const {return geneConversionRate; }
-  double getMutationRate( nat gen ) const  {  return mutationRate ; ;} // is neutral ? 
-
+  double getMutationRate( nat gen ) const  {  return mutationRate ; ;} // is neutral ?
   void parseEvents(vector<string> stringEvents, nat id);
 
 private:      
-  JudyArray<judyKey,Event*> events; 
+  vector<Event*> events; 
   popSize_t initSize; 
   nat correction; 
   

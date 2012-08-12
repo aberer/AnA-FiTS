@@ -38,7 +38,7 @@ public:
   nat getId(){return id; }
 
   // not really needed by anybody
-  SelectedArray* getFixedMutations(nat popId) {return fixedMutations[popId];} 
+  SelectedArray* getFixedMutations(nat popId) {return popId >= fixedMutations.size() ? nullptr :  fixedMutations[popId]; } // :KLUDE: this actually belongs to some population-specific object
   Base mutateSite(Randomness &rng, seqLen_t pos){  return mutMan.drawBase(rng, seqRep.getBase(pos)) ; }
 
 private:

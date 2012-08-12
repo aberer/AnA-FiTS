@@ -50,10 +50,12 @@ template<typename TYPE> void HaploTimeWindow::propagate(const nat generationNum,
   
   for(nat i = 0;  i < numberToPropagate; )
     {
-      // cout << "setting " << i << "/"  << numberToPropagate << ": " << numBuf[i] << endl; 
+      // if(generationNum  > 970  )
+      // 	cout << "setting " << i << "/"  << numberToPropagate << ": " << numBuf[i] << endl; 
       newState[i] = oldState[numBuf[i]]; 
       i++;
-      // cout << "setting " << i << "/"  << numberToPropagate <<  ": " << numBuf[i] <<  endl; 
+      // if(generationNum > 970)
+      // 	cout << "setting " << i << "/"  << numberToPropagate <<  ": " << numBuf[i] <<  endl; 
       newState[i] = oldState[numBuf[i]]; 
       i++;
     }

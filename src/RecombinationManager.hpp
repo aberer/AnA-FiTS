@@ -89,14 +89,14 @@ inline void RecombinationManager::precompute_helper<uint16_t>(ThreadPool &tp, ui
   if(numRec > 2 )
     {
       intNormalizer<uint16_t>(maxIndi, m,r2); 
+
       numRec -= 2;
       while(numSampled < numRec)
 	{
 	  converter.whole = rng.Ran32();
-	  if(converter.part[0] <= m) { nat nr = converter.part[0] / r2; numRecPerIndi[nr]++; numSampled++; }
-	  if(converter.part[1] <= m) { nat nr = converter.part[1] / r2; numRecPerIndi[nr]++; numSampled++; }
-	}
-      
+	  if(converter.part[0] <= m) { nat nr = converter.part[0] / r2; ++numRecPerIndi[nr]; ++numSampled; }
+	  if(converter.part[1] <= m) { nat nr = converter.part[1] / r2; ++numRecPerIndi[nr]; ++numSampled; }
+	}      
       numRec += 2; 
     }
 

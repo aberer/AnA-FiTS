@@ -189,6 +189,7 @@ void Graph::hookup(const Survivors &survivors, const Ancestry &ancestry, const P
 void Graph::printArg(FILE *fh)
 {
   nat end = nodMan.getNumberOfNodesUsed();
+  BIN_WRITE(end,fh); 
 
   for(nat i = 1; i < end ; ++i)
     {
