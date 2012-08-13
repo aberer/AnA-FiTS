@@ -1,7 +1,8 @@
 #! /usr/bin/python
 
+from bitarray import bitarray  
 import random
-import sys 
+import sys
 
 if ( len(sys.argv) != 2):
     print "need input file "
@@ -9,16 +10,21 @@ if ( len(sys.argv) != 2):
 
 
 fh = open(sys.argv[1])
+
+# throw away first three lines
+fh.readline()
+fh.readline()
+fh.readline()
 lines = fh.readlines()
 
-seqs = []
+bitsets = []
 for line in lines:
-    seq = set(line.strip().split(";"))
-    seqs.append(seq)
+    bs = bitarray(line.strip().split("\t")[1])
+    bitsets.append(bs)
 
-
-for i in range(0,1000) :
-    seqA = random.choice(seqs)
-    seqB = random.choice(seqs)
+for i in range(0,10000):
+    seqA = random.choice(bitsets)
+    seqB = random.choice(bitsets)
     
-    print("%d\t%d\t%d\t%d" % ( len(seqA), len(seqB), len(seqA - seqB), len(seqA & seqB))) 
+    differences = seqA ^ seqB 
+    print differences.count()

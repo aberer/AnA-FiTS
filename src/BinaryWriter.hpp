@@ -33,10 +33,14 @@ template<class TYPE> void BinaryWriter::getSortedMutations(vector<TYPE*> &result
   set<TYPE*> mutationMap;
 
   for(auto array : arrays)
-    for(TYPE **mutIter = array->begin(); mutIter != array->end(); ++mutIter)
-      mutationMap.insert(*mutIter); 
+    if(array)
+      for(TYPE **mutIter = array->begin(); mutIter != array->end(); ++mutIter)
+	mutationMap.insert(*mutIter); 
   
   for(auto iter = mutationMap.begin(); iter != mutationMap.end(); ++iter)
     result.push_back(*iter);   
   sort(result.begin(), result.end(), [](TYPE *a, TYPE *b){return a->absPos < b->absPos ; }); 
 }
+
+
+

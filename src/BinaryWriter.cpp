@@ -87,7 +87,7 @@ void BinaryWriter::write(Graph &graph, HaploTimeWindow &w, Chromosome &chrom)
   for(nat i = 0; i < numHaplo; ++i)
     {
       auto nSeq = arrays[i]; 
-      auto sSeq = arrays2[i]; 
+      auto sSeq = arrays2[i];       
       convertToBitSet(*(allBS[i]), nSeq, sSeq, nMuts, sMuts);
     }
 
@@ -171,8 +171,9 @@ void BinaryWriter::convertToBitSet(BitSet<uint32_t> &bs, NeutralArray *nSeq, Sel
 { 
   auto sIter = sSeq->begin(),
     sEnd = sSeq->end();
-  auto nIter = nSeq->begin(),
-    nEnd = nSeq->end(); 
+
+  NeutralMutation **nIter = nSeq ? nSeq->begin() : nullptr,
+    **nEnd = nSeq ? nSeq->end() : nullptr; 
   
   auto allSIter = selMutations.begin(), 
     allSEnd = selMutations.end();

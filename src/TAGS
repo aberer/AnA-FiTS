@@ -52,9 +52,9 @@ BinaryWriter.cpp,665
 BinaryWriter::BinaryWriter(string id, nat _numHaplo)BinaryWriter4,31
 BinaryWriter::~BinaryWriter()~BinaryWriter14,241
 void BinaryWriter::write(Graph &graph, HaploTimeWindow &w, Chromosome &chrom)write20,291
-ostream& BinaryWriter::printMutations(ostream &rhs , FILE *fh, vector<NeutralMutation*> &neutralMutations, vector<SelectedMutation*> &selMutations)printMutations120,2638
-void BinaryWriter::convertToBitSet(BitSet<uint32_t> &bs, NeutralArray *nSeq, SelectedArray *sSeq,  const vector<NeutralMutation*> &neutralMutations, const vector<SelectedMutation*> &selMutations) convertToBitSet170,3643
-void BinaryWriter::writeInt(nat theInt)writeInt237,5021
+ostream& BinaryWriter::printMutations(ostream &rhs , FILE *fh, vector<NeutralMutation*> &neutralMutations, vector<SelectedMutation*> &selMutations)printMutations120,2644
+void BinaryWriter::convertToBitSet(BitSet<uint32_t> &bs, NeutralArray *nSeq, SelectedArray *sSeq,  const vector<NeutralMutation*> &neutralMutations, const vector<SelectedMutation*> &selMutations) convertToBitSet170,3649
+void BinaryWriter::writeInt(nat theInt)writeInt238,5077
 
 BinaryWriter.hpp,247
 class BinaryWriterBinaryWriter10,122
@@ -157,7 +157,7 @@ template<nat PLOIDY> ChromConfig<PLOIDY>::~ChromConfig()~ChromConfig75,1871
 template<nat PLOIDY> void ChromConfig<PLOIDY>::initRandom(Randomness &rng)initRandom82,1994
 template<> inline nat ChromConfig<2>::getConfig(nat gen, haploAddr haploNr)getConfig88,2135
 
-Chromosome.cpp,844
+Chromosome.cpp,702
 Chromosome::Chromosome(seqLen_t seqLen, FitnessFunction fFun, nat _id)Chromosome6,48
 Chromosome::~Chromosome()~Chromosome17,240
 void Chromosome::init(Randomness &rng)init24,322
@@ -165,9 +165,8 @@ void Chromosome::updateUniqueHaplotypes(SelectedArray** seqBegin,SelectedArray**
 #define CURRENT_HAS_MUTATION CURRENT_HAS_MUTATION44,691
 #define CURRENT_IS_GREATER CURRENT_IS_GREATER45,751
 #define CURRENT_IS_LESS CURRENT_IS_LESS46,835
-void Chromosome::cleanFixedMutations(SelectedArray** seqBegin,SelectedArray** seqEnd, nat popId, ThreadPool &tp)cleanFixedMutations52,958
-void Chromosome::cleanFixedMutations(SelectedArray** seqBegin,SelectedArray** seqEnd, nat popId, ThreadPool &tp)cleanFixedMutations200,4843
-void Chromosome::insertFixedMutation(SelectedMutation *mut, nat popId)insertFixedMutation318,7664
+void Chromosome::cleanFixedMutations(SelectedArray** seqBegin,SelectedArray** seqEnd, nat popId, ThreadPool &tp)cleanFixedMutations49,929
+void Chromosome::insertFixedMutation(SelectedMutation *mut, nat popId)insertFixedMutation164,3741
 
 Chromosome.hpp,1317
 class ChromosomeChromosome21,394
@@ -297,8 +296,6 @@ class FractionalSimulation FractionalSimulation15,352
   ThreadPool &tp; tp33,913
   vector<Graph*> graphs;graphs34,932
   vector<Chromosome*> chromosomes;chromosomes35,957
-
-FractionalSimulation_flymake.h,0
 
 FreeRing.cpp,191
 FreeRing::FreeRing(nat initNum)FreeRing5,46
@@ -937,10 +934,11 @@ void intNormalizer(T number,unsigned int &m, unsigned int &r2)intNormalizer54,
 #define INIT_FITNESS INIT_FITNESS108,2301
 #define NUMBER_PARENTS NUMBER_PARENTS110,2328
 
-config.hpp,148
+config.hpp,197
 #define INFO_GENERALINFO_GENERAL11,143
-#define FITNESS_TYPE FITNESS_TYPE15,229
-#define EFFICIENCY_INIT_MEMBLOCKEFFICIENCY_INIT_MEMBLOCK23,362
+#define PRINT_SEQ_STDOUTPRINT_SEQ_STDOUT12,164
+#define FITNESS_TYPE FITNESS_TYPE15,226
+#define EFFICIENCY_INIT_MEMBLOCKEFFICIENCY_INIT_MEMBLOCK23,359
 
 main.cpp,141
 void playground(ProgramOptions &progOpt){  cerr << "PLAYGROUND MODE " << endl;playground13,217
