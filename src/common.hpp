@@ -77,6 +77,18 @@ string getBinary(int tmp, unsigned int numBits);
     assert(0);								
 
 
+// only relevant for resampleParentsByFitness
+#define CHOOSE_IMPLEMENTATION_BY_TYPE_AND_NEUTRALITY(type, neutral, function, ...) \
+  if(type <= std::numeric_limits<uint8_t>::max())			\
+    function<uint8_t,neutral>(__VA_ARGS__);					\
+  else if(type <= std::numeric_limits<uint16_t>::max())			\
+    function<uint16_t,neutral>(__VA_ARGS__);					\
+  else if(type <= std::numeric_limits<uint32_t>::max())			\
+    function<uint32_t,neutral>(__VA_ARGS__);					\
+  else									\
+    assert(0);								
+
+
 void* malloc_aligned(size_t size, size_t align); 
 
 #define ADD_PADDING_16(x) ((MODULO_16(x)) ? (16 - (MODULO_16(x))) : 0 )

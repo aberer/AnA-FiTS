@@ -19,7 +19,7 @@ Simulation::Simulation(InfoFile &info, ProgramOptions &theProgOpt)
   for(auto& length : lengths)
     {
       FitnessFunction fFun(progOpt.get<vector<string>>("selCoef"));
-      Chromosome* chromo = new Chromosome(length,fFun, idC++);
+      Chromosome* chromo = new Chromosome(length,theProgOpt.hasOption("neutral"), fFun, idC++);
       chromo->init(rng);
       chromosomes.push_back(chromo); 
     }

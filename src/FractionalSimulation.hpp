@@ -33,8 +33,9 @@ private:
   nat cleanFixPeriod; 
   SelectedArray *init;  
   ThreadPool &tp; 
-  vector<Graph*> graphs;
+  vector<Graph*> graphs;  
   vector<Chromosome*> chromosomes;
+  bool isNeutral; 
 
   // METHODS
   void sampleParentsByFitness(ThreadPool &tp);   

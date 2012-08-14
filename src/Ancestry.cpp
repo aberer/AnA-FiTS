@@ -99,31 +99,31 @@ void Ancestry::fillWithRandomIndividuals_parallel(ThreadPool &tp, nat tid)
     }
 }
 #else 
-void Ancestry::fillWithRandomIndividuals_parallel(ThreadPool &tp, nat tid)
-{
-  cout << "alternative sampling"   << endl; 
+// void Ancestry::fillWithRandomIndividuals_parallel(ThreadPool &tp, nat tid)
+// {
+//   cout << "alternative sampling"   << endl; 
   
-  assert(0); 
+//   assert(0); 
 
-  Randomness &rng = tp[tid].getRNG();
-  nat perThread = numGen / tp.getLoadBalancer().getTotalJobs();  
+//   Randomness &rng = tp[tid].getRNG();
+//   nat perThread = numGen / tp.getLoadBalancer().getTotalJobs();  
 
-  for(nat i = 0; i < numGen; ++i)
-    {
-      nat numInPrev = (i == 0) ? DIVIDE_2(initNum) : DIVIDE_2(length[i-1]); 
-      uint32_t lengthHere = length[i]; 
+//   for(nat i = 0; i < numGen; ++i)
+//     {
+//       nat numInPrev = (i == 0) ? DIVIDE_2(initNum) : DIVIDE_2(length[i-1]); 
+//       uint32_t lengthHere = length[i]; 
       
-      if(i < numGen-1)
-	assert(genStartIndi[i] + 2 * length[i] <= genStartIndi[i+1] );
+//       if(i < numGen-1)
+// 	assert(genStartIndi[i] + 2 * length[i] <= genStartIndi[i+1] );
 
 
-      assert(numInPrev > numeric_limits<uint8_t>::max() && numInPrev < numeric_limits<uint16_t>::max()); 
+//       assert(numInPrev > numeric_limits<uint8_t>::max() && numInPrev < numeric_limits<uint16_t>::max()); 
 
-      uint16_t* array = reinterpret_cast<uint16_t*>(this->genStartIndi[i]); 
-      for(nat j = 0; j < lengthHere; ++j)
-	array[j] = rng.Integer(numInPrev); 
-    }    
-}
+//       uint16_t* array = reinterpret_cast<uint16_t*>(this->genStartIndi[i]); 
+//       for(nat j = 0; j < lengthHere; ++j)
+// 	array[j] = rng.Integer(numInPrev); 
+//     }    
+// }
 #endif
 
 
@@ -142,7 +142,7 @@ void Ancestry::insertNeutralMutations(ThreadPool& tp,  Graph &graph, const Survi
 {
   Randomness &rng = tp[0].getRNG(); 
   nat *start = survivors.getFirstSurvivorForward(genNum); 
-  nat *end = survivors.getFirstSurvivorForward(genNum-1); 
+  nat *end = survivors.getFirstSurvivorForward(genNum-1);
   
   nat seqLen = chrom.getSeqLen();
   nat numSurvivors = end - start; 
@@ -261,7 +261,7 @@ void Ancestry::updateGraph_inner(ThreadPool &tp, Survivors &survivors, Chromosom
 		      cout << "\tmarking region of survivor " << ancstIdx << " with " << max(survivedRegStart, startSeg) << "-"<< min(stopSeg, survivedRegEnd) << endl; 
 #endif
 		      regMan.extendPrevRegion(ancstIdx, 
-					      max(survivedRegStart, startSeg), 
+					      max(survivedRegStart, startSeg),
 					      min(stopSeg, survivedRegEnd)); 
 		    }
 		  
@@ -269,7 +269,7 @@ void Ancestry::updateGraph_inner(ThreadPool &tp, Survivors &survivors, Chromosom
 		}
 
 	      // treat last part 
-	      startSeg = stopSeg + 1 ; 
+	      startSeg = stopSeg + 1;
 	      stopSeg  = chromosome.getSeqLen(); 
 
 	      if(survivedRegStart < stopSeg && startSeg < survivedRegEnd) 

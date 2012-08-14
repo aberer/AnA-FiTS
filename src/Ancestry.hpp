@@ -28,7 +28,7 @@ public:
   // OPERATORS 
   void fillWithRandomIndividuals(ThreadPool &tp); 
   void printGenerations(); 
-  template<typename TYPE> void resampleParentsByFitness(ThreadPool &tp, PopulationManager &popMan, nat generationNum);
+  template<typename TYPE, bool NEUTRAL> void resampleParentsByFitness(ThreadPool &tp, PopulationManager &popMan, nat generationNum);
   haploAddr getAddrOfParent (nat generation,  nat chromId, haploAddr haploNr ) const;
   void updateGraph(ThreadPool &tp, Chromosome &chromosome, Graph &graph, const PopulationManager &popMan, const GenerationCounter &genCnt);
   void updateGraph_inner(ThreadPool &tp, Survivors &survivors, Chromosome &chromosome, const PopulationManager &popMan, Graph &graph, nat initPopSize); 
@@ -114,7 +114,7 @@ template<typename TYPE> void Ancestry::initAddrArray(nat generation, nat chromId
 
 #define FIX_NUM_ALIGN 80
 
-template<typename TYPE> void Ancestry::resampleParentsByFitness(ThreadPool &tp, PopulationManager& popMan, nat generationNum)
+template<typename TYPE, bool NEUTRAL> void Ancestry::resampleParentsByFitness(ThreadPool &tp, PopulationManager& popMan, nat generationNum)
 {
   Randomness &rng = tp[0].getRNG();
   FITNESS_TYPE *fVals  = popMan.getFitnessValues(0); // :KLUDGE: for all populations
@@ -144,7 +144,7 @@ template<typename TYPE> void Ancestry::resampleParentsByFitness(ThreadPool &tp, 
 
       TYPE &elem = array[i]; 
       if(elem < numIndis
-	 && rng.Prob<FITNESS_TYPE>(fVals[elem]))
+	 && (NEUTRAL || rng.Prob<FITNESS_TYPE>(fVals[elem])))
 	++i; 
       else 	  	  
 	elem = buffer[currentNum++];

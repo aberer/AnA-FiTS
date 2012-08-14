@@ -51,6 +51,6 @@
 // BACKWARDS //
 ///////////////
 
-#define DEBUG_UPDATE_GRAPH
-#define DEBUG_HOOKUP
+// #define DEBUG_UPDATE_GRAPH
+// #define DEBUG_HOOKUP
 // #define DEBUG_BACKTRACE

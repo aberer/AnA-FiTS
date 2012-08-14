@@ -14,6 +14,7 @@ FractionalSimulation::FractionalSimulation(ThreadPool &_tp,InfoFile &info, const
   , cleanFixPeriod(progOpt.get<nat>("cleanF"))
   , tp(_tp) 
   , chromosomes(_chromosomes)
+  , isNeutral(false)
 {
   popMan = unique_ptr<PopulationManager>(new PopulationManager(popParams)); 
 
@@ -25,6 +26,8 @@ FractionalSimulation::FractionalSimulation(ThreadPool &_tp,InfoFile &info, const
       graphs.push_back(new Graph(MULT_2(popParams[0].getPopSizeByGeneration(0)))); // :MAGIC: :KLUDGE:      
     } 
 
+  if(progOpt.hasOption("neutral"))
+    isNeutral = true; 
 
   info.write("\t\t\t\tGENERAL INFO\n"); 
   info.write("\t\tinitial ancestrial population size %d\n", popMan->getTotalNumIndiByGen(0)); 
@@ -33,7 +36,7 @@ FractionalSimulation::FractionalSimulation(ThreadPool &_tp,InfoFile &info, const
     {				      
       info.write("\t\tCHROM %d (length=%d) gen1 pop1\t=> E(non-neut mutations) = %g\tE(neut mutations) = %g\tE(recomb) = %g\n" ,
 		 i , chromosomes[i]->getSeqLen(), 
-		 (PopulationManager::getLamdbaForParam( (*popMan)[0].getMutationRate(0), chromosomes[i]->getSeqLen(), *popMan, 0, 0) * chromosomes[i]->getSelectProb()), 
+		 (PopulationManager::getLamdbaForParam( (*popMan)[0].getMutationRate(0), chromosomes[i]->getSeqLen(), *popMan, 0, 0) *  chromosomes[i]->getSelectProb()),
 		 (PopulationManager::getLamdbaForParam( (*popMan)[0].getMutationRate(0), chromosomes[i]->getSeqLen(), *popMan, 0, 0) * chromosomes[i]->getNeutralProb()), 
 		 (PopulationManager::getLamdbaForParam((*popMan)[0].getRecombinationRate(0), chromosomes[i]->getSeqLen(), *popMan, 0, 0 ))); 
     }
@@ -63,7 +66,14 @@ void FractionalSimulation::sampleParentsByFitness(ThreadPool &tp)
 #endif
 
   // resample 
-  CHOOSE_IMPLEMENTATION_BY_TYPE(numHaploPrev, ancestry->resampleParentsByFitness, tp, *popMan, currentGen);
+  if(isNeutral)
+    {
+      CHOOSE_IMPLEMENTATION_BY_TYPE_AND_NEUTRALITY(numHaploPrev, true, ancestry->resampleParentsByFitness, tp, *popMan, currentGen);
+    }
+  else 
+    {
+      CHOOSE_IMPLEMENTATION_BY_TYPE_AND_NEUTRALITY(numHaploPrev, false, ancestry->resampleParentsByFitness, tp, *popMan, currentGen);
+    }    
 
   // propagate the haplotypes
   Ancestry &ancst = *ancestry; 
@@ -106,6 +116,14 @@ void FractionalSimulation::createRecombinants(ThreadPool &tp)
 	    {
 	      assert(length == 0); 
 	      break; 
+	    }
+
+	  
+	  // necessary, because obtainRecsForIndividual sorts the recombinations
+	  if(isNeutral)
+	    {
+	      i += length; 
+	      continue; 
 	    }
 	  
 	  nat ancestorA = ancestry->getAddrOfParent(currentGen, chromId,start->haploIndiNr); 
@@ -182,6 +200,9 @@ void FractionalSimulation::updateFitness()
 
 void FractionalSimulation::mutateSelectedSites(ThreadPool &tp)  
 {
+  if(isNeutral)
+    return; 
+
   nat currentGen = genCnt.getCurrentGeneration();
   nat numChrom = chromosomes.size(); 
   for(nat chromId = 0; chromId < numChrom; ++chromId)

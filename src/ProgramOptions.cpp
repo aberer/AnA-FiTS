@@ -80,6 +80,7 @@ ProgramOptions::ProgramOptions(int argc, char **argv)
   loc.add_options()
     // no linkage at first 
     ("length,L", po::value< vector<seqLen_t> >()->multitoken()->default_value(vector<seqLen_t>(1,10000000), "10 Mbp"), "locus length (repeat for multiple unlinked chromosomes)" )
+    ("neutral,w", po::value<bool>()->zero_tokens(), "simulate a neutral population (overrides contradictory flags, uses only the BEG algorithm)") // :TRICKY: for multiple pops, we'd need to use some tokens
     ("selCoef,W",
      po::value< vector<string> >()->default_value(defaultSelect, ss.str())->multitoken(), 
      "Distribution of selection coefficients: <mode> <args> \n"
@@ -128,7 +129,6 @@ ProgramOptions::ProgramOptions(int argc, char **argv)
       cerr << "Per chromosome selection cofficient distributions not implemented at the moment." << endl; 
       abort();
     }  
-      
 }
 
 

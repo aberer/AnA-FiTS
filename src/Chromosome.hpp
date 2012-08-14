@@ -21,7 +21,7 @@ class MutationSelected;
 class Chromosome
 {
 public:     
-  Chromosome(seqLen_t seqLen, FitnessFunction fFun, nat id);
+  Chromosome(seqLen_t seqLen, bool isNeutral, FitnessFunction fFun, nat id);
   ~Chromosome();
   
   // OPERATORS 
@@ -33,8 +33,8 @@ public:
   // ACCESSORS 
   seqLen_t getSeqLen() const { return seqLen; }
   const SeqRep& getSeqRep() const { return seqRep; }
-  float getSelectProb(){ assert(mutMan.getSelectProb() <= 1) ; return  mutMan.getSelectProb(); } // 
-  float getNeutralProb(){ assert(mutMan.getSelectProb() <= 1) ;  return 1 - mutMan.getSelectProb(); }
+  float getSelectProb(){ assert(mutMan.getSelectProb() <= 1) ; return  isNeutral ? 0 : mutMan.getSelectProb(); } // 
+  float getNeutralProb(){ assert(mutMan.getSelectProb() <= 1) ;  return isNeutral ? 1 :  1 - mutMan.getSelectProb(); }
   nat getId(){return id; }
 
   // not really needed by anybody
@@ -48,6 +48,7 @@ private:
   MutationManager mutMan; 
   nat id;   
   vector<SelectedArray*> fixedMutations; // for each population 
+  bool isNeutral;
   
   void insertFixedMutation(SelectedMutation *mut, nat popId); 
   void updateUniqueHaplotypes(SelectedArray** seqBegin,SelectedArray** seqEnd);
