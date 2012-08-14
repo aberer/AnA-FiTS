@@ -27,7 +27,6 @@ for N in $(echo $Ne)
 do     
     for l in $(echo $L)
     do 
-	$binary  $fitness -s $id -N $N -L $l -m $param -r $param -n run.$N.$l.$neutral.$id & 
+	$binary  $fitness -s $id -N $N -L $l -m $param -r $param -n run.$N.$l.$neutral.$id &
     done 
 done 
-

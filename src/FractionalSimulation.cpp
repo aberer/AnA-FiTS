@@ -36,8 +36,8 @@ FractionalSimulation::FractionalSimulation(ThreadPool &_tp,InfoFile &info, const
     {
       info.write("\t\tCHROM %d (length=%d) gen1 pop1\t=> E(non-neut mutations) = %g\tE(neut mutations) = %g\tE(recomb) = %g\n" ,
 		 i , chromosomes[i]->getSeqLen(), 
-		 (PopulationManager::getLamdbaForParam( (*popMan)[0].getMutationRate(0), chromosomes[i]->getSeqLen(), *popMan, 0, 0) *  chromosomes[i]->getSelectProb()),
-		 (PopulationManager::getLamdbaForParam( (*popMan)[0].getMutationRate(0), chromosomes[i]->getSeqLen(), *popMan, 0, 0) * chromosomes[i]->getNeutralProb()), 
+		 (PopulationManager::getLamdbaForParam( (*popMan)[0].getMutationRate(0), chromosomes[i]->getSeqLen(), *popMan, 0, 0) *  (isNeutral ?  0 : chromosomes[i]->getSelectProb())),
+		 (PopulationManager::getLamdbaForParam( (*popMan)[0].getMutationRate(0), chromosomes[i]->getSeqLen(), *popMan, 0, 0) * (isNeutral ? 1 : chromosomes[i]->getNeutralProb() )), 
 		 (PopulationManager::getLamdbaForParam((*popMan)[0].getRecombinationRate(0), chromosomes[i]->getSeqLen(), *popMan, 0, 0 ))); 
     }
 }
