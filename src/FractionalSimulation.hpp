@@ -1,6 +1,7 @@
 #pragma once 
 
 #include "common.hpp"
+#include "InfoFile.hpp"
 #include "HaploTimeWindow.hpp"
 #include "PopulationManager.hpp"
 #include "Ancestry.hpp"
@@ -9,13 +10,14 @@
 #include "ThreadPool.hpp"
 
 class ProgramOptions; 
+extern InfoFile info; 
 
 // :CONVENT: we start simulation in generation 0  ; there is a virtual generation preceeding this generation 
 
 class FractionalSimulation 
 {
 public: 
-  FractionalSimulation(ThreadPool &tp,const ProgramOptions &progOp, nat numGen, vector<Chromosome*> chromosomes, vector<PopulationParams> popParams); 
+  FractionalSimulation(ThreadPool &tp,InfoFile &info, const ProgramOptions &progOp, nat numGen, vector<Chromosome*> chromosomes, vector<PopulationParams> popParams); 
   ~FractionalSimulation();
   void simulate(); 
   void printSequencesRaw(string id); 
@@ -48,6 +50,7 @@ private:
 
   friend class PopulationTest;
 };
+
 
 
 

@@ -1,4 +1,5 @@
 #include "ProgramOptions.hpp"
+#include "common.hpp"
 
 #include <vector>
 #include <iostream>
@@ -106,7 +107,7 @@ ProgramOptions::ProgramOptions(int argc, char **argv)
   
   if(vm.count("version"))
     {
-      cout << "F-fits -- v. 1.0" << endl; 
+      cout << "AnA-FiTS -- v." << VERSION  << endl; 
       exit(0); 
     }  
 

@@ -8,7 +8,7 @@
 
 // #define _TEST
 
-#define INFO_GENERAL
+// #define CONSOLE_OUTPUT
 // #define PRINT_SEQ_STDOUT
 
 // not sure, if double really works

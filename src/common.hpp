@@ -63,13 +63,8 @@ void intNormalizer(T number,unsigned int &m, unsigned int &r2)
   r2 = r1 + 1U;     
 }
 
-
 // little helpers 
 string getBinary(int tmp, unsigned int numBits); 
-
-
-
-#include <limits>
 
 #define CHOOSE_IMPLEMENTATION_BY_TYPE(type, function, ...)		\
   if(type <= std::numeric_limits<uint8_t>::max())			\
@@ -104,7 +99,9 @@ FILE* openFile(string name, string mode);
 
 #define SEQ_FILE_NAME "anafits_polymorphisms"
 #define ARG_FILE_NAME "anafits_graph"
+#define INF_FILE_NAME "anafits_info"
 
 #define INIT_FITNESS  1.0
 
 #define NUMBER_PARENTS 2
+#define VERSION 0.9

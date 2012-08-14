@@ -271,31 +271,31 @@ class FitnessFunctionFitnessFunction16,249
   float sd; sd37,717
 inline float FitnessFunction::drawSelectionCoefficient(Randomness &rng)drawSelectionCoefficient41,735
 
-FractionalSimulation.cpp,956
-FractionalSimulation::FractionalSimulation(ThreadPool &_tp, const ProgramOptions &progOpt, nat _numGen, vector<Chromosome*> _chromosomes, vector<PopulationParams> popParams) FractionalSimulation12,213
-FractionalSimulation::~FractionalSimulation()~FractionalSimulation45,1923
-void FractionalSimulation::sampleParentsByFitness(ThreadPool &tp)sampleParentsByFitness58,2255
-void FractionalSimulation::createRecombinants(ThreadPool &tp)createRecombinants82,2990
-void FractionalSimulation::updateFitness()updateFitness137,4582
-void FractionalSimulation::mutateSelectedSites(ThreadPool &tp)  mutateSelectedSites185,5885
-void FractionalSimulation::simulate() simulate231,7379
-void FractionalSimulation::printArgs(string id)printArgs275,8706
-void FractionalSimulation::printSequencesRaw(string id)printSequencesRaw289,9017
-void FractionalSimulation::finalize()finalize306,9489
-inline void FractionalSimulation::cleanFixed()cleanFixed332,10259
+FractionalSimulation.cpp,971
+FractionalSimulation::FractionalSimulation(ThreadPool &_tp,InfoFile &info, const ProgramOptions &progOpt, nat _numGen, vector<Chromosome*> _chromosomes, vector<PopulationParams> popParams) FractionalSimulation11,212
+FractionalSimulation::~FractionalSimulation()~FractionalSimulation43,1864
+void FractionalSimulation::sampleParentsByFitness(ThreadPool &tp)sampleParentsByFitness56,2196
+void FractionalSimulation::createRecombinants(ThreadPool &tp)createRecombinants80,2931
+void FractionalSimulation::updateFitness()updateFitness135,4523
+void FractionalSimulation::mutateSelectedSites(ThreadPool &tp)  mutateSelectedSites183,5826
+void FractionalSimulation::simulate() simulate229,7320
+void FractionalSimulation::printArgs(string id)printArgs273,8650
+void FractionalSimulation::printSequencesRaw(string id)printSequencesRaw287,8961
+void FractionalSimulation::finalize()finalize304,9433
+inline void FractionalSimulation::cleanFixed()cleanFixed330,10203
 
-FractionalSimulation.hpp,523
-class FractionalSimulation FractionalSimulation15,352
-  vector<HaploTimeWindow*> haplotypesWindows;  // PER chromosome haplotypesWindows26,688
-  unique_ptr<PopulationManager> popMan;popMan27,754
-  GenerationCounter genCnt; genCnt28,794
-  Ancestry* ancestry;   ancestry29,823
-  nat numSelMut;numSelMut30,848
-  nat cleanFixPeriod; cleanFixPeriod31,865
-  SelectedArray *init;  init32,888
-  ThreadPool &tp; tp33,913
-  vector<Graph*> graphs;graphs34,932
-  vector<Chromosome*> chromosomes;chromosomes35,957
+FractionalSimulation.hpp,524
+class FractionalSimulation FractionalSimulation17,399
+  vector<HaploTimeWindow*> haplotypesWindows;  // PER chromosome haplotypesWindows28,751
+  unique_ptr<PopulationManager> popMan;popMan29,817
+  GenerationCounter genCnt; genCnt30,857
+  Ancestry* ancestry;   ancestry31,886
+  nat numSelMut;numSelMut32,911
+  nat cleanFixPeriod; cleanFixPeriod33,928
+  SelectedArray *init;  init34,951
+  ThreadPool &tp; tp35,976
+  vector<Graph*> graphs;graphs36,995
+  vector<Chromosome*> chromosomes;chromosomes37,1020
 
 FreeRing.cpp,191
 FreeRing::FreeRing(nat initNum)FreeRing5,46
@@ -313,8 +313,8 @@ GenerationCounter.cpp,391
 void protMult(MEM_TYPE& num, int factor)protMult10,156
 GenerationCounter::GenerationCounter(nat totalNumGen, string _memLimit)GenerationCounter23,403
 void GenerationCounter::determineNextSection(const PopulationManager &popMan,  vector<Chromosome*> chromosomes)determineNextSection60,1320
-void GenerationCounter::next()next112,3040
-bool GenerationCounter::hasNext()hasNext119,3157
+void GenerationCounter::next()next112,3045
+bool GenerationCounter::hasNext()hasNext119,3162
 
 GenerationCounter.hpp,701
 class GenerationCounterGenerationCounter9,101
@@ -391,6 +391,15 @@ inline seqLen_t  HashTable::hashFunction(seqLen_t pos)hashFunction43,729
 inline FitnessBucket& HashTable::operator[](seqLen_t pos)operator []55,932
 inline bool HashTable::find(FitnessBucket*& bkt, seqLen_t pos )find72,1212
 inline void HashTable::insert(FitnessBucket *bkt) insert83,1442
+
+InfoFile.cpp,139
+InfoFile::InfoFile(string id)InfoFile4,26
+InfoFile::~InfoFile()~InfoFile12,171
+void InfoFile::write(const char *fmt, ...)write18,215
+
+InfoFile.hpp,55
+class InfoFile InfoFile11,114
+  FILE *fh; fh19,229
 
 JudyArray.hpp,1224
 typedef unsigned long judyKey;judyKey8,76
@@ -561,10 +570,10 @@ class PopulationParamsPopulationParams14,149
   double mutationRate; mutationRate38,968
   bool isNeutral; isNeutral41,1017
 
-ProgramOptions.cpp,191
-void releaseText()releaseText9,73
-ProgramOptions::ProgramOptions(int argc, char **argv)  ProgramOptions15,208
-nat ProgramOptions::getNumberOfGenerations()getNumberOfGenerations134,5164
+ProgramOptions.cpp,192
+void releaseText()releaseText10,95
+ProgramOptions::ProgramOptions(int argc, char **argv)  ProgramOptions16,230
+nat ProgramOptions::getNumberOfGenerations()getNumberOfGenerations135,5196
 
 ProgramOptions.hpp,294
 class ProgramOptionsProgramOptions13,181
@@ -735,18 +744,18 @@ void SequenceArray<MUTATION>::computeFitness()computeFitness305,6728
 void SequenceArray<MUTATION>::copyRegion(const SequenceArray *donor, nat start, nat end)copyRegion319,7056
 void SequenceArray<MUTATION>::claimMutations()claimMutations347,7705
 
-Simulation.cpp,105
-Simulation::Simulation(ProgramOptions &theProgOpt)   Simulation9,122
-void Simulation::run()run36,991
+Simulation.cpp,122
+Simulation::Simulation(InfoFile &info, ProgramOptions &theProgOpt)   Simulation9,122
+void Simulation::run()run36,1014
 
 Simulation.hpp,320
-class SimulationSimulation12,230
-  ProgramOptions &progOpt;progOpt19,331
-  nat numGen; numGen20,358
-  ThreadPool tp; tp21,373
-  FractionalSimulation *fractionalSimulation;fractionalSimulation22,391
-  vector<Chromosome*> chromosomes;chromosomes23,437
-  vector<PopulationParams> popParams;   popParams24,472
+class SimulationSimulation13,254
+  ProgramOptions &progOpt;progOpt20,371
+  nat numGen; numGen21,398
+  ThreadPool tp; tp22,413
+  FractionalSimulation *fractionalSimulation;fractionalSimulation23,431
+  vector<Chromosome*> chromosomes;chromosomes24,477
+  vector<PopulationParams> popParams;   popParams25,512
 
 SseWrapper.hpp,2992
 #define SHIFT_LEFT_32(SHIFT_LEFT_3212,142
@@ -781,17 +790,17 @@ template<> inline void print128<uint16_t>(__m128i var, string name) print12869
 template<> inline uint32_t mapMask<uint16_t>(uint32_t mask)mapMask81,3957
 template<> inline uint32_t mapMask<uint32_t>(uint32_t mask)mapMask94,4278
 
-StopWatch.hpp,400
-class StopWatchStopWatch10,101
-  StopWatch() : accumulatedTime(0), lastStart(0)StopWatch13,130
-  void reset()reset18,191
-  void start()start24,270
-  void stop()stop29,323
-  double getElapsed()getElapsed34,392
-  string getElapsedAsString()getElapsedAsString41,465
-  double accumulatedTime; accumulatedTime70,953
-  double lastStart; lastStart71,980
-  double gettime()gettime73,1002
+StopWatch.hpp,402
+class StopWatchStopWatch13,174
+  StopWatch() : accumulatedTime(0), lastStart(0)StopWatch16,203
+  void reset()reset21,264
+  void start()start27,343
+  void stop()stop32,396
+  double getElapsed()getElapsed37,465
+  string getElapsedAsString()getElapsedAsString44,538
+  double accumulatedTime; accumulatedTime73,1026
+  double lastStart; lastStart74,1053
+  double gettime()gettime76,1075
 
 Survivors.cpp,270
 Survivors::Survivors(nat lastPopsize, nat maxPopSize, nat _startGen, nat _endGen)Survivors4,27
@@ -897,7 +906,7 @@ void* myRealloc(void *ptr, size_t num)myRealloc55,818
 static bool fileExists(const std::string& filename)fileExists74,1105
 FILE* openFile(string name, string mode)openFile81,1234
 
-common.hpp,1340
+common.hpp,1419
 #define APPEND(APPEND9,75
 #define POWER_2(POWER_211,145
 #define DIVIDE_2(DIVIDE_214,177
@@ -922,27 +931,28 @@ common.hpp,1340
 #define SWAP(SWAP42,802
 #define nullptr nullptr45,882
 void intNormalizer(T number,unsigned int &m, unsigned int &r2)intNormalizer54,995
-#define CHOOSE_IMPLEMENTATION_BY_TYPE(CHOOSE_IMPLEMENTATION_BY_TYPE74,1383
-#define ADD_PADDING_16(ADD_PADDING_1687,1840
-#define GET_OTHER_ANCESTOR(GET_OTHER_ANCESTOR91,1955
-#define NO_NODE NO_NODE93,2008
-#define IS_ODD(IS_ODD95,2027
-#define BIN_WRITE(BIN_WRITE98,2053
-#define NODE_IS_RELEVANT(NODE_IS_RELEVANT100,2107
-#define SEQ_FILE_NAME SEQ_FILE_NAME105,2216
-#define ARG_FILE_NAME ARG_FILE_NAME106,2262
-#define INIT_FITNESS INIT_FITNESS108,2301
-#define NUMBER_PARENTS NUMBER_PARENTS110,2328
+#define CHOOSE_IMPLEMENTATION_BY_TYPE(CHOOSE_IMPLEMENTATION_BY_TYPE69,1361
+#define ADD_PADDING_16(ADD_PADDING_1682,1818
+#define GET_OTHER_ANCESTOR(GET_OTHER_ANCESTOR86,1933
+#define NO_NODE NO_NODE88,1986
+#define IS_ODD(IS_ODD90,2005
+#define BIN_WRITE(BIN_WRITE93,2031
+#define NODE_IS_RELEVANT(NODE_IS_RELEVANT95,2085
+#define SEQ_FILE_NAME SEQ_FILE_NAME100,2194
+#define ARG_FILE_NAME ARG_FILE_NAME101,2240
+#define INF_FILE_NAME INF_FILE_NAME102,2278
+#define INIT_FITNESS INIT_FITNESS104,2316
+#define NUMBER_PARENTS NUMBER_PARENTS106,2343
+#define VERSION VERSION107,2368
 
-config.hpp,197
-#define INFO_GENERALINFO_GENERAL11,143
-#define PRINT_SEQ_STDOUTPRINT_SEQ_STDOUT12,164
-#define FITNESS_TYPE FITNESS_TYPE15,226
-#define EFFICIENCY_INIT_MEMBLOCKEFFICIENCY_INIT_MEMBLOCK23,359
+config.hpp,107
+#define FITNESS_TYPE FITNESS_TYPE15,234
+#define EFFICIENCY_INIT_MEMBLOCKEFFICIENCY_INIT_MEMBLOCK23,367
 
-main.cpp,141
-void playground(ProgramOptions &progOpt){  cerr << "PLAYGROUND MODE " << endl;playground13,217
-int main(int argc, char **argv)main33,566
+main.cpp,213
+void playground(ProgramOptions &progOpt){  cerr << "PLAYGROUND MODE " << endl;playground17,244
+void printInfo(InfoFile &info, int argc, char **argv)printInfo37,593
+int main(int argc, char **argv)main50,1023
 
 types.hpp,481
 typedef unsigned int  nat ; nat5,54

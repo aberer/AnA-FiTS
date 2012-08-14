@@ -62,7 +62,7 @@ void GenerationCounter::determineNextSection(const PopulationManager &popMan,  v
   if(memLimit < 1000000)
     {
       if(memLimit != 0)
-	cerr << "Program won't work well with less than 1MB memory. Ignoring memory constraint." << endl; 
+	cerr << "This program won't work well with less than 1MB memory. Ignoring memory constraint." << endl; 
 
       startOfSection = currentGen; 
       endOfSection = totalNum; 

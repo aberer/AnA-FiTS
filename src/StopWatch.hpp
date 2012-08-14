@@ -7,6 +7,9 @@
 using namespace std;
 
 
+// :TODO: multiple calls to watch-elapsed should not add up the time  
+
+
 class StopWatch
 {  
 public: 

@@ -6,7 +6,7 @@
 #include <vector>
 
 
-Simulation::Simulation(ProgramOptions &theProgOpt)   
+Simulation::Simulation(InfoFile &info, ProgramOptions &theProgOpt)   
   : progOpt(theProgOpt) 
   , numGen(progOpt.getNumberOfGenerations())
   , tp(1, progOpt.get<nat>("seed"))
@@ -29,7 +29,7 @@ Simulation::Simulation(ProgramOptions &theProgOpt)
   assert(popSizes.size() == 1 );
   popParams.push_back( PopulationParams(0, numGen, popSizes[0], progOpt));  
 
-  fractionalSimulation = new FractionalSimulation(tp,progOpt, numGen, chromosomes, popParams); 
+  fractionalSimulation = new FractionalSimulation(tp,info,  progOpt, numGen, chromosomes, popParams); 
 }
 
 

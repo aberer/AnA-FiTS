@@ -1,9 +1,13 @@
 #! /bin/bash
 
+# this call of anafits simulates an entire human female genome within its simulation assumptions 
+
 rateNonNeutral=0.05
 
+executable=$(ls ./AnA-FiTS-* | tail -n 1  )
 
-if [ "$#" != "2" ]; then
+
+if [ "$#" != "1" ]; then
     echo "USAGE: ./script <numIndi>"
     exit 
 fi
@@ -17,5 +21,4 @@ lengths="250000000 243000000 198000000 192000000 181000000 171000000 158000000 1
 fitnessModel="2 $rateNonNeutral 10 2000 $rateNonNeutral 1 500"
 rate="2.5e-8"
 
-
-./AnA-FiTS-Aug-13-1632 -m $rate -r $rate -W $fitnessModel -N $numIndi -L $lengths
+$executable -m $rate -r $rate -W $fitnessModel -N $numIndi -L $lengths

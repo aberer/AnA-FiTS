@@ -8,8 +8,7 @@
 #include <functional>
 #include <algorithm>
 
-
-FractionalSimulation::FractionalSimulation(ThreadPool &_tp, const ProgramOptions &progOpt, nat _numGen, vector<Chromosome*> _chromosomes, vector<PopulationParams> popParams) 
+FractionalSimulation::FractionalSimulation(ThreadPool &_tp,InfoFile &info, const ProgramOptions &progOpt, nat _numGen, vector<Chromosome*> _chromosomes, vector<PopulationParams> popParams) 
   : genCnt(_numGen, ( progOpt.hasOption("memory") ? progOpt.get<string>("memory") : "" ) )
   , numSelMut(0) 
   , cleanFixPeriod(progOpt.get<nat>("cleanF"))
@@ -23,22 +22,21 @@ FractionalSimulation::FractionalSimulation(ThreadPool &_tp, const ProgramOptions
   for(auto chromo : chromosomes)
     {
       haplotypesWindows.push_back(new HaploTimeWindow (popParams[0].getPopSizeByGeneration(0), selectedInit));       
-      graphs.push_back(new Graph(MULT_2(popParams[0].getPopSizeByGeneration(0)))); // :MAGIC: :KLUDGE:
+      graphs.push_back(new Graph(MULT_2(popParams[0].getPopSizeByGeneration(0)))); // :MAGIC: :KLUDGE:      
     } 
 
-#ifdef INFO_GENERAL
-  cout << "\t\t\t\tGENERAL INFO" << endl;
-  cout <<  "\t\tinitial ancestrial population size " << popMan->getTotalNumIndiByGen(0) << endl; 
+
+  info.write("\t\t\t\tGENERAL INFO\n"); 
+  info.write("\t\tinitial ancestrial population size %d\n", popMan->getTotalNumIndiByGen(0)); 
   
   for(nat i = 0; i < chromosomes.size(); ++i)
     {				      
-      cout << "\t\tCHROM " << i << " (length=" << chromosomes[i]->getSeqLen()  << ")"  << " gen1 pop1\t=> E(non-neut mutations)= " 
-	   << (PopulationManager::getLamdbaForParam( (*popMan)[0].getMutationRate(0), chromosomes[i]->getSeqLen(), *popMan, 0, 0) * chromosomes[i]->getSelectProb()); 
-      cout << "\tE(neut mutations)=" <<   (PopulationManager::getLamdbaForParam( (*popMan)[0].getMutationRate(0), chromosomes[i]->getSeqLen(), *popMan, 0, 0) * chromosomes[i]->getNeutralProb()); // 
-      cout << "\tE(recomb) = "<<  PopulationManager::getLamdbaForParam((*popMan)[0].getRecombinationRate(0), chromosomes[i]->getSeqLen(), *popMan, 0, 0 ) << endl; 
-
+      info.write("\t\tCHROM %d (length=%d) gen1 pop1\t=> E(non-neut mutations) = %g\tE(neut mutations) = %g\tE(recomb) = %g\n" ,
+		 i , chromosomes[i]->getSeqLen(), 
+		 (PopulationManager::getLamdbaForParam( (*popMan)[0].getMutationRate(0), chromosomes[i]->getSeqLen(), *popMan, 0, 0) * chromosomes[i]->getSelectProb()), 
+		 (PopulationManager::getLamdbaForParam( (*popMan)[0].getMutationRate(0), chromosomes[i]->getSeqLen(), *popMan, 0, 0) * chromosomes[i]->getNeutralProb()), 
+		 (PopulationManager::getLamdbaForParam((*popMan)[0].getRecombinationRate(0), chromosomes[i]->getSeqLen(), *popMan, 0, 0 ))); 
     }
-#endif
 }
 
 
@@ -233,7 +231,7 @@ void FractionalSimulation::simulate()
   while(genCnt.hasToSimulate())
     {
       genCnt.determineNextSection(*popMan, chromosomes);
-      cout << "GenerationCounter: simulating from " << genCnt.getStartOfSection() << " until " << genCnt.getEndOfSection() << endl; 
+      // cout << "GenerationCounter: simulating from " << genCnt.getStartOfSection() << " until " << genCnt.getEndOfSection() << endl; 
       
       // set up ancestry 
       ancestry = new Ancestry(tp, chromosomes, genCnt, *popMan); 

@@ -1,6 +1,7 @@
 #pragma once 
 
 #include "common.hpp"
+#include "InfoFile.hpp"
 #include "types.hpp"
 #include "FractionalSimulation.hpp"
 
@@ -12,7 +13,7 @@ class ProgramOptions;
 class Simulation
 {  
 public: 
-  Simulation(ProgramOptions &theProgOpt);   
+  Simulation(InfoFile &info, ProgramOptions &theProgOpt);   
   void run(); 
 
 private: 
