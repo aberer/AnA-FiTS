@@ -8,7 +8,7 @@
 
 // #define _TEST
 
-// #define CONSOLE_OUTPUT
+#define CONSOLE_OUTPUT
 // #define PRINT_SEQ_STDOUT
 
 // not sure, if double really works
@@ -51,6 +51,6 @@
 // BACKWARDS //
 ///////////////
 
-// #define DEBUG_UPDATE_GRAPH
-// #define DEBUG_HOOKUP
+#define DEBUG_UPDATE_GRAPH
+#define DEBUG_HOOKUP
 // #define DEBUG_BACKTRACE

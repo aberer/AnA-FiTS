@@ -13,7 +13,7 @@ public:
   seqLen_t getRegionEnd(nat idx ) { return regionNow->endReg[idx]; } 
 
   void extendPrevRegion(nat idx, seqLen_t start, seqLen_t stop ) { regionPrev->extendBy(idx, start, stop); }
-  bool locusSurvivesInPresent(nat haploNr, seqLen_t locus )  const { return (locus  >= regionNow->startReg[haploNr] ) && (regionNow->endReg[haploNr] >= locus )  ; } 
+  bool locusSurvivesInPresent(nat haploNr, seqLen_t locus )  const { return (regionNow->startReg[haploNr] <= locus ) && (locus <= regionNow->endReg[haploNr]); } 
 
 private: 
   Region *regionPrev; 

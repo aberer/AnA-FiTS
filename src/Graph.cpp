@@ -123,7 +123,7 @@ void Graph::insertMutEvents(nat genC, AddrArrayBackwardIter<Node,true> &mutBackI
       cout << "MUT: [" << *node  << "]" << "\t===>"  << (nodeBufferNowGen[indiNr] ? nodeBufferNowGen[indiNr]->id : 0) << endl; 
 #endif
       
-      nodeBufferNowGen[indiNr] = node; 
+      nodeBufferNowGen[indiNr] = node;
       canGoBack = mutBackIter.back();
     }
 }
