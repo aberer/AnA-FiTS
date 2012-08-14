@@ -296,7 +296,7 @@ void Ancestry::updateGraph_inner(ThreadPool &tp, Survivors &survivors, Chromosom
 	} // END  SURVIVOR ITER 
       
       insertNeutralMutations(tp, graph, survivors, popMan, chromosome, regMan, curGenIdx); 
-      survivors.prepareNextGenBackwards();      
+      survivors.prepareNextGenBackwards();
       regMan.nextGenBackwards();
     } // END backwards generation iter
 

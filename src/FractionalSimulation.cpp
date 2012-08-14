@@ -24,7 +24,7 @@ FractionalSimulation::FractionalSimulation(ThreadPool &_tp,InfoFile &info, const
     {
       haplotypesWindows.push_back(new HaploTimeWindow (popParams[0].getPopSizeByGeneration(0), selectedInit));       
       graphs.push_back(new Graph(MULT_2(popParams[0].getPopSizeByGeneration(0)))); // :MAGIC: :KLUDGE:      
-    } 
+    }
 
   if(progOpt.hasOption("neutral"))
     isNeutral = true; 
@@ -33,7 +33,7 @@ FractionalSimulation::FractionalSimulation(ThreadPool &_tp,InfoFile &info, const
   info.write("\t\tinitial ancestrial population size %d\n", popMan->getTotalNumIndiByGen(0)); 
   
   for(nat i = 0; i < chromosomes.size(); ++i)
-    {				      
+    {
       info.write("\t\tCHROM %d (length=%d) gen1 pop1\t=> E(non-neut mutations) = %g\tE(neut mutations) = %g\tE(recomb) = %g\n" ,
 		 i , chromosomes[i]->getSeqLen(), 
 		 (PopulationManager::getLamdbaForParam( (*popMan)[0].getMutationRate(0), chromosomes[i]->getSeqLen(), *popMan, 0, 0) *  chromosomes[i]->getSelectProb()),
@@ -295,13 +295,16 @@ void FractionalSimulation::printArgs(string id)
 {  
   stringstream fileName; 
   fileName << ARG_FILE_NAME  << "." << id ; 
-  nat c = 0; 
-  for(auto chrom : chromosomes)
+  FILE *fh = openFile(fileName.str(), "w"); 
+
+  nat numChrom = chromosomes.size(); 
+  BIN_WRITE(numChrom,fh); 
+  nat c = 0;
+  for(nat i = 0; i < numChrom; ++i)
     {
-      FILE *fh = openFile(fileName.str(), "w"); 
-      Graph &graph = *(graphs[chrom->getId()]);
-      graph.printArg(fh); 
-    }  
+      Graph &graph = *(graphs[i]);
+      graph.printRaw(fh); 
+    }
 }
 
 

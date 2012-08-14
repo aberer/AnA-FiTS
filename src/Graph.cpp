@@ -186,10 +186,36 @@ void Graph::hookup(const Survivors &survivors, const Ancestry &ancestry, const P
 
 						
 
-void Graph::printArg(FILE *fh)
+void Graph::printRaw(FILE *fh)
 {
+  // print survivors first 
+  nat num = previousState.size();
+  BIN_WRITE(num,fh);
+  
+  for(nat i = 0; i < num; ++i)
+    {
+      Node *node = previousState[i]; 
+      nat localNum = 0; 
+      if(node)
+	localNum = node->id; 
+      BIN_WRITE(localNum,fh); 
+    }
+  
+  nat numberOfNodes = 0; 
+  // determine number 
   nat end = nodMan.getNumberOfNodesUsed();
-  BIN_WRITE(end,fh); 
+  for(nat i =  1 ; i < end ; ++i)
+    {
+      Node *node = nodMan.getNode(i); 
+      assert(node); 
+      auto myInfo = nodMan.getInfo(node->id); 
+      
+      if(NOT myInfo->skip)
+	++numberOfNodes; 
+    }
+
+  
+  BIN_WRITE(numberOfNodes,fh); 
 
   for(nat i = 1; i < end ; ++i)
     {

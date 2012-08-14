@@ -33,8 +33,7 @@ public:
   nat getNumberOfMutations() {return mutNodes.getNumberUsed(); }
   vector<Node*>& getState() {return previousState; }
   NeutralArray* getSequenceFromNode(Node *node){ return nodMan.getInfo(node->id)->sequence; }
-  void printArg(FILE *fh);
-  void printNeutrals(FILE *fh);
+  void printRaw(FILE *fh);
 
 #ifdef VERIFICATION
   void getSequencesSlow(vector<NeutralArray*> &seqs, Chromosome &chrom, Randomness &rng);
