@@ -1,5 +1,4 @@
 #include "Ancestry.hpp"
-
 #include "GenerationCounter.hpp"
 
 
@@ -66,7 +65,7 @@ nat Ancestry::initMemBlock(const PopulationManager &popMan)
 }
 
 
-#ifdef EFFICIENCY_INIT_MEMBLOCK
+
 void Ancestry::fillWithRandomIndividuals_parallel(ThreadPool &tp, nat tid)
 {
   nat numGen = this->getNumGen();  
@@ -98,33 +97,6 @@ void Ancestry::fillWithRandomIndividuals_parallel(ThreadPool &tp, nat tid)
       	}
     }
 }
-#else 
-// void Ancestry::fillWithRandomIndividuals_parallel(ThreadPool &tp, nat tid)
-// {
-//   cout << "alternative sampling"   << endl; 
-  
-//   assert(0); 
-
-//   Randomness &rng = tp[tid].getRNG();
-//   nat perThread = numGen / tp.getLoadBalancer().getTotalJobs();  
-
-//   for(nat i = 0; i < numGen; ++i)
-//     {
-//       nat numInPrev = (i == 0) ? DIVIDE_2(initNum) : DIVIDE_2(length[i-1]); 
-//       uint32_t lengthHere = length[i]; 
-      
-//       if(i < numGen-1)
-// 	assert(genStartIndi[i] + 2 * length[i] <= genStartIndi[i+1] );
-
-
-//       assert(numInPrev > numeric_limits<uint8_t>::max() && numInPrev < numeric_limits<uint16_t>::max()); 
-
-//       uint16_t* array = reinterpret_cast<uint16_t*>(this->genStartIndi[i]); 
-//       for(nat j = 0; j < lengthHere; ++j)
-// 	array[j] = rng.Integer(numInPrev); 
-//     }    
-// }
-#endif
 
 
 void Ancestry::fillWithRandomIndividuals(ThreadPool &tp)
@@ -157,6 +129,10 @@ void Ancestry::insertNeutralMutations(ThreadPool& tp,  Graph &graph, const Survi
   cout << "numMut(neutral)="  << numMut << " lambda=" << lambda << "\tlambdaSmall="<<  lambdaSmall << "\tpopSize=" << popMan[0].getPopSizeByGeneration(genNum) << "\tgenNum=" << genNum << endl; 
 #endif
 
+  static int total = 0; 
+  static int totalMiss = 0;  
+
+  int ctr = 0; 
   for(nat i = 0 ; i < numMut; ++i)
     {
       seqLen_t pos = rng.Integer<nat>(seqLen);
@@ -164,13 +140,24 @@ void Ancestry::insertNeutralMutations(ThreadPool& tp,  Graph &graph, const Survi
       indiNr = *(start + indiNr); 
 
       if( regMan.locusSurvivesInPresent(indiNr, pos) && chrom.locusIsNeutral(pos) )
-	{
+      	{
 #ifdef DEBUG_UPDATE_GRAPH
 	  cout << "neutral mutation, pos=" << pos  << ", indiNr=" << indiNr << ", genNum=" << genNum << endl; 
 #endif
 	  graph.touchNode(pos, indiNr, genNum, NodeType::MUTATION);
-	}
+      	} 
+      else 
+      	ctr++ ; 
+
     }
+  
+  totalMiss += ctr; 
+  total += numMut; 
+  
+  cout << "["  << genNum << "] num mut neutral: " << ctr << "/" << numMut<< endl; 
+
+  if(genNum == 0)
+    cout << "final result: " << totalMiss << "/" << total << endl; 
 }
 
 

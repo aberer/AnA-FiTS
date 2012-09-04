@@ -221,7 +221,7 @@ void FractionalSimulation::mutateSelectedSites(ThreadPool &tp)
       numSelMut += numMut;  
       
 #ifdef DEBUG_MUT_SEL
-      cout << "number of mutations " << numMut  << " in chrom " << chromId << endl; 
+      cout << genCnt.getCurrentGeneration() << ": number of mutations " << numMut  << " in chrom " << chromId << endl; 
 #endif
   
       for(nat c = 0; c < numMut; ++c)

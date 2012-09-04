@@ -15,7 +15,7 @@ id = args[2]
 fn =paste("data/hist-",id, ".pdf", sep="") 
 
 pdf(fn)
-hist(tab[,1], breaks="FD")
+hist(tab[,1])
 cat(paste("mean ", mean(tab[,1]), "\n"))
 bla = dev.off()
 ## cat(paste("created hist file " , fn, "\n",sep=""))
