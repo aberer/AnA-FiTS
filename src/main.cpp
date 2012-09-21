@@ -42,7 +42,7 @@ void printInfo(InfoFile &info, int argc, char **argv)
   info.write("AnA-FiTS was called as\n\t"); 
   for(int i = 0; i < argc; ++i)
     info.write("%s ", argv[i]); 
-  info.write("\nusing default parameters otherwise.\n\n");   
+  info.write("\nusing default parameters otherwise (see -h).\n\n");   
 }
 
 

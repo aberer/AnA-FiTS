@@ -71,7 +71,7 @@ void NodeManager::markAncestrialMaterial(Node &node, seqLen_t start, seqLen_t en
       info->start = start; 
       info->wasInitialized = true; 
     }
-
+  
   bool extendsStart = (NOT wasInit || start < info->start), 
     extendsEnd = (NOT wasInit || info->end < end ); 
   
@@ -83,39 +83,38 @@ void NodeManager::markAncestrialMaterial(Node &node, seqLen_t start, seqLen_t en
 #endif
 
   assert(start < end && info->start < info->end);   
-
   
-  if( node.id ) 		// excluding start node
+  if( NOT node.id ) 		// excluding start node 
+    return; 
+
+  switch(node.type)
     {
-      switch(node.type)
-	{
-	case MUTATION:
-	  {
-	    Node *anc1 = getNode(node.ancId1); 
-	    if( (extendsStart || extendsEnd ) && anc1 && info->start < info->end)
-	      markAncestrialMaterial(*anc1,info->start,info->end); 
-	  }
-	  break; 
-	case RECOMBINATION:
-	  {
-	    Node
-	      *anc1 = getNode(node.ancId1),
-	      *anc2 = getNode(node.ancId2);
+    case MUTATION:
+      {
+	Node *anc1 = getNode(node.ancId1);
+	if( (extendsStart || extendsEnd ) && anc1 && info->start < info->end)
+	  markAncestrialMaterial(*anc1,info->start,info->end);
+      }
+      break; 
+    case RECOMBINATION:
+      {
+	Node
+	  *anc1 = getNode(node.ancId1),
+	  *anc2 = getNode(node.ancId2);
 
-	    if(anc1 && extendsStart && info->start < node.loc-1)
-	      markAncestrialMaterial(*anc1, info->start, node.loc-1);
+	if(anc1 && extendsStart && info->start < node.loc-1)
+	  markAncestrialMaterial(*anc1, info->start, node.loc-1);
 
-	    if(anc2 && extendsEnd && node.loc < info->end)
-	      markAncestrialMaterial(*anc2, node.loc, info->end); 
+	if(anc2 && extendsEnd && node.loc < info->end)
+	  markAncestrialMaterial(*anc2, node.loc, info->end); 
 	    
-	    break; 
-          }
-	default: 
-	  {
-	    cout << "aborting: node type is " << node.type << endl; 
-	    abort(); 
-	  }
-	}
+	break; 
+      }
+    default: 
+      {
+	cout << "aborting: node type is " << node.type << endl; 
+	abort(); 
+      }
     }
 }
 
@@ -199,8 +198,7 @@ void NodeManager::determineCoalescentNodes(Node *node)
 
 	if(anc1)
 	  {
-	    if(NOT (anc1->originGen <= node->originGen))
-	      {	      cout << *node << "\t================>" <<  *anc1  << endl;  abort() ; } 
+	    if(NOT (anc1->originGen <= node->originGen)) {	      cout << *node << "\t================>" <<  *anc1  << endl;  abort() ; } 
 	    determineCoalescentNodes(anc1); 	    
 	  }
 	break;
@@ -214,8 +212,7 @@ void NodeManager::determineCoalescentNodes(Node *node)
 	
 	if(anc1 && myInfo->start < node->loc -1 )
 	  {
-	    if(NOT (anc1->originGen <= node->originGen))
-	      {	      cout << *node << "\t================>" <<  *anc1  << endl;  abort() ; } 
+	    if(NOT (anc1->originGen <= node->originGen)) {	      cout << *node << "\t================>" <<  *anc1  << endl;  abort() ; } 
 
 #ifdef FEATURE_REDUCE_GRAPH
 	    node->ancId1 = getTrueAncestor(anc1); 	    
@@ -225,8 +222,7 @@ void NodeManager::determineCoalescentNodes(Node *node)
 
 	if(anc2 && node->loc < myInfo->end)
 	  {
-	    if(NOT (anc2->originGen <= node->originGen))
-	      {	      cout << *node << "\t================>" <<  *anc2  << endl;  abort() ; } 
+	    if(NOT (anc2->originGen <= node->originGen)) {	      cout << *node << "\t================>" <<  *anc2  << endl;  abort() ; }
 
 #ifdef FEATURE_REDUCE_GRAPH
 	    node->ancId2 = getTrueAncestor(anc2); 
@@ -235,7 +231,7 @@ void NodeManager::determineCoalescentNodes(Node *node)
 	  }
 
 	break;
-      }      
+      }
     default: assert(0);
     }
 }
@@ -281,9 +277,9 @@ void NodeManager::gatherMutations(Node *node, NeutralArray* seq,seqLen_t start, 
 	Node *anc1 = getNode(node->ancId1), 
 	  *anc2 = getNode(node->ancId2); 
 	
-	if(anc1  && start < node->loc-1 )
+	if( anc1 && start < node->loc-1 )
 	  handleAncestor(seq, anc1, start, min(end, node->loc-1)); 
-	if(anc2 && node->loc < end)
+	if( anc2 && node->loc < end )
 	  handleAncestor(seq, anc2, max(node->loc, start), end); 
 	break; 
       }
@@ -344,7 +340,7 @@ void NodeManager::simulateNode(Node *node)
 	  handleAncestor(info->sequence, anc, info->start, info->end);
 	NeutralMutation *mut = createNeutralMutation(node); 
 #ifdef DEBUG_SEQUENCE_EXTRACTION
-	cout << "\tSIM: inserting mutation" << *mut << endl; 
+	cout << "\tSIM: inserting mutation " << *mut << endl; 
 #endif
 	info->sequence->mutate(*mut, false);
 	break;

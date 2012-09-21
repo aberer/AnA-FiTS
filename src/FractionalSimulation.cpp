@@ -346,7 +346,7 @@ void FractionalSimulation::finalize()
       if( graph.getNumberOfMutations())
 	graph.createSequencesInGraph(*(chromosomes[i]));
       else 
-	cerr << "NOTICE: no neutral mutations can occur (because of -W), no graph produced." << endl; 
+	cerr << "NOTICE: no neutral mutations can occur for this selection configuration, no graph produced." << endl; 
     }
 }
 

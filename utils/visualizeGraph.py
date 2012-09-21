@@ -1,8 +1,12 @@
 #! /usr/bin/python
 
 import sys
-import networkx as nx 
-import pygraphviz as gv
+try: 
+    import networkx as nx 
+    import pygraphviz as gv
+except: 
+    sys.stderr.write("this script requires the following packages: pygraphviz, networkx\nPlease install and try again\n")
+
 import re 
 
 USAGE=" <OUTPUT from ./convertGraph.py >  | ./utils/visualizeGraph.py "
@@ -35,6 +39,11 @@ class RecNode:
         self.ancst1  = ancst1
         self.ancst2 = ancst2
 
+    def repr(self): 
+        return ("<%d,%d,%d,%d,%d>" % (self.nodeId, self.pos, self.gen, self.ancst1, self.ancst2))
+    def str(self): 
+        return self.repr()
+
 class MutNode : 
     def __init__(self, nodeId, pos, gen, base, ancst): 
         self.nodeId = nodeId 
@@ -43,11 +52,21 @@ class MutNode :
         self.base = base 
         self.ancst = ancst    
 
+    def repr(self): 
+        return ("<%d,%d,%d,%s,%d>" % (self.nodeId, self.pos, self.gen, self.base, self.ancst))
+    def str(self): 
+        return self.repr()
+
     
 class MyGraph:
     survivorIds = []
     allNodes = {}
     graph = nx.DiGraph()
+
+    def __init__(self):
+        dummy = MutNode(0,0,0,'A', 0)
+        self.graph.add_node(dummy)
+        self.allNodes[0] = dummy
 
     def getNodesFromToGen(self, start,end): 
         result = []
@@ -60,18 +79,29 @@ class MyGraph:
         return nx.subgraph(self.graph, result)
 
 
+    def insertEdges(self, edgeList): 
+        for elem in edgeList: 
+            print elem
+            # print repr(self.allNodes[elem[0]]) + "\t" + repr(self.allNodes[elem[1]])
+            self.graph.add_edge(self.allNodes[elem[0]], self.allNodes[elem[1]])
+
+
 def parse(lines): 
     graphs = []     
     
     assert(lines[0].startswith("// GRAPH"))
     isFirst = True 
+    edgeList = []
+
 
     for i in range(0,len(lines)): 
         line = lines[i].strip()
         if(line.startswith("// GRAPH")):
             if not isFirst: 
+                graph.insertEdges(edgeList)
+                edgeList = []
                 graphs.append(graph)
-                graph = MyGraph()                
+                graph = MyGraph() 
             else : 
                 graph = MyGraph()
                 isFirst = False
@@ -89,25 +119,20 @@ def parse(lines):
             nodeId = int(mr.group(1))
             assert(not graph.allNodes.has_key(nodeId))
             graph.allNodes[nodeId] = rn
-
             graph.graph.add_node(rn)
-
-            # TODO 
-            # graph.graph.add_edge(nodeId, rn.ancst1)
-            # graph.graph.add_edge(nodeId, rn.ancst2)
-
+            edgeList.append((nodeId, rn.ancst1) )
+            edgeList.append((nodeId, rn.ancst2))
 
 
         elif(not mm == None ):             
-            mn = MutNode(int(mm.group(1)), int(mm.group(2)), int(mm.group(3)), mm.group(4), int(mm.group(5)))            
+            mn = MutNode(int(mm.group(1)), int(mm.group(2)), int(mm.group(3)), mm.group(4), int(mm.group(5))) 
             nodeId = int(mm.group(1))
             assert(not graph.allNodes.has_key(nodeId))            
             graph.allNodes[nodeId] = mn 
-            graph.graph.add_node(mn ) 
+            graph.graph.add_node(mn) 
+            edgeList.append((nodeId,mn.ancst))
 
-            # TODO 
-            graph.graph.add_edge(nodeId, mn.ancst)
-
+    graph.insertEdges(edgeList)
     graphs.append(graph)
 
     return graphs
@@ -115,8 +140,14 @@ def parse(lines):
 graphs = parse(lines)
 
 graph = graphs[0]
-subgraph = graph.getNodesFromToGen(0, 10000)
+subgraph = graph.getNodesFromToGen(0, 100)
 
-vizGraph = nx.to_agraph(subgraph)
-vizGraph.layout(prog='dot')
-vizGraph.draw('tmp.pdf')
+
+import matplotlib.pyplot as plt
+plt.figure()
+nx.draw(subgraph)
+plt.savefig("tmp.pdf")
+
+# vizGraph = nx.to_agraph(subgraph)
+# vizGraph.layout(prog='dot')
+# vizGraph.draw('tmp.pdf')

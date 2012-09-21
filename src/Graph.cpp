@@ -1,6 +1,6 @@
 #include "Graph.hpp" 
 #include "Node.hpp"
-#include "Ancestry.hpp"		// 
+#include "Ancestry.hpp"
 #include "Survivors.hpp"
 #include "SequenceArray.hpp"
 #include "AddrArray.hpp"
@@ -45,7 +45,6 @@ void Graph::touchNode(seqLen_t loc, nat indiNr, nat genNum, NodeType type)
   node->indiNr = indiNr; 
   node->originGen = genNum; 
   node->type = type;
-
 }
 
 
@@ -80,7 +79,6 @@ void Graph::propagateSurvivorNodes(nat genC, nat chromId, Node **nowBuffer, Node
 Node* Graph::hookRecombinations(Node *anc1, Node *anc2)
 {
   Node *current = IS_ODD(buffer.getUsed() ) ? anc2 : anc1; 
-  bool sameBefore = anc1 == anc2; 
   
   // :TRICKY: starting with LAST event
   for(nat i = buffer.getUsed(); i > 0;  --i)
@@ -89,7 +87,7 @@ Node* Graph::hookRecombinations(Node *anc1, Node *anc2)
       tmp->ancId1 = IS_ODD(i) ? GET_ID_IF(anc1) : GET_ID_IF(anc2); 
       tmp->ancId2 = GET_ID_IF(current);
       current = tmp; 
-      assert(sameBefore || (tmp->ancId1 != tmp->ancId2));       
+      assert((tmp->ancId1 != tmp->ancId2));       // sameBefore
     }
 
 #ifdef DEBUG_HOOKUP
@@ -224,7 +222,7 @@ void Graph::printRaw(FILE *fh)
 
       auto myInfo = nodMan.getInfo(node->id); 
       
-      if(myInfo->skip)
+      if(myInfo->skip)	
 	continue;
       else 	
 	node->printRaw(fh);
@@ -245,58 +243,63 @@ void Graph::createSequencesInGraph(const Chromosome &chromo)
     if(node)
       nodMan.determineCoalescentNodes(node);
 
+
   for(Node *node : previousState)
-    if(node)
-      nodMan.simulateNode(node);
+    {
+#ifdef DEBUG_SEQUENCE_EXTRACTION
+      cout << "START sequence extraction" << endl; 
+#endif
+      if(node)
+	nodMan.simulateNode(node);      
+    }
 }
 
 #ifdef VERIFICATION 
-// void Graph::getSequencesSlow(vector<NeutralArray*> &seqs, Chromosome &chrom, Randomness &rng)
-// {
-//   for(Node *node : previousState)
-//     {
-//       NeutralArray *seq = new NeutralArray(100);  // :MAGIC: 
-//       gatherSequencesSlow(node, seq, 0, chrom.getSeqLen(), chrom, rng);
-//       seqs.push_back(seq); 
-//     }
-// }
+void Graph::getSequencesSlow(vector<NeutralArray*> &seqs, Chromosome &chrom)
+{
+  for(Node *node : previousState)
+    {
+      NeutralArray *seq = new NeutralArray(100);  // :MAGIC: 
+      gatherSequencesSlow(node, seq, 0, chrom.getSeqLen(), chrom);
+      seqs.push_back(seq); 
+    }
+}
 
-// void Graph::gatherSequencesSlow(Node *node, NeutralArray *seq, seqLen_t start, seqLen_t end, Chromosome &chrom, Randomness &rng)
-// {
-//   if(start >= end || NOT node)
-//     return; 
+void Graph::gatherSequencesSlow(Node *node, NeutralArray *seq, seqLen_t start, seqLen_t end, Chromosome &chrom)
+{
+  if(start >= end || NOT node)
+    return; 
 
-//   switch(node->type)
-//     {
-//     case MUTATION: 
-//       {
-// 	gatherSequencesSlow(nodMan.getNode(node->ancId1), seq, start, end, chrom, rng); 
-// 	auto neutMut = new NeutralMutation;
+  switch(node->type)
+    {
+    case MUTATION: 
+      {
+	gatherSequencesSlow(nodMan.getNode(node->ancId1), seq, start, end, chrom); 
+	auto neutMut = new NeutralMutation;
 	
-// 	if(start <= node->loc && node->loc <= end)
-// 	  {
-// 	    neutMut->absPos = node->loc; 
-// 	    neutMut->generation = node->originGen; 	
-// 	    neutMut->base = chrom.mutateSite(rng, node->loc); 
-// 	    seq->mutate(*neutMut); 
-// 	  }
-// 	break; 
-//       }
-//     case RECOMBINATION:
-//       {
-// 	gatherSequencesSlow(nodMan.getNode(node->ancId1),seq, start, min(node->loc-1, end), chrom, rng); 
-// 	gatherSequencesSlow(nodMan.getNode(node->ancId2),seq, max(node->loc,start),end, chrom, rng);
-// 	break; 
-//       }
-//     default: assert(0);   
-//   }
-// }
+	if(start <= node->loc && node->loc <= end)
+	  {
+	    neutMut->absPos = node->loc; 
+	    neutMut->generation = node->originGen; 	
+	    seq->mutate(*neutMut, false); 
+	  }
+	break; 
+      }
+    case RECOMBINATION:
+      {n
+	gatherSequencesSlow(nodMan.getNode(node->ancId1),seq, start, min(node->loc-1, end), chrom); 
+	gatherSequencesSlow(nodMan.getNode(node->ancId2),seq, max(node->loc,start),end, chrom);
+	break; 
+      }
+    default: assert(0);   
+  }
+}
 #endif 
 
 
-void Graph::insertRecEvents(nat genC, nat chromId,  AddrArrayBackwardIter<Node,true> &recBackIter, Node** nodeBufferNowGen, Node** nodeBufferPrevGen, const Ancestry &ancestry)  
+void Graph::insertRecEvents(nat genC, nat chromId,  AddrArrayBackwardIter<Node,true> &recBackIter, Node** nodeBufferNowGen, Node** nodeBufferPrevGen, const Ancestry &ancestry)
 {
-  bool canGoBack = true; 
+  bool canGoBack = true;
   
   // insert recombinations
   while(canGoBack && recBackIter()->originGen == genC)
@@ -309,7 +312,7 @@ void Graph::insertRecEvents(nat genC, nat chromId,  AddrArrayBackwardIter<Node,t
       Node
 	*ancNode1 = nodeBufferPrevGen[ancst1],
 	*ancNode2 = nodeBufferPrevGen[ancst2];
-      
+
       assert(nodeBufferNowGen[indiNr] == ancNode1); 
 
       buffer.resetUsed();

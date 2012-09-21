@@ -36,7 +36,8 @@ public:
   void printRaw(FILE *fh);
 
 #ifdef VERIFICATION
-  void getSequencesSlow(vector<NeutralArray*> &seqs, Chromosome &chrom, Randomness &rng);
+  void getSequencesSlow(vector<NeutralArray*> &seqs, Chromosome &chrom);
+  void gatherSequencesSlow(Node *node, NeutralArray *seq, seqLen_t start, seqLen_t end, Chromosome &chrom); 
 #endif
 
 private: 
@@ -55,9 +56,6 @@ private:
   void insertMutEvents(nat genC, AddrArrayBackwardIter<Node,true> &mutIter, Node** nodeBufferNowGen, Chromosome &chrom, Randomness &rng);
   void insertRecEvents(nat genC, nat chromId, AddrArrayBackwardIter<Node,true> &recIter, Node** nodeBufferNowGen, Node** nodeBufferPrevGen, const Ancestry &ancestry);
   Node* hookRecombinations(Node *anc1, Node *anc2);
-#ifdef VERIFICATION
-  void gatherSequencesSlow(Node *node, NeutralArray *seq, seqLen_t start, seqLen_t end, Chromosome &chrom, Randomness &rng);
-#endif
 };
 
 

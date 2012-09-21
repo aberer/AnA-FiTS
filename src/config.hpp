@@ -17,6 +17,8 @@
 // #define DEBUG_ALT_CLEANUP 
 // #define DEBUG_REORDER 
 
+
+// TODO does this work? 
 // #define FEATURE_REDUCE_GRAPH
 
 // EFFICIENCY
@@ -45,12 +47,14 @@
 // #define DEBUG_FITNESS
 // #define DEBUG_FITNESS_FUNC
 // #define DEBUG_SURVIVORS  
-// #define DEBUG_SEQUENCE_EXTRACTION
 
 ///////////////
 // BACKWARDS //
 ///////////////
 
-// #define DEBUG_UPDATE_GRAPH
-// #define DEBUG_HOOKUP
-// #define DEBUG_BACKTRACE
+#define DEBUG_UPDATE_GRAPH
+#define DEBUG_HOOKUP
+#define DEBUG_BACKTRACE
+#define DEBUG_SEQUENCE_EXTRACTION
+
+// #define VERIFICATION

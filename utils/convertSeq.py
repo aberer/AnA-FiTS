@@ -9,6 +9,7 @@
 import sys
 import struct
 
+
 INTEGER_LENGTH = 4 
 BYTE_LENGTH=1
 FLOAT_LENGTH=8                  # currently using doubles 
@@ -103,14 +104,14 @@ def printChromosome(chromId, fixedMutations, mutations, bitsets, fixedNeutral):
         print str(c)+ "\t" +  string
         c += 1
 
-    
+
 if len(sys.argv) != 2: 
     print "./script <dataFile>"
     sys.exit(1)
 
 fh = open(sys.argv[1], "rb")
 content = fh.read()
-index = 0; 
+index = 0
 
 # init table 
 for i in range(1,32): 
@@ -130,7 +131,7 @@ for chromId in range(0,numChrom):
     numMut = getInt()
     for i in xrange(0,numMut):
         mutations.append(getMut())    
-
+        
     # get bitsets 
     bitsets = []        
     bytesInBitset = len(mutations) / BITSET_UNIT
@@ -142,8 +143,11 @@ for chromId in range(0,numChrom):
         bsString += " I" 
 
     numSeq = getInt()
+
+    
     for i in range(0,numSeq):     
         bitsets.append(getBitset(bytesInBitset))
+
     assert(len(bitsets) == numSeq)        
 
     # determine fixed neutral mutations
@@ -152,5 +156,9 @@ for chromId in range(0,numChrom):
         fixedNeutral.append(allBits)
     for bs in bitsets: 
         fixedNeutral = andify(fixedNeutral, bs, bytesInBitset)
-    
+
     printChromosome(chromId, fixedMutations, mutations, bitsets, fixedNeutral)
+
+
+
+

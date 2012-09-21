@@ -154,10 +154,10 @@ void Ancestry::insertNeutralMutations(ThreadPool& tp,  Graph &graph, const Survi
   totalMiss += ctr; 
   total += numMut; 
   
-  cout << "["  << genNum << "] num mut neutral: " << ctr << "/" << numMut<< endl; 
+  // cout << "["  << genNum << "] num mut neutral: " << ctr << "/" << numMut<< endl; 
 
-  if(genNum == 0)
-    cout << "final result: " << totalMiss << "/" << total << endl; 
+  // if(genNum == 0)
+  //   cout << "final result: " << totalMiss << "/" << total << endl; 
 }
 
 
@@ -215,7 +215,7 @@ void Ancestry::updateGraph_inner(ThreadPool &tp, Survivors &survivors, Chromosom
 
 	  // is this haplotype a recombinant?  
 	  if(events[nowIdx])
-	    { 
+	    {
 	      assert(nowIdx == events[nowIdx]->haploIndiNr); 
 	      nat otherAncst = GET_OTHER_ANCESTOR(ancstIdx); 
 
@@ -257,7 +257,7 @@ void Ancestry::updateGraph_inner(ThreadPool &tp, Survivors &survivors, Chromosom
 
 	      // treat last part 
 	      startSeg = stopSeg + 1;
-	      stopSeg  = chromosome.getSeqLen(); 
+	      stopSeg  = chromosome.getSeqLen();
 
 	      if(survivedRegStart < stopSeg && startSeg < survivedRegEnd) 
 		{

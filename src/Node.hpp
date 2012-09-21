@@ -44,11 +44,13 @@ struct NodeExtraInfo
   NeutralArray *sequence; 
   seqLen_t start; 
   seqLen_t end;
+
+  // the following stuff could be compressed into a byte 
   nat referenced; 
   bool wasInitialized;
   bool skip;
+  bool belongsToOtherParent; 
 }; 
-
 
 
 ostream& operator<<(ostream &stream, const NodeType &rhs); 

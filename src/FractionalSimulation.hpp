@@ -24,6 +24,9 @@ public:
   void printArgs(string id ); 
   void finalize(); 
 
+  vector<Graph*> getGraphs(){ return graphs; }
+  vector<Chromosome*> getChromosomes(){return chromosomes; }
+
 private:
   vector<HaploTimeWindow*> haplotypesWindows;  // PER chromosome 
   unique_ptr<PopulationManager> popMan;
