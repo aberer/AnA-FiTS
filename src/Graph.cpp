@@ -20,8 +20,10 @@ Graph::Graph(nat initSize)
   fill(previousState.begin(), previousState.end(), nullptr); 
 }
 
-
-void Graph::touchNode(seqLen_t loc, nat indiNr, nat genNum, NodeType type)
+/** 
+    @param invertedOrientation in case of recombination, indicates the orientation of the node 
+*/ 
+void Graph::touchNode(seqLen_t loc, nat indiNr, nat genNum, NodeType type, bool invertedOrientation)
 {
   assert(type != NOTHING); 
   assert(type == MUTATION || type == RECOMBINATION) ;
@@ -45,6 +47,12 @@ void Graph::touchNode(seqLen_t loc, nat indiNr, nat genNum, NodeType type)
   node->indiNr = indiNr; 
   node->originGen = genNum; 
   node->type = type;
+
+  if(type == RECOMBINATION)
+    {
+      NodeExtraInfo *info = nodMan.getInfo(node->id); 
+      info->invertedOrientation = invertedOrientation; 
+    }
 }
 
 
@@ -76,15 +84,56 @@ void Graph::propagateSurvivorNodes(nat genC, nat chromId, Node **nowBuffer, Node
 }
 
 
+
+#define  NEW 
+
+#ifdef NEW 
 Node* Graph::hookRecombinations(Node *anc1, Node *anc2)
 {
-  Node *current = IS_ODD(buffer.getUsed() ) ? anc2 : anc1; 
-  
+  Node *tmp = buffer.at(0); 
+  NodeExtraInfo *info = nodMan.getInfo(tmp->id); 
+  Node *current = info->invertedOrientation ? anc2 : anc1; 
+
+  for(nat i = 0; i < buffer.getUsed(); ++i) 
+    {
+      tmp = buffer.at(i); 
+      info = nodMan.getInfo(tmp->id);
+      
+      tmp->ancId1 = info->invertedOrientation ? GET_ID_IF(anc1) : GET_ID_IF(anc2); 
+      tmp->ancId2 = GET_ID_IF(current); 
+
+      current = tmp; 
+
+      assert( tmp->ancId1 != tmp->ancId2 ); 
+    }
+
+#ifdef DEBUG_HOOKUP
+  Node *tmp1 = nodMan.getNode(current->ancId1);
+  Node *tmp2 = nodMan.getNode(current->ancId2);  
+  cout << "REC:"  << *current
+       << " ===>" <<  (GET_ID_IF(tmp2)) 
+       << "\t===>" << (GET_ID_IF(tmp1)) << "\t" << endl; 
+#endif
+
+  return current;   
+}
+
+
+#else 
+// :BUG:
+Node* Graph::hookRecombinations(Node *anc1, Node *anc2)
+{
+  Node *lastNode  = buffer.at(buffer.getUsed() -1 ); 
+  NodeExtraInfo *infoTmp = nodMan.getInfo(lastNode->id);
+  Node *current = infoTmp->invertedOrientation ? anc1 : anc2; 
+      
   // :TRICKY: starting with LAST event
   for(nat i = buffer.getUsed(); i > 0;  --i)
     {
-      Node *tmp = buffer.at(i-1); 
-      tmp->ancId1 = IS_ODD(i) ? GET_ID_IF(anc1) : GET_ID_IF(anc2); 
+      Node *tmp = buffer.at(i-1);
+      NodeExtraInfo *info = nodMan.getInfo(tmp->id);
+      
+      tmp->ancId1 =  info->invertedOrientation ? GET_ID_IF(anc2) : GET_ID_IF(anc1); 
       tmp->ancId2 = GET_ID_IF(current);
       current = tmp; 
       assert((tmp->ancId1 != tmp->ancId2));       // sameBefore
@@ -93,12 +142,15 @@ Node* Graph::hookRecombinations(Node *anc1, Node *anc2)
 #ifdef DEBUG_HOOKUP
   Node *tmp1 = nodMan.getNode(current->ancId1);
   Node *tmp2 = nodMan.getNode(current->ancId2);
-  cout << "REC:"  << *current << " ===> " 
-       << (tmp1 == nullptr ? 0 : tmp1->id ) << "\t===>"
-       << (tmp2 == nullptr ? 0 : tmp2->id ) << "\t" << endl; 
+  
+  cout << "REC:"  << *current
+       << " ===>" << (GET_ID_IF(tmp2))
+       << "\t===>" << (GET_ID_IF(tmp1)) << "\t" << endl; 
 #endif
-  return current; 
+  return current;
 }
+
+#endif
 
 
 void Graph::insertMutEvents(nat genC, AddrArrayBackwardIter<Node,true> &mutBackIter, Node** nodeBufferNowGen, Chromosome &chrom, Randomness &rng)
@@ -316,7 +368,7 @@ void Graph::insertRecEvents(nat genC, nat chromId,  AddrArrayBackwardIter<Node,t
       assert(nodeBufferNowGen[indiNr] == ancNode1); 
 
       buffer.resetUsed();
-      buffer.setNext(recBackIter()); 
+      buffer.setNext(recBackIter());
       
       // determine how many rec events we have to handle  
       while((canGoBack = recBackIter.back()) && recBackIter()->originGen == gen && recBackIter()->indiNr == indiNr)

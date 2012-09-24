@@ -144,7 +144,7 @@ void Ancestry::insertNeutralMutations(ThreadPool& tp,  Graph &graph, const Survi
 #ifdef DEBUG_UPDATE_GRAPH
 	  cout << "neutral mutation, pos=" << pos  << ", indiNr=" << indiNr << ", genNum=" << genNum << endl; 
 #endif
-	  graph.touchNode(pos, indiNr, genNum, NodeType::MUTATION);
+	  graph.touchNode(pos, indiNr, genNum, NodeType::MUTATION, false);
       	} 
       else 
       	ctr++ ; 
@@ -214,6 +214,7 @@ void Ancestry::updateGraph_inner(ThreadPool &tp, Survivors &survivors, Chromosom
 #endif
 
 	  // is this haplotype a recombinant?  
+	  nat origAncst = ancstIdx ; 
 	  if(events[nowIdx])
 	    {
 	      assert(nowIdx == events[nowIdx]->haploIndiNr); 
@@ -221,7 +222,7 @@ void Ancestry::updateGraph_inner(ThreadPool &tp, Survivors &survivors, Chromosom
 
 	      seqLen_t startSeg = 0; 
 	      seqLen_t stopSeg = -1; 
-	      for(Recombination* recIter = events[nowIdx] ; 		  
+	      for(Recombination* recIter = events[nowIdx] ;
 		  recIter < recIterEnd &&
 		    recIter->haploIndiNr == nowIdx ; 
 		  ++recIter) 
@@ -237,9 +238,9 @@ void Ancestry::updateGraph_inner(ThreadPool &tp, Survivors &survivors, Chromosom
 		    { 
 		      if(stopSeg < survivedRegEnd)	// recombination divides ancestral region 
 			{
-			  graph.touchNode(stopSeg+1, nowIdx, curGenIdx, RECOMBINATION ); 
+			  graph.touchNode(stopSeg+1, nowIdx, curGenIdx, RECOMBINATION, origAncst != ancstIdx );
 #ifdef DEBUG_UPDATE_GRAPH
-			  cout  << "\tADDING node for rec " << stopSeg+1 << endl; 
+			  cout  << "\tADDING node for rec " << stopSeg+1 << ( origAncst != ancstIdx ?  " INVERTED" : " NORMAL") << endl; 
 #endif
 			}
 

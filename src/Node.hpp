@@ -49,7 +49,7 @@ struct NodeExtraInfo
   nat referenced; 
   bool wasInitialized;
   bool skip;
-  bool belongsToOtherParent; 
+  bool invertedOrientation; 
 }; 
 
 

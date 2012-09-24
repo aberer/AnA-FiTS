@@ -99,7 +99,7 @@ void* myRealloc(void *ptr, size_t num);
 
 #define NO_NODE 0
 
-#define IS_ODD(x) (x&1)
+// #define IS_ODD(x) (x&1)
 
 
 #define BIN_WRITE(x,fh) fwrite(&x, 1, sizeof(x), fh)
