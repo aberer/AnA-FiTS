@@ -235,7 +235,7 @@ void Ancestry::updateGraph_inner(ThreadPool &tp, Survivors &survivors, Chromosom
 #endif
 		  
 		  if( survivedRegStart < stopSeg && startSeg < survivedRegEnd ) // something is transmitted 
-		    { 
+		    {
 		      if(stopSeg < survivedRegEnd)	// recombination divides ancestral region 
 			{
 			  graph.touchNode(stopSeg+1, nowIdx, curGenIdx, RECOMBINATION, origAncst != ancstIdx );
@@ -250,7 +250,7 @@ void Ancestry::updateGraph_inner(ThreadPool &tp, Survivors &survivors, Chromosom
 #endif
 		      regMan.extendPrevRegion(ancstIdx, 
 					      max(survivedRegStart, startSeg),
-					      min(stopSeg, survivedRegEnd)); 
+					      min(stopSeg, survivedRegEnd));
 		    }
 		  
 		  std::swap(ancstIdx, otherAncst);
@@ -262,7 +262,7 @@ void Ancestry::updateGraph_inner(ThreadPool &tp, Survivors &survivors, Chromosom
 
 	      if(survivedRegStart < stopSeg && startSeg < survivedRegEnd) 
 		{
-		  survivors.addSurvivor(ancstIdx); 
+		  survivors.addSurvivor(ancstIdx);
 #ifdef DEBUG_UPDATE_GRAPH
 		  cout << "\tlast part: marking region of survivor "<< ancstIdx << " with " << max(survivedRegStart, startSeg) << "/" << min(stopSeg, survivedRegEnd) << endl; 
 #endif

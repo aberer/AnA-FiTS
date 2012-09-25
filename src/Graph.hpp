@@ -3,6 +3,7 @@
 #include "common.hpp"
 #include "NodeManager.hpp"
 #include "AddrArray.hpp"
+#include "InvertedRelationship.hpp"
 #include "Node.hpp"
 #include "SequenceArray.hpp"
 
@@ -16,6 +17,8 @@ class Randomness;
 class Chromosome; 
 class Survivors; 
 class PopulationManager; 
+
+#define GET_ID_IF(x) (x ? x->id : NO_NODE) 
 
 
 class Graph
@@ -35,11 +38,6 @@ public:
   NeutralArray* getSequenceFromNode(Node *node){ return nodMan.getInfo(node->id)->sequence; }
   void printRaw(FILE *fh);
 
-#ifdef VERIFICATION
-  void getSequencesSlow(vector<NeutralArray*> &seqs, Chromosome &chrom);
-  void gatherSequencesSlow(Node *node, NeutralArray *seq, seqLen_t start, seqLen_t end, Chromosome &chrom); 
-#endif
-
 private: 
   // ATTRIBUTES  
   AddrArray<Node,true> mutNodes; 
@@ -47,6 +45,11 @@ private:
   vector<Node*> previousState; 
   NodeManager nodMan; 
   DynArraySequential<Node*> buffer; 
+  DynArraySequential<>
+
+#ifndef NDEBUG
+  bool survivorsContainStartingNode; 
+#endif
 
   // METHODS
   Graph& operator=(const Graph &rhs); 

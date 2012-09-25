@@ -75,8 +75,11 @@ void NodeManager::markAncestrialMaterial(Node &node, seqLen_t start, seqLen_t en
   bool extendsStart = (NOT wasInit || start < info->start), 
     extendsEnd = (NOT wasInit || info->end < end ); 
   
-  info->start = min(start, info->start); 
-  info->end = max(end, info->end); 
+  
+  if(start < info->start)
+    info->start = start; 
+  if(info->end < end )
+    info->end = end; 
 
 #ifdef DEBUG_BACKTRACE
   cout << (NOT wasInit ? " INIT: " : "") << " entering " << node << "\t" << *info << endl; 
