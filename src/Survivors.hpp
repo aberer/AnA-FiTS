@@ -16,18 +16,18 @@ public:
   ~Survivors();
 
   void prepareNextGenBackwards(); 
-  nat* getFirstSurvivorBackwards(nat fromLastGeneration) const ; 
-  nat* getFirstSurvivorForward(nat genNum) const ;  
-  void setFirstSuvivorRelativeToNow(nat fromLastGeneration, nat *firstSurvivor) ; 
-  void addSurvivor(nat idx); 
-  nat* getLastSurvivor() const;
+  int* getFirstSurvivorBackwards(nat fromLastGeneration) const ; 
+  int* getFirstSurvivorForward(nat genNum) const ;  
+  // void setFirstSuvivorRelativeToNow(nat fromLastGeneration, nat *firstSurvivor) ; 
+  void addSurvivor(int idx); 
+  int* getLastSurvivor() const;
   void printGen(nat gen) const; 
   void reserve(nat num);
 
 private:
-  nat *survivors; 
+  int *survivors; 
   nat capacity;
-  nat *nextSurvivor;  		// points to the next free position in nextSurvivor  
+  int *nextSurvivor;  		// points to the next free position in nextSurvivor  
   nat *survivorAccCountByGen; 
   BitSet<uint32_t> setMaker;  
   nat highestIndex; 
@@ -47,11 +47,11 @@ inline ostream&  operator<<(ostream &stream, const Survivors &rhs)
 {
   for(nat i = 0; i < rhs.highestIndex+1; ++i)
     {
-      nat *start = rhs.survivors + rhs.survivorAccCountByGen[i]; 
-      nat *end = rhs.survivors + rhs.survivorAccCountByGen[i+1]; 
+      int *start = rhs.survivors + rhs.survivorAccCountByGen[i]; 
+      int *end = rhs.survivors + rhs.survivorAccCountByGen[i+1]; 
       
       stream << "gen " << rhs.highestIndex-i << ": "; 
-      for(nat *iter = start; iter < end; ++iter )
+      for(int *iter = start; iter < end; ++iter )
 	cout << *iter << ","; 
       cout << endl;
     }
@@ -61,34 +61,34 @@ inline ostream&  operator<<(ostream &stream, const Survivors &rhs)
 
 inline void Survivors::printGen(nat gen) const
 {
-  nat *start = survivors + survivorAccCountByGen[gen]; 
-  nat *end = survivors + survivorAccCountByGen[gen+1]; 
+  int *start = survivors + survivorAccCountByGen[gen]; 
+  int *end = survivors + survivorAccCountByGen[gen+1]; 
 
   cout << "gen " << gen ; 
-  for(nat *iter = start ; iter < end ; ++iter)
+  for(int *iter = start ; iter < end ; ++iter)
     cout << *iter << "," ; 
   cout << endl; 
 }
 
 
 // :TRICKY: no correction necessary? 
-inline nat* Survivors::getFirstSurvivorBackwards(nat fromLastGeneration) const
+inline int* Survivors::getFirstSurvivorBackwards(nat fromLastGeneration) const
 {    
   return  survivors + survivorAccCountByGen[fromLastGeneration] ;
 }  // different: gen 0 is present gen   
 
 
 
-inline nat* Survivors::getFirstSurvivorForward(nat genNum) const
+inline int* Survivors::getFirstSurvivorForward(nat genNum) const
 { 
   return survivors + survivorAccCountByGen[highestIndex-this->getGenIdx(genNum)] ;
 }    // usual numbering gen 0 was first gen in past  
 
 
-inline void Survivors::setFirstSuvivorRelativeToNow(nat fromLastGeneration, nat *firstSurvivor) 
-{   
-  survivorAccCountByGen[fromLastGeneration] = firstSurvivor - survivors;
-}
+// inline void Survivors::setFirstSuvivorRelativeToNow(nat fromLastGeneration, nat *firstSurvivor) 
+// {   
+//   survivorAccCountByGen[fromLastGeneration] = firstSurvivor - survivors;
+// }
 
 
 inline void Survivors::prepareNextGenBackwards()
@@ -99,9 +99,9 @@ inline void Survivors::prepareNextGenBackwards()
   setMaker.reset();
 }
 
-inline nat* Survivors::getLastSurvivor() const {return nextSurvivor ; } 
+inline int* Survivors::getLastSurvivor() const {return nextSurvivor ; } 
 
-inline void Survivors::addSurvivor(nat idx)
+inline void Survivors::addSurvivor(int idx)
 { 
   if(NOT setMaker.test(idx))
     {

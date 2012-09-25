@@ -113,8 +113,8 @@ void Ancestry::fillWithRandomIndividuals(ThreadPool &tp)
 void Ancestry::insertNeutralMutations(ThreadPool& tp,  Graph &graph, const Survivors &survivors, const PopulationManager &popMan, Chromosome &chrom , const RegionManager &regMan, const nat genNum ) 
 {
   Randomness &rng = tp[0].getRNG(); 
-  nat *start = survivors.getFirstSurvivorForward(genNum); 
-  nat *end = survivors.getFirstSurvivorForward(genNum-1);
+  int *start = survivors.getFirstSurvivorForward(genNum); 
+  int *end = survivors.getFirstSurvivorForward(genNum-1);
   
   nat seqLen = chrom.getSeqLen();
   nat numSurvivors = end - start; 
@@ -126,7 +126,9 @@ void Ancestry::insertNeutralMutations(ThreadPool& tp,  Graph &graph, const Survi
   nat numMut = rng.samplePoisson(lambdaSmall);
 
 #ifdef DEBUG_UPDATE_GRAPH
-  cout << "numMut(neutral)="  << numMut << " lambda=" << lambda << "\tlambdaSmall="<<  lambdaSmall << "\tpopSize=" << popMan[0].getPopSizeByGeneration(genNum) << "\tgenNum=" << genNum << endl; 
+  cout << "numMut(neutral)="  << numMut << " lambda=" << lambda << "\tlambdaSmall=" 
+       << lambdaSmall << "\tpopSize=" << popMan[0].getPopSizeByGeneration(genNum) 
+       << "\tgenNum=" << genNum << endl; 
 #endif
 
   static int total = 0; 
@@ -136,8 +138,12 @@ void Ancestry::insertNeutralMutations(ThreadPool& tp,  Graph &graph, const Survi
   for(nat i = 0 ; i < numMut; ++i)
     {
       seqLen_t pos = rng.Integer<nat>(seqLen);
-      nat indiNr = rng.Integer<nat>(numSurvivors);
+      int indiNr = rng.Integer<nat>(numSurvivors);
       indiNr = *(start + indiNr); 
+      
+      if(IS_INVERTED(indiNr))
+	indiNr = REVERT_INT(indiNr); 
+      assert(NOT IS_INVERTED(indiNr)); 
 
       if( regMan.locusSurvivesInPresent(indiNr, pos) && chrom.locusIsNeutral(pos) )
       	{
@@ -198,8 +204,8 @@ void Ancestry::updateGraph_inner(ThreadPool &tp, Survivors &survivors, Chromosom
 	}
       
       // iterate through previous survivors
-      nat *end = survivors.getFirstSurvivorForward(curGenIdx-1); 
-      for(nat *prevSurvivors = survivors.getFirstSurvivorForward(curGenIdx); 
+      int *end = survivors.getFirstSurvivorForward(curGenIdx-1); 
+      for(int *prevSurvivors = survivors.getFirstSurvivorForward(curGenIdx); 
 	  prevSurvivors != end; 
 	  ++prevSurvivors)
 	{
@@ -217,6 +223,9 @@ void Ancestry::updateGraph_inner(ThreadPool &tp, Survivors &survivors, Chromosom
 	  nat origAncst = ancstIdx ; 
 	  if(events[nowIdx])
 	    {
+	      bool recNodeWasCreated = false;
+	      bool otherAncstContributes = false;
+
 	      assert(nowIdx == events[nowIdx]->haploIndiNr); 
 	      nat otherAncst = GET_OTHER_ANCESTOR(ancstIdx); 
 
@@ -239,12 +248,16 @@ void Ancestry::updateGraph_inner(ThreadPool &tp, Survivors &survivors, Chromosom
 		      if(stopSeg < survivedRegEnd)	// recombination divides ancestral region 
 			{
 			  graph.touchNode(stopSeg+1, nowIdx, curGenIdx, RECOMBINATION, origAncst != ancstIdx );
+			  recNodeWasCreated = true; 
 #ifdef DEBUG_UPDATE_GRAPH
 			  cout  << "\tADDING node for rec " << stopSeg+1 << ( origAncst != ancstIdx ?  " INVERTED" : " NORMAL") << endl; 
 #endif
 			}
 
 		      survivors.addSurvivor(ancstIdx);
+
+		      if(ancstIdx != origAncst)
+			otherAncstContributes = true; 
 #ifdef DEBUG_UPDATE_GRAPH
 		      cout << "\tmarking region of survivor " << ancstIdx << " with " << max(survivedRegStart, startSeg) << "-"<< min(stopSeg, survivedRegEnd) << endl; 
 #endif
@@ -263,12 +276,28 @@ void Ancestry::updateGraph_inner(ThreadPool &tp, Survivors &survivors, Chromosom
 	      if(survivedRegStart < stopSeg && startSeg < survivedRegEnd) 
 		{
 		  survivors.addSurvivor(ancstIdx);
+		  
+		  if(ancstIdx != origAncst)
+		    otherAncstContributes = true; 
 #ifdef DEBUG_UPDATE_GRAPH
 		  cout << "\tlast part: marking region of survivor "<< ancstIdx << " with " << max(survivedRegStart, startSeg) << "/" << min(stopSeg, survivedRegEnd) << endl; 
 #endif
 		  regMan.extendPrevRegion(ancstIdx, 
 					  max(survivedRegStart, startSeg), 
 					  min(survivedRegEnd, stopSeg)); // was ancstlow		  
+		}
+
+	      if(NOT recNodeWasCreated && otherAncstContributes)
+		{
+#ifdef DEBUG_UPDATE_GRAPH
+		  cout  << "\tATTENTION: in " << GET_OTHER_ANCESTOR(origAncst) << " only other parent transmits genetic material" << endl; 
+		  /* 
+		     :TRICKY: when propagating the nodes, we'd do a
+		     mistake here and therefore have to explicitely
+		     recall to take the other ancestrial node  
+		  */ 
+#endif
+		  *prevSurvivors = INVERT_INT(*prevSurvivors); 
 		}
 	    }
 	  else

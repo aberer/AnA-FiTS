@@ -117,3 +117,9 @@ FILE* openFile(string name, string mode);
 
 #define NUMBER_PARENTS 2
 #define VERSION 0.9
+
+
+// this is a bad hack 
+#define INVERT_INT(x) (x + std::numeric_limits<int>::min())
+#define REVERT_INT(x) (x - std::numeric_limits<int>::min())
+#define IS_INVERTED(x) (x < 0)

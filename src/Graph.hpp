@@ -3,7 +3,6 @@
 #include "common.hpp"
 #include "NodeManager.hpp"
 #include "AddrArray.hpp"
-#include "InvertedRelationship.hpp"
 #include "Node.hpp"
 #include "SequenceArray.hpp"
 
@@ -45,7 +44,6 @@ private:
   vector<Node*> previousState; 
   NodeManager nodMan; 
   DynArraySequential<Node*> buffer; 
-  DynArraySequential<>
 
 #ifndef NDEBUG
   bool survivorsContainStartingNode; 

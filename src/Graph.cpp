@@ -63,7 +63,7 @@ void Graph::propagateSurvivorNodes(nat genC, nat chromId, Node **nowBuffer, Node
 				   const Ancestry &ancestry, const Survivors &survivors)
 {
   // iterate through survivors from generation, starting with past 
-  nat *end = survivors.getFirstSurvivorForward(genC-1); 
+  int *end = survivors.getFirstSurvivorForward(genC-1); 
 
   assert(survivors.getFirstSurvivorForward(genC) < end); 
   
@@ -75,19 +75,34 @@ void Graph::propagateSurvivorNodes(nat genC, nat chromId, Node **nowBuffer, Node
 
   nat i = 0; 
   for(auto iter = survivors.getFirstSurvivorForward(genC) ; iter != end ; ++iter)
-    {
-      nat ancest = ancestry.getAddrOfParent(genC, chromId, *iter);
-      nowBuffer[*iter] = prevBuffer[ancest];      
-      assert(NOT nowBuffer[*iter]
-	     || nodMan.getNode(GET_ID_IF(nowBuffer[*iter]))->originGen <= genC); 
+    { 
+      nat ancest; 
+      int iterValue; 
+      
+      if(IS_INVERTED(*iter)) 
+	{
+	  iterValue = REVERT_INT(*iter);
+	  ancest = ancestry.getAddrOfParent(genC, chromId, iterValue); 	  
+	  ancest = GET_OTHER_ANCESTOR(ancest); 
+	}
+      else 
+	{
+	  iterValue = *iter; 
+	  ancest = ancestry.getAddrOfParent(genC, chromId, iterValue); 
+	}
+
+      assert(iterValue >= 0); 
+      nowBuffer[iterValue] = prevBuffer[ancest];
+      assert(NOT nowBuffer[iterValue]
+	     || nodMan.getNode(GET_ID_IF(nowBuffer[iterValue]))->originGen <= genC); 
 
 #ifndef NDEBUG
-      startingNodePresent |= (nowBuffer[*iter] == nullptr ); 
+      startingNodePresent |= (nowBuffer[iterValue] == nullptr ); 
 #endif
       
 #ifdef DEBUG_HOOKUP
-      cout << i++ << " PROPAGATE: " << *iter << " survives [anc=" << ancest << "]; preNode= "
-	   << GET_ID_IF(nowBuffer[*iter])
+      cout << i++ << " PROPAGATE: " << iterValue << " survives [anc=" << ancest << "]; preNode= "
+	   << GET_ID_IF(nowBuffer[iterValue])
 	   << endl;
 #endif
     }
@@ -102,9 +117,8 @@ void Graph::propagateSurvivorNodes(nat genC, nat chromId, Node **nowBuffer, Node
 
 
 
-#define  NEW 
-
-#ifdef NEW 
+// #define  NEW 
+// #ifdef NEW 
 Node* Graph::hookRecombinations(Node *anc1, Node *anc2)
 {
   Node *tmp = buffer.at(0); 
@@ -134,37 +148,37 @@ Node* Graph::hookRecombinations(Node *anc1, Node *anc2)
 
   return current;   
 }
-#else 
-// :BUG:
-Node* Graph::hookRecombinations(Node *anc1, Node *anc2)
-{
-  Node *lastNode  = buffer.at(buffer.getUsed() -1 ); 
-  NodeExtraInfo *infoTmp = nodMan.getInfo(lastNode->id);
-  Node *current = infoTmp->invertedOrientation ? anc1 : anc2; 
+// #else 
+// // :BUG:
+// Node* Graph::hookRecombinations(Node *anc1, Node *anc2)
+// {
+//   Node *lastNode  = buffer.at(buffer.getUsed() -1 ); 
+//   NodeExtraInfo *infoTmp = nodMan.getInfo(lastNode->id);
+//   Node *current = infoTmp->invertedOrientation ? anc1 : anc2; 
       
-  // :TRICKY: starting with LAST event
-  for(nat i = buffer.getUsed(); i > 0;  --i)
-    {
-      Node *tmp = buffer.at(i-1);
-      NodeExtraInfo *info = nodMan.getInfo(tmp->id);
+//   // :TRICKY: starting with LAST event
+//   for(nat i = buffer.getUsed(); i > 0;  --i)
+//     {
+//       Node *tmp = buffer.at(i-1);
+//       NodeExtraInfo *info = nodMan.getInfo(tmp->id);
       
-      tmp->ancId1 =  info->invertedOrientation ? GET_ID_IF(anc2) : GET_ID_IF(anc1); 
-      tmp->ancId2 = GET_ID_IF(current);
-      current = tmp; 
-      assert((tmp->ancId1 != tmp->ancId2));       // sameBefore
-    }
+//       tmp->ancId1 =  info->invertedOrientation ? GET_ID_IF(anc2) : GET_ID_IF(anc1); 
+//       tmp->ancId2 = GET_ID_IF(current);
+//       current = tmp; 
+//       assert((tmp->ancId1 != tmp->ancId2));       // sameBefore
+//     }
 
-#ifdef DEBUG_HOOKUP
-  Node *tmp1 = nodMan.getNode(current->ancId1);
-  Node *tmp2 = nodMan.getNode(current->ancId2);
+// #ifdef DEBUG_HOOKUP
+//   Node *tmp1 = nodMan.getNode(current->ancId1);
+//   Node *tmp2 = nodMan.getNode(current->ancId2);
   
-  cout << "REC:"  << *current
-       << " ===>" << (GET_ID_IF(tmp2))
-       << "\t===>" << (GET_ID_IF(tmp1)) << "\t" << endl; 
-#endif
-  return current;
-}
-#endif
+//   cout << "REC:"  << *current
+//        << " ===>" << (GET_ID_IF(tmp2))
+//        << "\t===>" << (GET_ID_IF(tmp1)) << "\t" << endl; 
+// #endif
+//   return current;
+// }
+// #endif
 
 
 void Graph::insertMutEvents(nat genC, AddrArrayBackwardIter<Node,true> &mutBackIter, Node** nodeBufferNowGen, Chromosome &chrom, Randomness &rng)

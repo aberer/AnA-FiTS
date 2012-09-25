@@ -8,7 +8,7 @@ Survivors::Survivors(nat lastPopsize, nat maxPopSize, nat _startGen, nat _endGen
   , highestIndex(this->getEndGen() - this->getStartGen() -1)
   , currentGenerationBackwards(0) 
 {
-  survivors = (nat*)calloc(capacity, sizeof(nat));
+  survivors = (int*)calloc(capacity, sizeof(int));
   nextSurvivor = &(this->survivors[0]);
 
   survivorAccCountByGen = (nat*)malloc( sizeof(nat) * (this->getEndGen() - this->getStartGen() +2)); 
@@ -30,7 +30,7 @@ void Survivors::resize()
   nat offset = nextSurvivor - survivors; 
 
   capacity = MULT_2(capacity);
-  survivors = (nat*)myRealloc(survivors, capacity * sizeof(nat));
+  survivors = (int*)myRealloc(survivors, capacity * sizeof(int));
 
   nextSurvivor = survivors + offset;   
 }
