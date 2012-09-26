@@ -18,7 +18,6 @@ public:
   ResizMemArena<SelectedMutation>& getMutationMemory() {return mutationMemory; }
   void join(){thread_ptr->join();}
 
-
 private:
   nat tid; 
   Randomness rng; 

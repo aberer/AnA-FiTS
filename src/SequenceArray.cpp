@@ -114,5 +114,6 @@ void NeutralArray::conditionallyJoinOtherSeq(const NeutralArray &rhs, seqLen_t s
 
   numElem = indexNew; 
   memcpy(array, tmpArray, indexNew * sizeof(NeutralMutation*));
-
 }
+
+

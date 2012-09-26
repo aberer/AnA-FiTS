@@ -342,10 +342,11 @@ void SequenceArray<MUTATION>::copyRegion(const SequenceArray *donor, nat start, 
 }
 
 
-
 template<class MUTATION>
 void SequenceArray<MUTATION>::claimMutations()
 {
   for(nat i = 0; i < numElem; ++i)
     array[i]->claim();
 }
+
+

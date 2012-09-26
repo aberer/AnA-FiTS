@@ -28,19 +28,36 @@ private:
 ////////////////////
 // IMPLEMENTATION //
 ////////////////////
+
+/* 
+   get a sorted array of all mutations for conversion of sequences into bitvectors. 
+   :TRICKY: this depends on all mutations being unclaimed first
+ */ 
 template<class TYPE> void BinaryWriter::getSortedMutations(vector<TYPE*> &result, const vector<SequenceArray<TYPE>*> &arrays)
-{
-  set<TYPE*> mutationMap;
-
+{  
   for(auto array : arrays)
-    if(array)
-      for(TYPE **mutIter = array->begin(); mutIter != array->end(); ++mutIter)
-	mutationMap.insert(*mutIter); 
-  
-  for(auto iter = mutationMap.begin(); iter != mutationMap.end(); ++iter)
-    result.push_back(*iter);   
-  sort(result.begin(), result.end(), [](TYPE *a, TYPE *b){return a->absPos < b->absPos ; }); 
+    {
+      TYPE **mutPtrEnd = array->end(); 
+      for(TYPE **mutPtr = array->begin(); mutPtr < mutPtrEnd; ++mutPtr)	
+	(*mutPtr)->unclaim();
+    }
+
+  SequenceArray<TYPE> tmpSeq(1000); 
+
+  for(auto array : arrays )
+    {
+      TYPE **mutPtrEnd = array->end(); 
+      for(TYPE **mutPtr =  array->begin(); mutPtr < mutPtrEnd; ++mutPtr)
+	{
+	  if(NOT (*mutPtr)->isClaimed())
+	    {
+	      (*mutPtr)->claim();
+	      tmpSeq.mutate(**mutPtr, false);
+	    }
+	}
+    }
+
+  TYPE** mutPtrEnd = tmpSeq.end();
+  for(TYPE** mutPtr = tmpSeq.begin(); mutPtr < mutPtrEnd; ++mutPtr)
+    result.push_back(*mutPtr);   
 }
-
-
-

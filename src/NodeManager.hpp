@@ -46,3 +46,4 @@ private:
   void gatherMutations(Node *node, NeutralArray* seq, seqLen_t start, seqLen_t end);
   NeutralMutation* createNeutralMutation(Node *node);
 };
+

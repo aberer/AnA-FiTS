@@ -145,8 +145,7 @@ void Chromosome::cleanFixedMutations(SelectedArray** seqBegin,SelectedArray** se
     {
       seqI->computeFitness(); 
       seqI->resetVisited();
-    }
-  
+    }  
 
   // unclaim mutations
   for(nat i = 0; i < tp.getNumberOfThreads() ;++i)

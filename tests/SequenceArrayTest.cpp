@@ -307,11 +307,11 @@ TEST(SequenceArrayTest, testJoin)
     seqB(10); 
 
   NeutralMutation
-    mut1({1,1000, Base::A}),
-    mut123 ({123,1000, Base::A}),
-    mut245({245, 1000, Base::T}), 
-    mut150({150, 1000, Base::T}), 
-    mut76({76, 10000, Base::T}); 
+    mut1({1,1000, Base::A, false}),
+    mut123 ({123,1000, Base::A, false}),
+    mut245({245, 1000, Base::T, false}), 
+    mut150({150, 1000, Base::T, false}), 
+    mut76({76, 10000, Base::T, false}); 
   
   seqA.mutate(mut123, true ); 
   seqA.mutate(mut150, true);   

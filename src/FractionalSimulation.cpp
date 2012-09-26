@@ -152,6 +152,9 @@ void FractionalSimulation::createRecombinants(ThreadPool &tp)
 
 void FractionalSimulation::updateFitness()
 {      
+  if(isNeutral)
+    return; 
+    
   nat numChrom = chromosomes.size(); 
   nat currentGen = genCnt.getCurrentGeneration();
 
@@ -312,6 +315,10 @@ void FractionalSimulation::printSequencesRaw(string id)
 {
   nat numHaplo = popMan->getTotalNumHaploByGen(genCnt.getCurrentGeneration() - 1); 
   BinaryWriter writer(id, numHaplo);
+
+  // first unclaim everything all selected mutations, neutral mutations never have been claimed before 
+  for(nat i = 0; i < tp.getNumberOfThreads() ; ++i)    
+    tp[i].getMutationMemory().unclaimAll();
 
   nat numChrom = chromosomes.size();  
   writer.writeInt(numChrom); 

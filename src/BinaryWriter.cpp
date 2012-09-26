@@ -17,6 +17,10 @@ BinaryWriter::~BinaryWriter()
 }
 
 
+
+/* 
+   :TRICKY: requires mutations to be unclaimed
+ */ 
 void BinaryWriter::write(Graph &graph, HaploTimeWindow &w, Chromosome &chrom)
 { 
   NeutralArray dummy(10); 
@@ -65,6 +69,7 @@ void BinaryWriter::write(Graph &graph, HaploTimeWindow &w, Chromosome &chrom)
       else 
 	arrays.push_back(&dummy); 
     }
+
   vector<NeutralMutation*> nMuts; 
   getSortedMutations<NeutralMutation>(nMuts, arrays); 
 
@@ -97,7 +102,7 @@ void BinaryWriter::write(Graph &graph, HaploTimeWindow &w, Chromosome &chrom)
     noWhere.orify(*(allBS[i])); 
   if(noWhere.count() != nMuts.size() + sMuts.size())
     {
-      cout << noWhere.count() << "\t"  << nMuts.size()  << "\t" << sMuts.size() << endl; 
+      cout << "#mut anywhere=" << noWhere.count() << "\ttotal nMuts="  << nMuts.size()  << "\ttotalsMuts=" << sMuts.size() << endl; 
       assert(0); 
     }
 #endif
@@ -168,7 +173,7 @@ ostream& BinaryWriter::printMutations(ostream &rhs , FILE *fh, vector<NeutralMut
 }
 
 void BinaryWriter::convertToBitSet(BitSet<uint32_t> &bs, NeutralArray *nSeq, SelectedArray *sSeq,  const vector<NeutralMutation*> &neutralMutations, const vector<SelectedMutation*> &selMutations) 
-{ 
+{   
   auto sIter = sSeq->begin(),
     sEnd = sSeq->end();
 
@@ -180,7 +185,7 @@ void BinaryWriter::convertToBitSet(BitSet<uint32_t> &bs, NeutralArray *nSeq, Sel
   auto allNIter = neutralMutations.begin(), 
     allNEnd = neutralMutations.end();
   
-  nat bsIndex = 0; 
+  nat bsIndex = 0;
   while(allNIter != allNEnd && allSIter != allSEnd)
     {
       if((*allSIter)->absPos < (*allNIter)->absPos)
@@ -204,16 +209,23 @@ void BinaryWriter::convertToBitSet(BitSet<uint32_t> &bs, NeutralArray *nSeq, Sel
 	  ++allNIter;
 	}
       ++bsIndex; 
+
+      
+      cout << (*allNIter)->absPos  << "/" << (*nIter)->absPos << "\t" <<  (*allSIter)->absPos << "/"  << (*sIter)->absPos << endl;  ;
+      assert((*allNIter)->absPos <= (*nIter)->absPos && (*allSIter)->absPos <= (*sIter)->absPos) ;
     }
 
   while(allNIter != allNEnd)
-    {
+    {      
       if(*nIter == *allNIter)
 	{
 	  assert(NOT bs.test(bsIndex)); 
 	  bs.set(bsIndex); 
 	  ++nIter;
 	}
+
+      cout << (*allNIter)->absPos << "/" << (*nIter)->absPos << endl;
+      assert((*allNIter)->absPos <= (*nIter)->absPos); 	
       ++allNIter;
       ++bsIndex; 
     }
@@ -226,6 +238,8 @@ void BinaryWriter::convertToBitSet(BitSet<uint32_t> &bs, NeutralArray *nSeq, Sel
 	  bs.set(bsIndex); 
 	  ++sIter;
 	}
+      cout << (*allSIter)->absPos << "/"  << (*sIter)->absPos << endl ;
+      assert((*allSIter)->absPos <= (*sIter)->absPos); 	
       ++allSIter; 
       ++bsIndex; 
     }

@@ -29,8 +29,13 @@ struct NeutralMutation
   seqLen_t absPos;
   nat generation;
   Base base;  
-  void printRaw(FILE *fh); 
-};  
+  
+  bool inUse; 
+  bool isClaimed() {return inUse; }
+  void claim() {inUse = true; }
+  void unclaim() {inUse = false; }
+  void printRaw(FILE *fh);
+ };
 
 
 ostream& operator<<(ostream &stream, const Base base); 

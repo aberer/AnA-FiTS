@@ -63,3 +63,5 @@ inline bool MutationManager::locusIsNeutral(seqLen_t locus)
   else 
     return false;   
 }
+
+

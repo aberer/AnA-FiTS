@@ -253,6 +253,29 @@ NeutralMutation* NodeManager::createNeutralMutation(Node *node)
 }
 
 
+
+
+
+
+
+void NodeManager::handleAncestor(NeutralArray *seq, Node *anc , seqLen_t start, seqLen_t end) 
+{
+  NodeExtraInfo *ancInfo = getInfo(anc->id); 
+
+  assert(ancInfo->referenced); 
+
+  // it is a coalescent node 
+  if(ancInfo->referenced > 1)
+    {
+      simulateNode(anc);
+      assert(start < end); 
+      seq->conditionallyJoinOtherSeq(*(ancInfo->sequence), start,end); 
+    }
+  else 
+    gatherMutations(anc, seq, start, end); 
+}
+
+
 void NodeManager::gatherMutations(Node *node, NeutralArray* seq,seqLen_t start, seqLen_t end)
 {
 #ifdef DEBUG_SEQUENCE_EXTRACTION
@@ -291,23 +314,6 @@ void NodeManager::gatherMutations(Node *node, NeutralArray* seq,seqLen_t start, 
 }
 
 
-void NodeManager::handleAncestor(NeutralArray *seq, Node *anc , seqLen_t start, seqLen_t end) 
-{
-  NodeExtraInfo *ancInfo = getInfo(anc->id); 
-
-  assert(ancInfo->referenced); 
-
-  // it is a coalescent node 
-  if(ancInfo->referenced > 1)
-    {
-      simulateNode(anc);
-      assert(start < end); 
-      seq->conditionallyJoinOtherSeq(*(ancInfo->sequence), start,end); 
-    }
-  else 
-    gatherMutations(anc, seq, start, end); 
-}
-
 
 void NodeManager::simulateNode(Node *node)
 {
@@ -330,7 +336,7 @@ void NodeManager::simulateNode(Node *node)
   auto info = getInfo(node->id); 
   if(NOT info->sequence)
     {
-      info->sequence = new NeutralArray(100); 
+      info->sequence = new NeutralArray(1000); 
       allocatedSeqs.setNext(info->sequence); 
     }
 
@@ -369,5 +375,3 @@ void NodeManager::simulateNode(Node *node)
   cout << "\t" << *(info->sequence) << endl;  
 #endif
 }
-
-
