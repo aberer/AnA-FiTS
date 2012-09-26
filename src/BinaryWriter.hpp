@@ -34,7 +34,7 @@ private:
    :TRICKY: this depends on all mutations being unclaimed first
  */ 
 template<class TYPE> void BinaryWriter::getSortedMutations(vector<TYPE*> &result, const vector<SequenceArray<TYPE>*> &arrays)
-{  
+{
   for(auto array : arrays)
     {
       TYPE **mutPtrEnd = array->end(); 
@@ -52,7 +52,7 @@ template<class TYPE> void BinaryWriter::getSortedMutations(vector<TYPE*> &result
 	  if(NOT (*mutPtr)->isClaimed())
 	    {
 	      (*mutPtr)->claim();
-	      tmpSeq.mutate(**mutPtr, false);
+	      tmpSeq.mutate(**mutPtr, false, true);
 	    }
 	}
     }

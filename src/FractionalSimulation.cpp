@@ -242,7 +242,7 @@ void FractionalSimulation::mutateSelectedSites(ThreadPool &tp)
 	  SelectedMutation &mut = chromosome.getSelectedMutation(mem, rng);
 	  mut.generation = currentGen; 
 	  mut.indiNr = mutNum; 
-	  tmp->mutate(mut, true);
+	  tmp->mutate(mut, true, false);
 
 	  haplos.setCurrentConfiguration(mutNum, tmp); 
 	}

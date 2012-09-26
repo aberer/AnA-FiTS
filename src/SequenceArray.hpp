@@ -19,7 +19,7 @@ public:
   SequenceArray& operator=(const SequenceArray& rhs); 
 
   // OPERATORS
-  void mutate(MUTATION &mut, bool replace);  
+  void mutate(MUTATION &mut, bool replace, bool insertAnyway);  
   void recombine(const SequenceArray &seqA, const SequenceArray &seqB, Recombination *start, nat length); 
   void remove(MUTATION *mut);
   void removeAt(nat index); 
@@ -64,7 +64,7 @@ private:
   SequenceArray(const SequenceArray &rhs); 
   void resize();
   void checkConsistency(); 
-  void mutate_helper(MUTATION &mut, bool replace); 
+  void mutate_helper(MUTATION &mut, bool replace, bool insertAnyway); 
   
   template<class MUT>
   friend ostream& operator<<(ostream &stream, const SequenceArray<MUT> &rhs);    
@@ -144,7 +144,7 @@ SequenceArray<MUTATION>::~SequenceArray()
 
 
 template<class MUTATION>
-void SequenceArray<MUTATION>::mutate_helper(MUTATION &mut, bool replace)
+void SequenceArray<MUTATION>::mutate_helper(MUTATION &mut, bool replace, bool insertAnyway)
 {
   if(capacity == numElem )
     resize();
@@ -159,7 +159,15 @@ void SequenceArray<MUTATION>::mutate_helper(MUTATION &mut, bool replace)
   else if( array[index]->absPos == mut.absPos )
     {
       if(replace)
-	array[index] = &mut; 	// replace current mutation    
+	array[index] = &mut; 	// replace current mutation 
+      else if(insertAnyway)
+	{
+	  nat length = numElem - index; 
+	  assert(length); 
+	  memmove(array + index + 1, array + index, length * sizeof(MUTATION*)); 
+	  array[index] = &mut; 
+	  ++numElem; 
+	}
     }
   else				
     {				// insert ; expensive memmove  
@@ -167,7 +175,7 @@ void SequenceArray<MUTATION>::mutate_helper(MUTATION &mut, bool replace)
       assert(length); 
       memmove(array + index + 1, array + index, length * sizeof(MUTATION*)); 
       array[index] = &mut; 
-      numElem++;
+      ++numElem;
     }
 
 #ifndef NDEBUG

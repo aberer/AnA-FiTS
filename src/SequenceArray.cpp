@@ -1,19 +1,21 @@
 #include "SequenceArray.hpp"
 
 
-template<> void SelectedArray::mutate(SelectedMutation &mut, bool replace) 
+template<> void SelectedArray::mutate(SelectedMutation &mut, bool replace, bool insertAnyway) 
 {
+  assert(NOT (insertAnyway && replace) ); 
   fitness *= mut.fitness;
   assert(fitness != 0); 
   assert(this) ; 
-  mutate_helper(mut, replace); 
+  mutate_helper(mut, replace, insertAnyway); 
   assert(fitness != 0); 
 }
 
 template<>		       
-void NeutralArray::mutate(NeutralMutation &mut, bool replace) 
+void NeutralArray::mutate(NeutralMutation &mut, bool replace, bool insertAnyway ) 
 {
-  mutate_helper(mut, replace); 
+  assert(NOT (insertAnyway && replace) ); 
+  mutate_helper(mut, replace, insertAnyway); 
 }
 
 
@@ -102,8 +104,15 @@ void NeutralArray::conditionallyJoinOtherSeq(const NeutralArray &rhs, seqLen_t s
 	tmpArray[indexNew++] = rhs.array[indexRhs++]; 
       else if(hereMut->absPos  < rhsMut->absPos)
 	tmpArray[indexNew++] = array[indexHere++]; 
-      else 	
-	tmpArray[indexNew++] = rhsMut->generation > hereMut->generation ? rhs.array[indexRhs++] : array[indexHere++]; 
+      else 
+	{
+	  tmpArray[indexNew++] = 
+	    rhsMut->generation > hereMut->generation 
+	    ? rhs.array[indexRhs] 
+	    : array[indexHere]; 
+	  ++indexHere; 
+	  ++indexRhs;
+	}
     }
 
   while(indexRhs < rhs.numElem && rhs.array[indexRhs]->absPos < end)
@@ -114,6 +123,11 @@ void NeutralArray::conditionallyJoinOtherSeq(const NeutralArray &rhs, seqLen_t s
 
   numElem = indexNew; 
   memcpy(array, tmpArray, indexNew * sizeof(NeutralMutation*));
+
+#ifndef NDEBUG
+  for (nat i = 1; i < numElem ; ++i )
+    assert(array[i-1]->absPos < array[i]->absPos);
+#endif
 }
 
 

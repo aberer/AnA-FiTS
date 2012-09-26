@@ -166,6 +166,7 @@ void Chromosome::insertFixedMutation(SelectedMutation *mut, nat popId)
     fixedMutations.push_back(new SelectedArray(100)); 
 
   SelectedArray *array = fixedMutations[popId];  
-  array->mutate(*mut, true);
+  array->mutate(*mut, false, true); //  :TODO: correct? was true,nothing before   
+
 }
 

@@ -17,10 +17,10 @@ TEST(SequenceArrayTest, mutate)
   mut4.fitness = 1.0; 
   
   SequenceArray<SelectedMutation> seq(1); 
-  seq.mutate(mut2, true); 
-  seq.mutate(mut, true ); 
-  seq.mutate(mut4, true ); 
-  seq.mutate(mut3, true ); 
+  seq.mutate(mut2, true, false); 
+  seq.mutate(mut, true, false ); 
+  seq.mutate(mut4, true, false ); 
+  seq.mutate(mut3, true, false ); 
   
   ASSERT_EQ(23U, seq[0]->absPos); 
   ASSERT_EQ(50U, seq[1]->absPos); 
@@ -61,10 +61,10 @@ TEST(SequenceArrayTest, testAssignment)
   mut4.fitness = 1.0; 
   
   SequenceArray<SelectedMutation> seq(1); 
-  seq.mutate(mut, true ); 
-  seq.mutate(mut2, true ); 
-  seq.mutate(mut3, true );   
-  seq.mutate(mut4, true ); 
+  seq.mutate(mut, true , false); 
+  seq.mutate(mut2, true, false ); 
+  seq.mutate(mut3, true, false );   
+  seq.mutate(mut4, true, false ); 
 
   SequenceArray<SelectedMutation> seq2(1); 
   seq2 = seq; 
@@ -93,10 +93,10 @@ TEST(SequenceArrayTest, getIfPresent)
   mut4.fitness = 1.0; 
   
   SequenceArray<SelectedMutation> seq(1); 
-  seq.mutate(mut, true ); 
-  seq.mutate(mut2, true); 
-  seq.mutate(mut3, true );   
-  seq.mutate(mut4, true); 
+  seq.mutate(mut, true, false ); 
+  seq.mutate(mut2, true, false); 
+  seq.mutate(mut3, true , false);   
+  seq.mutate(mut4, true, false); 
 
   ASSERT_TRUE(&mut2 == seq.getIfPresent(50)); 
   ASSERT_TRUE(&mut == seq.getIfPresent(123)); 
@@ -126,10 +126,10 @@ TEST(SequenceArrayTest, searchTest)
   mut4.fitness = 1.0; 
   
   SequenceArray<SelectedMutation> seq(1); 
-  seq.mutate(mut, true ); 
-  seq.mutate(mut2, true); 
-  seq.mutate(mut3, true );   
-  seq.mutate(mut4, true); 
+  seq.mutate(mut, true , false); 
+  seq.mutate(mut2, true, false); 
+  seq.mutate(mut3, true, false );   
+  seq.mutate(mut4, true, false); 
 
   ASSERT_EQ(0U,seq.searchIndexSmallerThan(0));
   ASSERT_EQ(0U,seq.searchIndexSmallerThan(22));
@@ -169,16 +169,16 @@ TEST(SequenceArrayTest,searchTestExtreme)
   m10.fitness = 10 ;
 
   SequenceArray<SelectedMutation> seqA(10);  
-  seqA.mutate(m1, true ) ; 
-  seqA.mutate(m2, true) ; 
-  seqA.mutate(m3, true ) ; 
-  seqA.mutate(m4, true) ; 
-  seqA.mutate(m5, true ) ; 
-  seqA.mutate(m6, true) ; 
-  seqA.mutate(m7, true ) ; 
-  seqA.mutate(m8, true) ; 
-  seqA.mutate(m9, true ) ; 
-  seqA.mutate(m10, true) ; 
+  seqA.mutate(m1, true, false ) ; 
+  seqA.mutate(m2, true, false) ; 
+  seqA.mutate(m3, true, false ) ; 
+  seqA.mutate(m4, true, false) ; 
+  seqA.mutate(m5, true, false ) ; 
+  seqA.mutate(m6, true, false) ; 
+  seqA.mutate(m7, true, false ) ; 
+  seqA.mutate(m8, true, false) ; 
+  seqA.mutate(m9, true, false ) ; 
+  seqA.mutate(m10, true, false) ; 
 
   ASSERT_EQ(0U, seqA.searchIndexSmallerThan(0));
   ASSERT_EQ(0U, seqA.searchIndexSmallerThan(1));
@@ -205,20 +205,20 @@ TEST(SequenceArrayTest, removeTest)
   SelectedMutation mut2; mut2.absPos = 2345; mut2.fitness = 2345; 
   SelectedMutation mut3; mut3.absPos = 1234; mut3.fitness = 1234; 
 
-  seq.mutate(mut, true );
+  seq.mutate(mut, true, false );
   seq.remove(&mut); 
   ASSERT_EQ(0U, seq.size()); 
 
 
-  seq.mutate(mut, true); 
-  seq.mutate(mut2, true ); 
-  seq.mutate(mut3, true); 
+  seq.mutate(mut, true, false); 
+  seq.mutate(mut2, true, false ); 
+  seq.mutate(mut3, true, false); 
   seq.remove(&mut); 
   ASSERT_EQ(2U, seq.size()); 
   ASSERT_EQ(1234U,seq.at(0)->absPos);
   ASSERT_EQ(2345U,seq.at(1)->absPos);
 
-  seq.mutate(mut, true ); 
+  seq.mutate(mut, true, false ); 
   seq.remove(&mut2); 
 
   ASSERT_EQ(2U, seq.size());   
@@ -226,7 +226,7 @@ TEST(SequenceArrayTest, removeTest)
   ASSERT_EQ(1234U,seq.at(1)->absPos);
 
 
-  seq.mutate(mut2, true); 
+  seq.mutate(mut2, true, false); 
   seq.remove(&mut3); 
 
   ASSERT_EQ(2U, seq.size());   
@@ -253,10 +253,10 @@ TEST(SequenceArrayTest, recombine)
   mut4.fitness = 1234; 
   
   SequenceArray<SelectedMutation> seq(1); 
-  seq.mutate(mut, true ); 
-  seq.mutate(mut2, true); 
-  seq.mutate(mut3, true ); 
-  seq.mutate(mut4, true); 
+  seq.mutate(mut, true, false ); 
+  seq.mutate(mut2, true, false); 
+  seq.mutate(mut3, true, false ); 
+  seq.mutate(mut4, true, false); 
 
   // sequence 2    1, 25, 80
   SequenceArray<SelectedMutation> seq2(1); 
@@ -270,9 +270,9 @@ TEST(SequenceArrayTest, recombine)
   mut7.absPos = 80; 
   mut7.fitness = 80; 
 
-  seq2.mutate(mut5, true ); 
-  seq2.mutate(mut6, true); 
-  seq2.mutate(mut7, true ); 
+  seq2.mutate(mut5, true, false ); 
+  seq2.mutate(mut6, true, false); 
+  seq2.mutate(mut7, true, false ); 
 
   ASSERT_EQ(1U, seq2[0]->absPos); 
   ASSERT_EQ(25U, seq2[1]->absPos); 
@@ -296,7 +296,7 @@ TEST(SequenceArrayTest, recombine)
   SelectedMutation mut123; 
   mut123.absPos = 13; 
   mut123.fitness = 13; 
-  recombinant.mutate(mut123, true);
+  recombinant.mutate(mut123, true, false);
   ASSERT_EQ(5U, recombinant.size());   
 }
 
@@ -313,11 +313,11 @@ TEST(SequenceArrayTest, testJoin)
     mut150({150, 1000, Base::T, false}), 
     mut76({76, 10000, Base::T, false}); 
   
-  seqA.mutate(mut123, true ); 
-  seqA.mutate(mut150, true);   
+  seqA.mutate(mut123, true, false ); 
+  seqA.mutate(mut150, true, false);   
 
-  seqB.mutate(mut76, true ); 
-  seqB.mutate(mut245, true); 
+  seqB.mutate(mut76, true, false ); 
+  seqB.mutate(mut245, true, false); 
 
   seqA.conditionallyJoinOtherSeq(seqB,0,-1); 
   NeutralMutation** array = seqA.begin();
@@ -327,7 +327,7 @@ TEST(SequenceArrayTest, testJoin)
   ASSERT_EQ(245U, array[3]->absPos); 
 
   NeutralArray seqC(10); 
-  seqC.mutate(mut1, true ); 
+  seqC.mutate(mut1, true, false ); 
   seqC.conditionallyJoinOtherSeq(seqA,130,250); 
   array = seqC.begin();
   ASSERT_EQ(1U, array[0]->absPos); 

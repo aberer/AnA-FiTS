@@ -289,7 +289,7 @@ void NodeManager::gatherMutations(Node *node, NeutralArray* seq,seqLen_t start, 
     case MUTATION: 
       {
 	NeutralMutation *mut =  (createNeutralMutation(node)); 
-	seq->mutate(*mut, false);
+	seq->mutate(*mut, false, false);
 	Node *anc = getNode(node->ancId1); 
 #ifdef DEBUG_SEQUENCE_EXTRACTION
 	cout << "\tVISIT: inserting mutation " << *mut << endl; 
@@ -351,7 +351,7 @@ void NodeManager::simulateNode(Node *node)
 #ifdef DEBUG_SEQUENCE_EXTRACTION
 	cout << "\tSIM: inserting mutation " << *mut << endl; 
 #endif
-	info->sequence->mutate(*mut, false);
+	info->sequence->mutate(*mut, false, false);
 	break;
       }
     case RECOMBINATION: 
