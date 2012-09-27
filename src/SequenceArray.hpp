@@ -31,6 +31,8 @@ public:
   void resetVisited(){ wasVisited_v = false; }
   void claimMutations();
   void conditionallyJoinOtherSeq(const SequenceArray &rhs, seqLen_t start, seqLen_t end); 
+  MUTATION** getStartByPos(seqLen_t start) const;
+  MUTATION** getEndByPos(seqLen_t end) const ;
 
   // OBSERVERS
   nat size() const {return numElem;} 
@@ -358,3 +360,26 @@ void SequenceArray<MUTATION>::claimMutations()
 }
 
 
+
+
+
+/** 
+    returns an iterator for the first mutation that is located at a start <= pos
+ */ 
+template<class TYPE> 
+TYPE** SequenceArray<TYPE>::getStartByPos(seqLen_t start) const
+{
+  nat index = searchIndexSmallerThan(start);
+  return array + index ; 
+}
+
+
+/** 
+    returns end of iterator for the last mutation that is located at a pos > end 
+ */ 
+template<class TYPE> 
+TYPE** SequenceArray<TYPE>::getEndByPos(seqLen_t end) const 
+{
+  nat index = searchIndexSmallerThan(end);   
+  return index == numElem ? array + index : array + index + 1; 
+}

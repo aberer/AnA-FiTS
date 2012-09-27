@@ -88,21 +88,11 @@ void BinaryWriter::write(Graph &graph, HaploTimeWindow &w, Chromosome &chrom)
   for(nat i = 0; i < numHaplo; ++i)
     allBS.push_back(new BitSet<uint32_t>(totalNum)); 
 
-
-  // // DEBUG 
-  // cout << "all " ; 
-  // for(auto mut : nMuts)
-  //   cout << *mut;
-  // cout << endl; 
-  // // END
-
-
   // print out every haplotype 
   for(nat i = 0; i < numHaplo; ++i)
     {
       auto nSeq = arrays[i]; 
       auto sSeq = arrays2[i];       
-      // cout << "local " <<  *nSeq << endl; 
       convertToBitSet(*(allBS[i]), nSeq, sSeq, nMuts, sMuts);
     }
 
