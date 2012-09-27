@@ -218,7 +218,14 @@ void FractionalSimulation::mutateSelectedSites(ThreadPool &tp)
   
       nat currentHaploNum = popMan->getTotalNumHaploByGen(currentGen); 
       
-      float lambda = PopulationManager::getLamdbaForParam((*popMan)[0].getMutationRate(currentGen), chromosome.getSeqLen(), *popMan, 0, currentGen) * chromosome.getSelectProb() ; 
+      float lambda = 
+	PopulationManager::getLamdbaForParam((*popMan)[0].getMutationRate(currentGen), 
+					     chromosome.getSeqLen(), 
+					     *popMan, 
+					     0, 
+					     currentGen)
+	* chromosome.getSelectProb() ; 
+
       nat numMut = rng.samplePoisson(lambda);       
 
       numSelMut += numMut;  
@@ -351,9 +358,16 @@ void FractionalSimulation::finalize()
     {
       Graph &graph = *(graphs[i]); 
       if( graph.getNumberOfMutations())
-	graph.createSequencesInGraph(*(chromosomes[i]));
+	{
+	  // cout << "NUM MUT: " << graph.getNumberOfMutations() << endl; 
+	  graph.createSequencesInGraph(*(chromosomes[i]));
+	}
       else 
-	cerr << "NOTICE: no neutral mutations can occur for this selection configuration, no graph produced." << endl; 
+	{	  
+	  cout << "NOTICE: no neutral mutations can occur for this selection configuration, no graph produced." << endl; 
+	}
+      
+
     }
 }
 

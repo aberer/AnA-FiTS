@@ -183,7 +183,8 @@ Node* Graph::hookRecombinations(Node *anc1, Node *anc2)
 
 void Graph::insertMutEvents(nat genC, AddrArrayBackwardIter<Node,true> &mutBackIter, Node** nodeBufferNowGen, Chromosome &chrom, Randomness &rng)
 {
-  bool canGoBack = true;
+  bool canGoBack = NOT mutBackIter.empty();
+
   nat chromId = chrom.getId();
   
   while(canGoBack && mutBackIter()->originGen == genC)

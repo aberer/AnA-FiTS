@@ -33,8 +33,8 @@ public:
   // ACCESSORS 
   seqLen_t getSeqLen() const { return seqLen; }
   const SeqRep& getSeqRep() const { return seqRep; }
-  float getSelectProb(){ assert(mutMan.getSelectProb() <= 1) ; return  isNeutral ? 0 : mutMan.getSelectProb(); } // 
-  float getNeutralProb(){ assert(mutMan.getSelectProb() <= 1) ;  return isNeutral ? 1 :  1 - mutMan.getSelectProb(); }
+  float getSelectProb(){ assert(mutMan.getSelectProb() <= 1) ; return  isNeutral  ? 0 : mutMan.getSelectProb(); } // 
+  float getNeutralProb(){ assert(mutMan.getSelectProb() <= 1) ;  return isNeutral  ? 1 :  1 - mutMan.getSelectProb(); }
   nat getId(){return id; }
 
   // not really needed by anybody

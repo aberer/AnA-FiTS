@@ -27,6 +27,7 @@ class AddrArrayBackwardIter
  public:
   bool back();
   VALUE* operator()() { return &(arrays[arrayNum-1][index]) ;}
+  bool empty(){return index == 0 && arrayNum == 1; }
   
  // private: 
   VALUE **arrays; 

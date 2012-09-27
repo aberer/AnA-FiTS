@@ -187,7 +187,16 @@ ostream& BinaryWriter::printMutations(ostream &rhs , FILE *fh, vector<NeutralMut
 
 
 
-#define DEBUG_BITVECTOR_CONVERSION 
+#define SET_IF_FOUND(subset, subEnd, allset, bv,bvIdx)	\
+  if( subset != subEnd && *subset == *allset  )		\
+    {							\
+      assert(NOT bv.test(bvIdx));			\
+      bv.set(bvIdx);					\
+      ++subset;						\
+    }							\
+  
+
+// #define DEBUG_BITVECTOR_CONVERSION 
 
 void BinaryWriter::convertToBitSet(BitSet<uint32_t> &bs, NeutralArray *nSeq, SelectedArray *sSeq,  const vector<NeutralMutation*> &neutralMutations, const vector<SelectedMutation*> &selMutations) 
 {  
@@ -196,136 +205,97 @@ void BinaryWriter::convertToBitSet(BitSet<uint32_t> &bs, NeutralArray *nSeq, Sel
 
   NeutralMutation **nIter = nSeq ? nSeq->begin() : nullptr,
     **nEnd = nSeq ? nSeq->end() : nullptr; 
-  
-  auto allSIter = selMutations.begin(), 
-    allSEnd = selMutations.end();
-  auto allNIter = neutralMutations.begin(), 
-    allNEnd = neutralMutations.end();
+
+  auto allSIter = selMutations.begin(); 
+  auto allSEnd = selMutations.end();
+  auto allNIter = neutralMutations.begin(); 
+  auto allNEnd = neutralMutations.end();
+
+
+#ifdef DEBUG_BITVECTOR_CONVERSION
+  cout << "\tstarting new conversion"   << endl;   
+#endif
   
   nat bsIndex = 0;
-  while(allNIter != allNEnd && allSIter != allSEnd)
-    {
-      bool equality = false; 
-      
-      if((*allSIter)->absPos < (*allNIter)->absPos)
-	{
-	  if( (equality = *sIter == *allSIter ) )
-	    {	      
-	      assert(NOT bs.test(bsIndex));
-	      bs.set(bsIndex); 	      
-	      ++sIter;
-	    } 
-	  // do {
-	      ++allSIter;
-	      ++bsIndex; 
-	    // } while(equality && allSIter != allSEnd && (*allSIter)->absPos == (*(sIter-1))->absPos) ;
-	}
-      else 
-	{
-	  if( (equality = (*nIter == *allNIter) ) )
-	    {
-	      assert(NOT bs.test(bsIndex)); 
-	      bs.set(bsIndex); 	      
-	      ++nIter; 
-	    }
-	  
-	  // do {
-	      ++allNIter;
-	      ++bsIndex; 
-	    // }while(allNIter != allNEnd && (*allNIter)->absPos == (*(nIter-1))->absPos); 
-	}
-
-
-      if(sIter != sEnd &&  nIter != nEnd)	
-	{
-#ifdef DEBUG_BITVECTOR_CONVERSION
-	  cout  << "BOTH " << (*allNIter)->absPos  << "/" << (*nIter)->absPos << "\t" <<  (*allSIter)->absPos << "/"  << (*sIter)->absPos << endl;  ;
-#endif
-	  assert((*allNIter)->absPos <= (*nIter)->absPos && (*allSIter)->absPos <= (*sIter)->absPos) ;
-	}
-    }
-
-  // cout << "reached 1/3"  << endl; 
-
-  while(allNIter != allNEnd)
-    {
-      bool equality = false; ; 
-
-      if( ( equality = (*nIter == *allNIter) ) )
-	{
-	  assert(NOT bs.test(bsIndex)); 
-	  bs.set(bsIndex); 	  	
-	  ++nIter;
-	}
-
-      // bool firstTime = true; 
-      // do 
-      // 	{ 
-	  // if(firstTime)
-	  //   firstTime = false; 
-	  // else 
-	  //   cout << "proceeding" << endl; 
-
-	  // if(equality)
-	  //   cout << "\t" << (*allNIter)->absPos << "/" <<  (*(nIter-1))->absPos << endl; 
-
-	  ++allNIter;
-	  ++bsIndex; 
-	// } while(equality && allNIter != allNEnd && (*allNIter)->absPos == (*(nIter-1))->absPos); 
-
-
-	  if(nIter != nEnd)
-	    {
-#ifdef DEBUG_BITVECTOR_CONVERSION
-	      cout << "NEUT " << (*nIter)->absPos << "\t" <<  (*allNIter)->absPos << endl;
-	      if((*allNIter)->absPos >  (*nIter)->absPos)
-		{
-		  cout << "local: " << *nSeq << endl; 
-		  cout << "gloal: "; 
-		  for(auto mut : neutralMutations )
-		    cout << *mut << "," ; 
-		  cout << endl; 
-
-		}      
-#endif
-	      assert((*allNIter)->absPos <= (*nIter)->absPos); 	
-	    }
-    }
-
-  // cout << "reached 2/3"  << endl; 
-
-  while(allSIter != allSEnd)
-    {
-      bool equality = false;
-
-      if(*sIter == *allSIter)
-	{
-	  equality = true; 
-	  assert(NOT bs.test(bsIndex)); 
-	  bs.set(bsIndex); 	  
-	  ++sIter;
-	}
-      
-      do 
-	{
-	  ++allSIter; 
-	  ++bsIndex; 
-	}while(equality && allSIter != allSEnd && (*allSIter)->absPos == (*(sIter-1))->absPos); 
-      
+  
+  for( ; allNIter != allNEnd && allSIter != allSEnd ; ++bsIndex) 
+    {      
       if(sIter != sEnd)
 	{
 #ifdef DEBUG_BITVECTOR_CONVERSION
-	  cout << "SELECT " << (*allSIter)->absPos << "/"  << (*sIter)->absPos << endl ;
+	  cout << "SELECT/ " << (*allSIter)->absPos << "/"  << (*sIter)->absPos << endl ;
 #endif
-	  assert((*allSIter)->absPos <= (*sIter)->absPos); 	
+	  if((*allSIter)->absPos >  (*sIter)->absPos)
+	    {
+	      cout << *sSeq << endl; 
+	      for(auto mut : selMutations)
+		cout << mut->absPos  << ","; 
+	      cout << endl; 
+	      cout << *nSeq << endl; 
+	      for(auto mut: neutralMutations)
+		cout << mut->absPos << ","; 
+	      cout << endl; 
+	      abort();
+	    }
+	}
+
+      if(nIter != nEnd)
+	{
+#ifdef DEBUG_BITVECTOR_CONVERSION
+	  cout << "NEUT/ " << (*allNIter)->absPos << "/" << (*nIter)->absPos << endl;      
+#endif
+	  if((*allNIter)->absPos >  (*nIter)->absPos)
+	    cout << *nSeq << endl; 
+	  assert((*allNIter)->absPos <= (*nIter)->absPos); 
+	}
+
+
+      if((*allSIter)->absPos < (*allNIter)->absPos)
+	{	  
+	  SET_IF_FOUND(sIter, sEnd, allSIter, bs, bsIndex); 
+	  ++allSIter;
+	}
+      else
+	{
+	  SET_IF_FOUND(nIter, nEnd, allNIter, bs, bsIndex); 
+	  ++allNIter;
 	}
     }
 
-  // cout << "reached 3/3"  << endl; 
+  for( ; allNIter != allNEnd ; ++bsIndex, ++allNIter) 
+    {
+      if(nIter != nEnd)
+	{
+#ifdef DEBUG_BITVECTOR_CONVERSION
+	  cout << "NEUT " << (*nIter)->absPos << "\t" <<  (*allNIter)->absPos << endl;      
+#endif
+	  assert((*allNIter)->absPos <= (*nIter)->absPos); 	
+	}
+
+      SET_IF_FOUND(nIter, nEnd, allNIter, bs, bsIndex); 
+    }
+
+  for( ; allSIter != allSEnd ; ++allSIter, ++bsIndex )
+    {
+
+      if(sIter != sEnd)
+	{
+#ifdef DEBUG_BITVECTOR_CONVERSION
+	  cout << "SELECT " << (*sIter)->absPos << "\t" <<  (*allSIter)->absPos << endl;      
+#endif
+	  assert((*allSIter)->absPos <= (*sIter)->absPos); 	
+	}
+
+      SET_IF_FOUND(sIter, sEnd, allSIter, bs, bsIndex); 
+    }
 
   assert(bsIndex == bs.size()); 
   assert(allNIter == allNEnd && allSIter == allSIter); 
 }
+
+
+
+
 
 
 void BinaryWriter::writeInt(nat theInt)

@@ -3,12 +3,13 @@
 #include <vector>
 
 
-Chromosome::Chromosome(seqLen_t seqLen, bool isNeutral, FitnessFunction fFun, nat _id)
+Chromosome::Chromosome(seqLen_t seqLen, bool _isNeutral, FitnessFunction fFun, nat _id)
   : seqLen(seqLen)
   , uniqueHaplotypes(1000) // :MAGIC:
   , seqRep(seqLen)
   , mutMan(seqLen,fFun)
   , id(_id)
+  , isNeutral(_isNeutral)
 {
   
 }
