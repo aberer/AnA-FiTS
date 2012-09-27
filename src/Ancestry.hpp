@@ -88,7 +88,7 @@ private:
 
 haploAddr inline Ancestry::getAddrOfParent(nat generation, nat chromId, haploAddr haploNr) const
 {
-  nat numInPrev = this->getGenIdx(generation) == 0 ? initNum : DIVIDE_2( length[this->getGenIdx(generation-1)]);
+  nat numInPrev = this->getGenIdx(generation) == 0 ? initNum / 2 : DIVIDE_2( length[this->getGenIdx(generation-1)]);
   // cout <<"numInPrev=" << numInPrev << endl; 
 
   if(numInPrev <= numeric_limits<uint8_t>::max())
@@ -146,7 +146,7 @@ template<typename TYPE, bool NEUTRAL> void Ancestry::resampleParentsByFitness(Th
       if(elem < numIndis
 	 && (NEUTRAL || rng.Prob<FITNESS_TYPE>(fVals[elem])))
 	++i; 
-      else 	  	  
+      else 	  	  	
 	elem = buffer[currentNum++];
     }
 }

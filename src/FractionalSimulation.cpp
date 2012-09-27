@@ -90,7 +90,11 @@ void FractionalSimulation::sampleParentsByFitness(ThreadPool &tp)
 void FractionalSimulation::createRecombinants(ThreadPool &tp)
 {
   nat currentGen = genCnt.getCurrentGeneration();
-  FreeRing &fr = tp[0].getFreeRing();
+  FreeRing &fr = tp[0].getFreeRing();  
+
+#ifndef NDEBUG
+  nat numHaploNow = popMan->getTotalNumHaploByGen(currentGen);
+#endif
 
   nat numChrom = chromosomes.size(); 
   for(nat chromId = 0; chromId < numChrom; ++chromId)
@@ -118,7 +122,6 @@ void FractionalSimulation::createRecombinants(ThreadPool &tp)
 	      break; 
 	    }
 
-	  
 	  // necessary, because obtainRecsForIndividual sorts the recombinations
 	  if(isNeutral)
 	    {
@@ -127,6 +130,7 @@ void FractionalSimulation::createRecombinants(ThreadPool &tp)
 	    }
 	  
 	  nat ancestorA = ancestry->getAddrOfParent(currentGen, chromId,start->haploIndiNr); 
+	  assert(ancestorA < numHaploNow); 
 	  SelectedArray *anc1 = haplos.getPreviousConfiguration(ancestorA),
 	    *anc2 = haplos.getPreviousConfiguration(GET_OTHER_ANCESTOR(ancestorA));	  
 

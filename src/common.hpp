@@ -68,11 +68,17 @@ string getBinary(int tmp, unsigned int numBits);
 
 #define CHOOSE_IMPLEMENTATION_BY_TYPE(type, function, ...)		\
   if(type <= std::numeric_limits<uint8_t>::max())			\
-    function<uint8_t>(__VA_ARGS__);					\
+    {									\
+      function<uint8_t>(__VA_ARGS__);					\
+    }									\
   else if(type <= std::numeric_limits<uint16_t>::max())			\
-    function<uint16_t>(__VA_ARGS__);					\
+    {									\
+      function<uint16_t>(__VA_ARGS__);					\
+    }									\
   else if(type <= std::numeric_limits<uint32_t>::max())			\
-    function<uint32_t>(__VA_ARGS__);					\
+    {									\
+      function<uint32_t>(__VA_ARGS__);					\
+    }									\
   else									\
     assert(0);								
 

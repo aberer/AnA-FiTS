@@ -19,7 +19,7 @@ ProgramOptions::ProgramOptions(int argc, char **argv)
   po::options_description tuning("Tuning parameters");
   tuning.add_options()
     ("cleanF,Z", po::value<nat>()->default_value(100), "check every <x> generations for fixed mutations.")
-    ("memory,M", po::value<string>(), "recommend  memory limit (e.g., specify 1G or 500M). Note: the same seed will not result in a reproducible run with varying values of -M. This is no guarantee to stay   ")
+    ("memory,M", po::value<string>(), "recommend  memory limit (e.g., specify 1G or 500M). Note: the same seed will not result in a reproducible run with varying values of -M. AnA-FiTS can not guarantee to stay below the limit.")
     ; 
   
   po::options_description prog("Program flags"); 
