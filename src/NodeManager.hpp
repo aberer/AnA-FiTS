@@ -24,6 +24,8 @@ public:
   
   // OPERATORS  
   void registerNextNode(Node &node); 
+  void getCoalStatistic(); 
+  
   void markAncestrialMaterial(Node &node, seqLen_t start, seqLen_t end);  
   Node* getNode(nat id){assert(id == 0 ||  relevantNodes[id]->id ==id) ; return  relevantNodes[id];} 
   NodeExtraInfo* getInfo(nat id) { return &(extraInfo[id]); }

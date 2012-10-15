@@ -324,7 +324,8 @@ void Graph::createSequencesInGraph(const Chromosome &chromo)
     if(node)
       nodMan.determineCoalescentNodes(node);
 
-
+  nodMan.getCoalStatistic();
+  
   for(Node *node : previousState)
     {
 #ifdef DEBUG_SEQUENCE_EXTRACTION

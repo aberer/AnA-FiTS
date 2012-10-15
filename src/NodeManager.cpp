@@ -70,6 +70,7 @@ void NodeManager::markAncestrialMaterial(Node &node, seqLen_t start, seqLen_t en
     {
       info->start = start; 
       info->wasInitialized = true; 
+      assert(info->referenced == 0); 
     }
   
   bool extendsStart = (NOT wasInit || start < info->start), 
@@ -182,13 +183,14 @@ void NodeManager::determineCoalescentNodes(Node *node)
 
   auto myInfo = getInfo(node->id);
 
+
   if(myInfo->referenced)  
     {
       ++myInfo->referenced; 
       return;
     }
   else 
-    ++myInfo->referenced;  
+    ++myInfo->referenced; 
 
   switch(node->type)
     {
@@ -252,9 +254,24 @@ NeutralMutation* NodeManager::createNeutralMutation(Node *node)
   return res; 
 }
 
+#define NUM_REF_FOR_SIM 1 
 
 
+void NodeManager::getCoalStatistic()
+{
+  nat notatAll = 0; 
+  nat coal = 0;   
+  for(nat i = 0; i < length ;++i) 
+    {
+      auto info = extraInfo[i]; 
+      if(info.referenced > NUM_REF_FOR_SIM)
+	coal++; 
+      if(info.referenced == 0)
+	notatAll++;
+    }
 
+  cout << "coalescent nodes: " << coal << "/" << length << "\t(" << notatAll << ")" << endl;
+}
 
 
 
@@ -265,7 +282,7 @@ void NodeManager::handleAncestor(NeutralArray *seq, Node *anc , seqLen_t start, 
   assert(ancInfo->referenced); 
 
   // it is a coalescent node 
-  if(ancInfo->referenced > 1)
+  if(ancInfo->referenced > NUM_REF_FOR_SIM)
     {
       simulateNode(anc);
       assert(start < end); 
@@ -282,7 +299,8 @@ void NodeManager::gatherMutations(Node *node, NeutralArray* seq,seqLen_t start, 
   cout << "VISITING " << *node << endl; 
 #endif
 
-  assert(getInfo(node->id)->referenced == 1  ); 
+  // TODO reassert again 
+  assert(getInfo(node->id)->referenced <= NUM_REF_FOR_SIM  ); 
 
   switch(node->type)
     {
@@ -375,3 +393,5 @@ void NodeManager::simulateNode(Node *node)
   cout << "\t" << *(info->sequence) << endl;  
 #endif
 }
+
+
