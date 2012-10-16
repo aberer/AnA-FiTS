@@ -43,7 +43,10 @@ ostream& operator<<(ostream &stream, const Node &rhs)
 
 ostream& operator<<(ostream &stream, const NodeExtraInfo &rhs)
 {
-  stream << "seq=" << rhs.sequence
+  stream
+#ifndef USE_BVBASED_EXTRACTION
+   << "seq=" << rhs.sequence
+#endif
 	 << ", start=" << rhs.start
 	 << ", end=" << rhs.end
 	 << ", refed=" << rhs.referenced

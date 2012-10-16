@@ -20,6 +20,7 @@ public:
 
   BitSet& operator=(const BitSet& rhs ); 
 
+  void flip();
   void flip(nat pos) ;  
   bool test(nat pos)  const ; 
 
@@ -27,7 +28,9 @@ public:
   void set(nat pos); 
 
   void andify(const BitSet &rhs); 
-  void orify(const BitSet &rhs); 
+  void orify( const BitSet &rhs); 
+
+  void orifyPart( const BitSet &rhs, nat startIdx, nat endIdx);
 
   void unset(nat pos) ; 
   void unset();
@@ -39,7 +42,7 @@ public:
 
   T getPart (nat num) const { return bv[num]; }
 
-  void copyRange( BitSet *donor, nat begin, nat end );
+  void copyRange( const BitSet &donor, nat begin, nat end );
 
   nat count() const;
   void resize(uint64_t size);
@@ -85,7 +88,7 @@ private:
 
 template<typename T> BitSet<T>::BitSet(nat _numElems)
   :  numElems(_numElems)
-{    
+{ 
   this->length =  convertToInternalSize(numElems); 
   bv = (T*) calloc(length, sizeof(T));
 }
@@ -105,7 +108,21 @@ template<typename T> uint64_t BitSet<T>::convertToInternalSize(uint64_t size)
 
 template<typename T> void BitSet<T>::set()
 {  
-  memset(bv, UCHAR_MAX, length * sizeof(T)); 
+  nat numFullInts = (convertToInternalSize(numElems) - 1 ); 
+  memset(bv, UCHAR_MAX, numFullInts  * sizeof(T));   
+  for(nat i = numFullInts * sizeof(T) * 8; i < numElems; ++i)
+    set(i); 
+}
+
+
+template<typename T> void BitSet<T>::flip()
+{
+  nat numFullInts = (convertToInternalSize(numElems) - 1 ); 
+  for(nat i = 0; i < numFullInts; ++i)
+    bv[i] = ~bv[i]; 
+
+  for(nat i = numFullInts * sizeof(T) * 8; i < numElems; ++i)
+    flip(i); 
 }
 
 
@@ -149,7 +166,7 @@ template<typename T> inline void BitSet<T>::copyToEnd(T *donor, T *result, nat s
 }
 
 // :TRICKY: assuming, that the bitstring is nulled  
-template<typename T> void BitSet<T>::copyRange( BitSet *donor, nat begin, nat end )  
+template<typename T> void BitSet<T>::copyRange( const BitSet &donor, nat begin, nat end )  
 {
   nat startInt = begin >> divOp ; 
   nat endInt = end >> divOp;
@@ -157,7 +174,7 @@ template<typename T> void BitSet<T>::copyRange( BitSet *donor, nat begin, nat en
   begin = begin & maxElem; 
   end = end & maxElem; 
   
-  T* donorBv = donor->bv + startInt; 
+  T* donorBv = donor.bv + startInt; 
   T* recBv = bv + startInt; 
   int bytesToCopy = endInt - startInt - 1 ; 
   
@@ -262,6 +279,32 @@ template<typename T > void BitSet<T>::andify(const BitSet &rhs)
   for(nat i = 0 ; i < length; ++i)
     this->bv[i] &= rhs.bv[i]; 
 }
+
+
+
+// TODO 
+
+/** 
+    orify sub-bitset including first and excluding last index 
+ */ 
+template<typename T> void BitSet<T>::orifyPart(const BitSet &rhs, nat startIdx, nat endIdx)
+{
+  // for(nat i = startIdx; i < endIdx; ++i)
+  //   {
+  //     // here we can assert, that this is never true 
+  //     if(rhs.test(i))
+  // 	{
+  // 	  // assert(NOT this->test(i)); 
+  // 	  this->set(i); 
+  // 	}
+  //   }
+  
+  BitSet<T> tmp(numElems);
+  tmp.copyRange(rhs, startIdx, endIdx);
+  this->orify(tmp);
+  // delete tmp; 
+}
+
  
 
 template<typename T> void BitSet<T>::orify(const BitSet &rhs)

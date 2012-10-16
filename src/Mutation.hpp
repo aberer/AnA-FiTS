@@ -3,9 +3,12 @@
 #include "types.hpp"
 #include "common.hpp"
 
+// #include "Node.hpp"
+#include "Base.hpp"
+
+
 #include <fstream>
 
-enum Base : uint8_t    { A = 0, C = 1 , G = 2 , T = 3 }; 
 
 // INSTANCES 
 struct SelectedMutation
@@ -21,8 +24,16 @@ struct SelectedMutation
   void claim() { inUse = true; }
   void unclaim() { inUse = false; }
   void printRaw(FILE *fh); 
-};
+  SelectedMutation(){};
+  SelectedMutation(const SelectedMutation &rhs)
+    : absPos(rhs.absPos)
+    , generation(rhs.generation)
+    , base(rhs.base)
+    , fitness(rhs.fitness)
+    , indiNr(rhs.indiNr) 
+  { }
 
+};
 
 struct NeutralMutation
 {

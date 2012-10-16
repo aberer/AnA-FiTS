@@ -16,10 +16,13 @@ Simulation::Simulation(InfoFile &info, ProgramOptions &theProgOpt)
   Randomness &rng = tp[0].getRNG();
   vector<seqLen_t> lengths = progOpt.get<vector<seqLen_t> >("length");  
   nat idC = 0; 
+
+  nat numPop = 1; 		// TODO pops 
+  
   for(auto& length : lengths)
     {
       FitnessFunction fFun(progOpt.get<vector<string>>("selCoef"));
-      Chromosome* chromo = new Chromosome(length, theProgOpt.hasOption("neutral"), fFun, idC++);
+      Chromosome* chromo = new Chromosome(length, theProgOpt.hasOption("neutral"), fFun, idC++, numPop);
       chromo->init(rng);
       chromosomes.push_back(chromo); 
     }
@@ -41,7 +44,7 @@ void Simulation::run()
 
   fractionalSimulation->simulate();
   fractionalSimulation->finalize();
-
+  
 #ifdef VERIFICATION
   vector<Graph*> graphs = fractionalSimulation->getGraphs();
   assert(graphs.size() == 1);

@@ -311,6 +311,31 @@ void Graph::printRaw(FILE *fh)
 }
 
 
+
+
+
+
+#ifdef USE_BVBASED_EXTRACTION
+void Graph::createSequencesInGraph(const Chromosome &chromo)
+{
+  seqLen_t start = 0; 
+  seqLen_t end = chromo.getSeqLen();
+
+  for(Node *node : previousState)    
+    if(node)
+      nodMan.markAncestrialMaterial(*node, start, end); 
+
+  for(Node *node : previousState)    
+    if(node)
+      nodMan.determineCoalescentNodes(node);
+
+  nodMan.initBvMeaning();
+
+  for(Node *node : previousState)
+    if(node)
+      nodMan.createSequenceForNode(node);  
+}
+#else 
 void Graph::createSequencesInGraph(const Chromosome &chromo)
 {
   seqLen_t start = 0; 
@@ -335,6 +360,7 @@ void Graph::createSequencesInGraph(const Chromosome &chromo)
 	nodMan.simulateNode(node);      
     }
 }
+#endif
 
 
 
@@ -367,3 +393,13 @@ void Graph::insertRecEvents(nat genC, nat chromId,  AddrArrayBackwardIter<Node,t
 	nodeBufferNowGen[indiNr] = hookRecombinations(ancNode1, ancNode2);
     }
 }
+
+
+void Graph::getRawSequences(vector<BitSet<uint64_t>*> &bvs)
+{
+  for(Node *node : previousState)
+    {      
+      auto info = nodMan.getInfo(node->id); 
+      bvs.push_back(info->bv); 
+    }
+} 

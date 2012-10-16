@@ -60,3 +60,5 @@ void NeutralMutation::printRaw(FILE *fh)
   uint8_t tmp = uint8_t(base );
   BIN_WRITE(tmp,fh);
 }
+
+

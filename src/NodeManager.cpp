@@ -1,11 +1,12 @@
 #include "NodeManager.hpp"
-
+#include <algorithm>
 
 NodeManager::NodeManager(nat initSize)
   : length(initSize)
   , highestId(1)          // 0 is the non-existing starting node
   , allocatedSeqs(100)
-  , allocatedMuts(100)
+  , allocatedMuts(100)    
+  , allocatedBvs(100)
 {
   relevantNodes = (Node**)calloc(length, sizeof(Node*)); 
   relevantNodes[0] = nullptr; 
@@ -22,6 +23,10 @@ NodeManager::~NodeManager()
   end = allocatedMuts.getUsed();
   for(nat i = 0; i < end; ++i)
     delete allocatedMuts.at(i); 
+
+  end = allocatedMuts.getUsed();
+  for(nat i = 0; i < end; ++i)
+    delete allocatedBvs.at(i); 
 
   free(relevantNodes); 
   free(extraInfo); 
@@ -256,12 +261,11 @@ NeutralMutation* NodeManager::createNeutralMutation(Node *node)
 
 #define NUM_REF_FOR_SIM 1 
 
-
 void NodeManager::getCoalStatistic()
 {
   nat notatAll = 0; 
   nat coal = 0;   
-  for(nat i = 0; i < length ;++i) 
+  for(nat i = 1; i < highestId ;++i) 
     {
       auto info = extraInfo[i]; 
       if(info.referenced > NUM_REF_FOR_SIM)
@@ -270,11 +274,15 @@ void NodeManager::getCoalStatistic()
 	notatAll++;
     }
 
-  cout << "coalescent nodes: " << coal << "/" << length << "\t(" << notatAll << ")" << endl;
+  cout << "coalescent nodes: " << coal << "/" << highestId << "\t(" << notatAll << ")" << endl;
 }
 
 
 
+
+#ifdef USE_BVBASED_EXTRACTION
+
+#else 
 void NodeManager::handleAncestor(NeutralArray *seq, Node *anc , seqLen_t start, seqLen_t end) 
 {
   NodeExtraInfo *ancInfo = getInfo(anc->id); 
@@ -393,5 +401,176 @@ void NodeManager::simulateNode(Node *node)
   cout << "\t" << *(info->sequence) << endl;  
 #endif
 }
+
+#endif
+
+
+
+#ifdef USE_BVBASED_EXTRACTION
+
+void NodeManager::initBvMeaning()
+{
+  nat bvLength = 0; 
+  for(nat i = 1; i < highestId; ++i) // :TRICKY: exclude node id 0
+    {
+      auto info = getInfo(i); 
+      if(relevantNodes[i]->type == NodeType::MUTATION && info->referenced > 0)
+	bvLength++;
+    }
+
+  bvMeaning = vector<Node*>(bvLength, nullptr); 
+  
+  nat ctr = 0; 
+  for(nat i = 1; i < highestId; ++i)
+    {
+      auto info = getInfo(i); 
+      if(relevantNodes[i]->type == NodeType::MUTATION && info->referenced > 0)
+	bvMeaning[ctr++] = relevantNodes[i];       
+    }
+  assert(ctr == bvLength) ;   
+
+  // TODO could be more efficient 
+  sort(bvMeaning.begin(),bvMeaning.end(),  
+       [](const Node *a, const Node* b) -> bool {return a->loc < b->loc ; }
+       ); 
+  
+  ctr = 0; 
+  for(Node *node : bvMeaning)
+    {
+      auto info = getInfo(node->id); 
+      info->bvIdx = ctr; 
+      ctr++; 
+    }
+}
+
+
+void NodeManager::accumulateMutationsBv(Node *node, BitSet<uint64_t> *bv, seqLen_t start, seqLen_t end)
+{
+  assert(getInfo(node->id)->referenced <= NUM_REF_FOR_SIM); 
+
+  assert(node->id != 0); 
+  
+  switch(node->type)
+    {
+    case MUTATION:
+      {
+	auto info = getInfo(node->id); 	
+	bv->set(info->bvIdx);
+	Node *anc = getNode(node->ancId1); 
+	if(anc)
+	  handleAncestorBv(bv,anc,start,end); 
+	break; 
+      }
+    case RECOMBINATION: 
+      {
+	Node *anc1 = getNode(node->ancId1), 
+	  *anc2 = getNode(node->ancId2); 
+	
+	if( anc1 && start < node->loc-1 )
+	  handleAncestorBv(bv, anc1, start, min(end, node->loc-1));
+	if( anc2 && node->loc < end )
+	  handleAncestorBv(bv, anc2, max(node->loc, start), end); 
+	break; 
+      }
+    default: assert(0); 
+    }
+}
+
+
+// TODO init with end 
+nat NodeManager::findInBv(seqLen_t key ) const
+{
+  int low = 0; 
+  int high = bvMeaning.size() - 1; 
+  while(low <= high)
+    {
+      nat mid = DIVIDE_2((low+high)) ; 
+      if( key <= bvMeaning[mid]->loc )
+	high = mid - 1 ; 
+      else 
+	low = mid + 1; 
+    }
+
+  return low; 
+}
+
+
+
+void NodeManager::handleAncestorBv(BitSet<uint64_t> *bv, Node *anc, seqLen_t start, seqLen_t end)
+{
+  const NodeExtraInfo *ancInfo = getInfo(anc->id);   
+  assert(ancInfo->referenced); 
+
+  if(ancInfo->referenced > NUM_REF_FOR_SIM)
+    {
+      createSequenceForNode(anc); 
+      assert(start < end); 
+
+      // TODO correct end!!! 
+      nat startIdx = findInBv(start), 
+	endIdx = findInBv(end); 
+      // cout << "=> copying from " << startIdx << " to " << endIdx << endl; 
+
+      assert(start <= end); 
+      assert(startIdx <= endIdx); 
+      const BitSet<uint64_t> &ancbv =  *(ancInfo->bv); 
+      bv->orifyPart(ancbv, startIdx, endIdx);
+    }
+  else 
+    accumulateMutationsBv(anc, bv, start, end); 
+}
+
+
+void NodeManager::createSequenceForNode(Node *node)
+{
+  if(NOT node || getInfo(node->id)->bv)
+    {      
+#ifdef DEBUG_SEQUENCE_EXTRACTION
+      if(node)
+	cout << "ALREADY" << *node << endl; 
+      else 
+	cout << "START" << endl; 
+#endif
+      return; 
+    }
+
+    auto info = getInfo(node->id);
+    if(NOT info->bv)
+      {
+	info->bv = new BitSet<uint64_t>(bvMeaning.size());
+	allocatedBvs.setNext(info->bv);
+      }
+    
+    switch(node->type)
+      {
+      case MUTATION:
+	{
+	  Node *anc = getNode(node->ancId1);
+	  if(anc)
+	    handleAncestorBv(info->bv, anc, info->start, info->end);
+
+	  info->bv->set(info->bvIdx);
+	  break; 
+	}
+      case RECOMBINATION:
+	{
+	  Node *anc1 = getNode(node->ancId1);
+	  Node *anc2 = getNode(node->ancId2);
+
+	  seqLen_t start = info->start,
+	    end = info->end; 
+	  
+	  if(anc1 && start < node->loc-1 )
+	    handleAncestorBv(info->bv,anc1, start, min(end, node->loc-1));
+	  if(anc2 && node->loc < end) 
+	    handleAncestorBv(info->bv,anc2, max(node->loc, start), end); 
+	  
+	  break; 
+	}
+      default: assert(0); 
+      }
+}
+#endif
+
 
 

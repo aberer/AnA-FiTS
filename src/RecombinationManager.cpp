@@ -5,7 +5,10 @@
 #include "Randomness.hpp"
 #include "FractionalSimulation.hpp"
 
-int sortByAbsPos(const void* t1, const void* t2) { return ((Recombination*)t1)->absPos - ((Recombination*)t2)->absPos; }
+int sortByAbsPos(const void* t1, const void* t2) 
+{ 
+  return ((Recombination*)t1)->absPos - ((Recombination*)t2)->absPos; 
+}
 
 
 

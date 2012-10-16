@@ -21,7 +21,7 @@ class MutationSelected;
 class Chromosome
 {
 public:     
-  Chromosome(seqLen_t seqLen, bool isNeutral, FitnessFunction fFun, nat id);
+  Chromosome(seqLen_t seqLen, bool isNeutral, FitnessFunction fFun, nat id, nat numPop);
   ~Chromosome();
   
   // OPERATORS 
@@ -52,7 +52,6 @@ private:
   
   void insertFixedMutation(SelectedMutation *mut, nat popId); 
   void updateUniqueHaplotypes(SelectedArray** seqBegin,SelectedArray** seqEnd);
-  void determineFixedAndPresentMutations(const DynArraySequential<SelectedArray*> &uniqSeqs, BitSet<uint32_t> &fixed, BitSet<uint32_t> &present); 
   void replaceInAllSequences(nat numMutations, const DynArraySequential<uint16_t> &indicesInOld); 
 };
 

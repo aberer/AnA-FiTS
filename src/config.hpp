@@ -1,6 +1,9 @@
 // #define PRODUCTIVE
 
 
+#define USE_BVBASED_EXTRACTION
+
+
 ///////////////////
 // OPTIMIZATION  //
 ///////////////////

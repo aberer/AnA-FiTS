@@ -2,6 +2,8 @@
 
 #include "common.hpp"
 #include "types.hpp"
+#include "Base.hpp"
+#include "BitSet.hpp"
 #include "SequenceArray.hpp"
 
 #include <fstream> 
@@ -22,7 +24,7 @@ struct Node
   nat indiNr;			// DONT PRINT 
 
   seqLen_t loc;
-  nat originGen;	       
+  nat originGen; 
   Base base; 
 
   nat ancId1; 
@@ -41,7 +43,11 @@ struct Node
  */
 struct NodeExtraInfo
 {
+#ifdef USE_BVBASED_EXTRACTION
+  BitSet<uint64_t> *bv; 
+#else 
   NeutralArray *sequence; 
+#endif
   seqLen_t start; 
   seqLen_t end;
 
@@ -50,6 +56,10 @@ struct NodeExtraInfo
   bool wasInitialized;
   bool skip;
   bool invertedOrientation; 
+
+#ifdef USE_BVBASED_EXTRACTION
+  nat bvIdx; 
+#endif
 }; 
 
 

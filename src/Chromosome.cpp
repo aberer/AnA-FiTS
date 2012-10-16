@@ -3,7 +3,7 @@
 #include <vector>
 
 
-Chromosome::Chromosome(seqLen_t seqLen, bool _isNeutral, FitnessFunction fFun, nat _id)
+Chromosome::Chromosome(seqLen_t seqLen, bool _isNeutral, FitnessFunction fFun, nat _id, nat numPop)
   : seqLen(seqLen)
   , uniqueHaplotypes(1000) // :MAGIC:
   , seqRep(seqLen)
@@ -11,7 +11,8 @@ Chromosome::Chromosome(seqLen_t seqLen, bool _isNeutral, FitnessFunction fFun, n
   , id(_id)
   , isNeutral(_isNeutral)
 {
-  
+  for(nat i = 0; i < numPop; ++i)
+    fixedMutations.push_back(new SelectedArray(100)); 
 }
 
 
@@ -163,11 +164,7 @@ void Chromosome::cleanFixedMutations(SelectedArray** seqBegin,SelectedArray** se
 
 void Chromosome::insertFixedMutation(SelectedMutation *mut, nat popId)
 {
-  while(fixedMutations.size() < popId+1)
-    fixedMutations.push_back(new SelectedArray(100)); 
-
   SelectedArray *array = fixedMutations[popId];  
   array->mutate(*mut, false, true); //  :TODO: correct? was true,nothing before   
-
 }
 

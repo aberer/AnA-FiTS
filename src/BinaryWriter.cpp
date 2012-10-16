@@ -17,10 +17,17 @@ BinaryWriter::~BinaryWriter()
 }
 
 
-
 /* 
    :TRICKY: requires mutations to be unclaimed
  */ 
+#ifdef USE_BVBASED_EXTRACTION
+void BinaryWriter::write(Graph &graph, HaploTimeWindow &w, Chromosome &chrom)
+{ 
+// TODO 
+  assert(0); 
+}
+
+#else 
 void BinaryWriter::write(Graph &graph, HaploTimeWindow &w, Chromosome &chrom)
 { 
   NeutralArray dummy(10); 
@@ -123,6 +130,7 @@ void BinaryWriter::write(Graph &graph, HaploTimeWindow &w, Chromosome &chrom)
   for(nat i = 0; i < numSeq; ++i)
     delete allBS[i]; 
 }
+#endif
 
 
 ostream& BinaryWriter::printMutations(ostream &rhs , FILE *fh, vector<NeutralMutation*> &neutralMutations, vector<SelectedMutation*> &selMutations)
