@@ -28,8 +28,8 @@ RAND_INCLUDE=-Ilib/RandomLib/include
 INCLUDES = $(RAND_INCLUDE) -Ilib/gtest/include
 
 # -flto
-# -DNDEBUG
-LANG =   -Wno-sign-compare -Wall -std=c++0x  -Wno-unused-variable -Wextra -Wno-unused-parameter -fpermissive #  -Wstrict-aliasing=2  -Wfloat-equal # is permissive a prolem?  
+#  -DNDEBUG
+LANG =  -Wno-sign-compare -Wall -std=c++0x  -Wno-unused-variable -Wextra -Wno-unused-parameter -fpermissive #  -Wstrict-aliasing=2  -Wfloat-equal # is permissive a prolem?  
 OPT = -O3 -march=native -mtune=native -funroll-all-loops 
 OPT_UNKNOWN = -D_HAS_EXCEPTIONS=0  -D_STATIC_CPPLIB -ffast-math -fno-common
 
@@ -43,6 +43,8 @@ PROFILE_CFLAGS = $(SSE_FLAG) $(FLAG_64) $(LANG) $(OPT) -DPROFILE -ggdb -pg
 PROFILE_LFLAGS = $(LFLAGS) $(LFLAGS_GPROF)
 
 RAND_OBJ=lib/RandomLib/src/Random.o 
+
+
 
 # ================================================================ 
 # DO NOT CHANGE CONTENTS BELOW THIS LINE 
@@ -61,7 +63,7 @@ TEST_OBJ_DIR := build/test-$(GITVERSION)/
 DEBUG_OBJ_DIR := build/debug-$(GITVERSION)/
 PROFILE_OBJ_DIR := build/profile-$(GITVERSION)/
 
-SRC_FILES := $(filter-out %_flymake.cpp %_flymake.hpp %_flymake_master.cpp, $(wildcard $(SRCDIR)/*.cpp))
+SRC_FILES := $(filter-out  %sequenceConversion.cpp %_flymake.cpp %_flymake.hpp %_flymake_master.cpp, $(wildcard $(SRCDIR)/*.cpp))
 TEST_FILES := $(filter-out %_flymake.cpp %_flymake.hpp %_flymake_master.cpp, $(wildcard $(TESTSRC)/*.cpp))
 
 OBJS := $(addprefix $(OBJDIR),  $(notdir $(SRC_FILES))) 
@@ -76,7 +78,7 @@ DEBUG_OBJS := $(DEBUG_OBJS:.cpp=.o)
 PROFILE_OBJS := $(addprefix $(PROFILE_OBJ_DIR),  $(notdir $(SRC_FILES)))
 PROFILE_OBJS := $(PROFILE_OBJS:.cpp=.o)
 
-release :  $(OBJDIR) $(TARGET) 
+release :  $(OBJDIR) $(TARGET)  convertSeq
 dist:  depend  $(OBJDIR) $(TARGET) 
 all : depend release   test #  debug  # profile
 
@@ -153,13 +155,26 @@ $(TARGET_PROFILE) : $(PROFILE_OBJS)   $(RAND_OBJ)
 
 clean:
 	@echo "[CLEAN]"
-	$(RM) $(OBJDIR) $(TEST_OBJ_DIR) $(DEBUG_OBJ_DIR) $(PROFILE_OBJ_DIR) $(ALL_TARGETS) $(RAND_OBJ) *~ \#* callgrind* cachegrind*  gmon.out ffits.prof
+	$(RM) $(OBJDIR) $(TEST_OBJ_DIR) $(DEBUG_OBJ_DIR) $(PROFILE_OBJ_DIR) $(ALL_TARGETS) $(RAND_OBJ) convertSeq  *~ \#* callgrind* cachegrind*  gmon.out ffits.prof 
 
 .PHONY : clean depend
 
 DEPFILE  =  .depends
 DEPTOKEN = '\# MAKEDEPENDS'
 DEPFLAGS = -Y -f $(DEPFILE) -s $(DEPTOKEN) 
+
+
+
+
+
+# BEGIN  intermediate section for the convert tool  (TODO integrate better)
+convertSeq : $(OBJDIR)/sequenceConversion.o $(OBJDIR)/BitSet.o    
+	@echo [LINK] $@
+	$(CXX) -o $@  $^ $(LFLAGS)  
+## END 
+
+
+
 
 depend :
 	@echo [DEPEND]
@@ -174,3 +189,7 @@ depend :
 	@cd src;  ctags -Re * 
 
 sinclude $(DEPFILE) 
+
+
+
+

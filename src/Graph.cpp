@@ -331,9 +331,18 @@ void Graph::createSequencesInGraph(const Chromosome &chromo)
 
   nodMan.initBvMeaning();
 
-  for(Node *node : previousState)
-    if(node)
-      nodMan.createSequenceForNode(node);  
+  // a slight hack to initialize the dummy node 
+  nat numNeutMut = getBvMeaning().size();
+  NodeExtraInfo *info = nodMan.getInfo(0); 
+  info->bv = new BitSet<uint64_t>(numNeutMut); 
+
+  for(nat i = 0; i < previousState.size(); ++i)
+    {
+      Node *node = previousState[i]; 
+
+      if(node)
+	nodMan.createSequenceForNode(node);  
+    }
 }
 #else 
 void Graph::createSequencesInGraph(const Chromosome &chromo)
@@ -399,7 +408,15 @@ void Graph::getRawSequences(vector<BitSet<uint64_t>*> &bvs)
 {
   for(Node *node : previousState)
     {      
-      auto info = nodMan.getInfo(node->id); 
-      bvs.push_back(info->bv); 
+      if(node )
+	{
+	  auto info = nodMan.getInfo(node->id); 
+	  bvs.push_back(info->bv); 
+	}
+      else 			// in this case, starting node survived or (a sub-case, we do not have any graph at all ) 
+	{
+	  auto info = nodMan.getInfo(0); 
+	  bvs.push_back(info->bv); 
+	}
     }
 } 

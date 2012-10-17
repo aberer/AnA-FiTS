@@ -109,6 +109,7 @@ void* myRealloc(void *ptr, size_t num);
 
 
 #define BIN_WRITE(x,fh) fwrite(&x, 1, sizeof(x), fh)
+#define BIN_READ(x,fh) fread(&x, 1, sizeof(x), fh)
 
 #define NODE_IS_RELEVANT(x,start,end) (start <= x && x <= end)
 

@@ -24,7 +24,7 @@ NodeManager::~NodeManager()
   for(nat i = 0; i < end; ++i)
     delete allocatedMuts.at(i); 
 
-  end = allocatedMuts.getUsed();
+  end = allocatedBvs.getUsed();
   for(nat i = 0; i < end; ++i)
     delete allocatedBvs.at(i); 
 
@@ -41,6 +41,7 @@ void NodeManager::resize()
 
   memset(extraInfo + (length / 2) , 0, (length / 2) * sizeof(NodeExtraInfo)); 
 }
+
 
 
 void NodeManager::registerNextNode(Node &node)
@@ -431,8 +432,20 @@ void NodeManager::initBvMeaning()
 
   // TODO could be more efficient 
   sort(bvMeaning.begin(),bvMeaning.end(),  
-       [](const Node *a, const Node* b) -> bool {return a->loc < b->loc ; }
-       ); 
+       [](const Node *a, const Node* b) -> bool 
+       {
+	 if(a->loc !=  b->loc)
+	   return a->loc < b->loc; 
+	 else if(a->originGen != b->originGen)
+	   return a->originGen < b->originGen; 
+	 else if(a->base != b->base)
+	   return a->base < b->base; 
+	 else 
+	   {	     
+	     assert(0); 
+	     return false; 
+	   }
+       } ); 
   
   ctr = 0; 
   for(Node *node : bvMeaning)
@@ -503,7 +516,7 @@ void NodeManager::handleAncestorBv(BitSet<uint64_t> *bv, Node *anc, seqLen_t sta
 
   if(ancInfo->referenced > NUM_REF_FOR_SIM)
     {
-      createSequenceForNode(anc); 
+      createSequenceForNode( anc); 
       assert(start < end); 
 
       // TODO correct end!!! 
@@ -521,7 +534,7 @@ void NodeManager::handleAncestorBv(BitSet<uint64_t> *bv, Node *anc, seqLen_t sta
 }
 
 
-void NodeManager::createSequenceForNode(Node *node)
+void NodeManager::createSequenceForNode( Node *node)
 {
   if(NOT node || getInfo(node->id)->bv)
     {      
@@ -537,7 +550,7 @@ void NodeManager::createSequenceForNode(Node *node)
     auto info = getInfo(node->id);
     if(NOT info->bv)
       {
-	info->bv = new BitSet<uint64_t>(bvMeaning.size());
+ 	info->bv = new BitSet<uint64_t>(bvMeaning.size());
 	allocatedBvs.setNext(info->bv);
       }
     

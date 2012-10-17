@@ -19,7 +19,9 @@ private:
   FILE *fh; 
   nat numHaplo; 
 
+#ifndef USE_BVBASED_EXTRACTION
   template<class TYPE> void getSortedMutations(vector<TYPE*> &result, const vector<SequenceArray<TYPE>*> &arrays); 
+#endif
   void convertToBitSet(BitSet<uint32_t> &bs, NeutralArray *nSeq, SelectedArray *sSeq,  const vector<NeutralMutation*> &neutralMutations, const vector<SelectedMutation*> &selMutations); 
   ostream& printMutations(ostream &rhs , FILE *fh, vector<NeutralMutation*> &neutralMutations, vector<SelectedMutation*> &selMutations); 
 }; 
@@ -29,6 +31,8 @@ private:
 // IMPLEMENTATION //
 ////////////////////
 
+
+#ifndef USE_BVBASED_EXTRACTION
 /* 
    get a sorted array of all mutations for conversion of sequences into bitvectors. 
    :TRICKY: this depends on all mutations being unclaimed first
@@ -61,3 +65,4 @@ template<class TYPE> void BinaryWriter::getSortedMutations(vector<TYPE*> &result
   for(TYPE** mutPtr = tmpSeq.begin(); mutPtr < mutPtrEnd; ++mutPtr)
     result.push_back(*mutPtr);   
 }
+#endif

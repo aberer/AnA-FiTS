@@ -12,7 +12,7 @@ int sortByAbsPos(const void* t1, const void* t2)
 
 
 
-RecombinationManager::RecombinationManager(nat _seqLen, nat _startGen, nat _endGen)  
+RecombinationManager::RecombinationManager(seqLen_t _seqLen, nat _startGen, nat _endGen)
   : TimeSection(_startGen, _endGen)
   , totalRec(0)
   , recombs(nullptr)

@@ -79,7 +79,7 @@ ProgramOptions::ProgramOptions(int argc, char **argv)
   po::options_description loc("Locus-specific parameters"); 
   loc.add_options()
     // no linkage at first 
-    ("length,L", po::value< vector<seqLen_t> >()->multitoken()->default_value(vector<seqLen_t>(1,10000000), "10 Mbp"), "locus length (repeat for multiple unlinked chromosomes)" )
+    ("length,L", po::value< vector<seqLen_t> >()->multitoken()->default_value(vector<seqLen_t>(1,10000000), "10 Mbp"), "locus length (repeat for multiple unlinked chromosomes). Maximum: ~4.2Gbp" )
     ("neutral,w", po::value<bool>()->zero_tokens(), "simulate a neutral population (overrides contradictory flags, uses only the BEG algorithm)") // :TRICKY: for multiple pops, we'd need to use some tokens
     ("selCoef,W",
      po::value< vector<string> >()->default_value(defaultSelect, ss.str())->multitoken(), 

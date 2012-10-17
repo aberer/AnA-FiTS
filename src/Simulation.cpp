@@ -36,6 +36,12 @@ Simulation::Simulation(InfoFile &info, ProgramOptions &theProgOpt)
 }
 
 
+Simulation::~Simulation()
+{
+  delete fractionalSimulation; 
+}
+
+
 void Simulation::run()
 {     
 #ifdef DEBUG_TOPLEVEL

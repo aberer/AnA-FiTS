@@ -34,6 +34,7 @@ public:
   NodeExtraInfo* getInfo(nat id) { return &(extraInfo[id]); }
   void checkConsistency();
   void determineCoalescentNodes(Node *node);   
+  void setStartNode(Node *node);
 
   // OBSERVERS 
   vector<Node*>& getBvMeaning(){return bvMeaning;}

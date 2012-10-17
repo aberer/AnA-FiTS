@@ -124,8 +124,6 @@ inline nat SequenceArray<MUTATION>::searchIndexSmallerThan(seqLen_t key)  const
 }
 
 
-
-
 template<class MUTATION>
 SequenceArray<MUTATION>::SequenceArray(nat initSize)
   : numElem(0)

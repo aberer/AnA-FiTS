@@ -25,7 +25,7 @@ SequenceFinalizer::~SequenceFinalizer()
 
 
 /** 
-    For simplicity not sorted currently
+ * For simplicity not sorted currently
  */ 
 void SequenceFinalizer::annotateFixedMutations(SelectedArray *fixedSelectedMut, BitSet<uint64_t> &fixedNeutral, vector<Node*> &bvMeaning)
 {  
@@ -39,12 +39,12 @@ void SequenceFinalizer::annotateFixedMutations(SelectedArray *fixedSelectedMut, 
     {
       if(fixedNeutral.test(i))
 	{
-	  SelectedMutation *newMut = (SelectedMutation*)calloc(1,sizeof(SelectedMutation));
+	  SelectedMutation *newMut =  new  SelectedMutation;
 	  Node *node = bvMeaning[i]; 	  
 	  newMut->absPos = node->loc; 
 	  newMut->generation = node->originGen; 
 	  newMut->base = node->base; 
-	  newMut->fitness = 0; 
+	  newMut->fitness = 1.0; 
 	  newMut->indiNr = node->indiNr; 
 	  fixedMutations.push_back(newMut); 
 	}
@@ -75,17 +75,31 @@ void SequenceFinalizer::annotateRelevantMutations(BitSet<uint64_t> &notPresent, 
     if(NOT notPresent.test(i) && NOT fixedRawMut.test(i))
       {
 	Node *node = bvMeaning[i]; 
-	SelectedMutation *newMut = (SelectedMutation*) calloc(1,sizeof(SelectedMutation)); 
+	SelectedMutation *newMut = new SelectedMutation; 
 	newMut->absPos = node->loc; 
 	newMut->generation = node->originGen; 
 	newMut->base = node->base; 
-	newMut->fitness = 0; 
+	newMut->fitness = 1.0; 
 	newMut->indiNr = node->indiNr; 
 	mutationsInSeqs.push_back(newMut);
       }
   
   // sort array 
-  sort(mutationsInSeqs.begin(), mutationsInSeqs.end(), [](const SelectedMutation *a, const SelectedMutation* b) -> bool {return a->absPos < b->absPos ; }); 
+  sort(mutationsInSeqs.begin(), mutationsInSeqs.end(), 
+       [](const SelectedMutation *a, const SelectedMutation* b) -> bool 
+       {
+	 if(a->absPos != b->absPos)
+	   return a->absPos < b->absPos; 
+	 else if(a->generation != b->generation)
+	   return a->generation < b->generation; 
+	 else if(a->base != b->base)
+	   return a->base < b->base; 
+	 else 
+	   {
+	     assert(0) ; 
+	     return false; 
+	   }
+       } ); 
 }
 
 
@@ -108,6 +122,8 @@ void SequenceFinalizer::createMergedBitvectors(BitSet<uint64_t> &notPresent, Bit
       while(neutralIndex < neutralBsLen && ( fixedRawMut.test(neutralIndex) || notPresent.test(neutralIndex)))
 	++neutralIndex;
       
+      assert(neutralBsLen <= neutralIndex  || mutationsInSeqs[bvIdx]->absPos <=  bvMeaning[neutralIndex]->loc );
+
       if(neutralIndex < neutralBsLen && *(bvMeaning[neutralIndex]) == *iter)
 	{
 	  for(nat i = 0; i < numSequences; ++i)
@@ -117,22 +133,19 @@ void SequenceFinalizer::createMergedBitvectors(BitSet<uint64_t> &notPresent, Bit
 	}
       else 			// a selected mutation 
 	{
-	  bool foundOne = false; 
 	  for(nat i = 0; i < numSequences; ++i)
 	    {	      
-	      if(*iter == *(selectedSequences[i]->at(selIndices[i]))) 
+	      if( selIndices[i] < selectedSequences[i]->size()
+		  && *iter == *(selectedSequences[i]->at(selIndices[i]))) 
 		{
 		  finalSequences[i]->set(bvIdx); 
 		  selIndices[i]++; 
-		  foundOne = true; 
 		}
 	    }
-	  assert(foundOne); 
-	} 
+	}
       
       bvIdx++; 
-    }
-  
+    }  
 }
 
 
@@ -163,8 +176,48 @@ void SequenceFinalizer::computeFinalSequences(vector<BitSet<uint64_t>*> rawNeutr
   annotateFixedMutations(fixedSelected, fixedRawMut, bvMeaning);
   annotateRelevantMutations(mutationsNotPresent, fixedRawMut, bvMeaning, selectedSequences); 
   createMergedBitvectors(mutationsNotPresent, fixedRawMut,  rawNeutralSequences, bvMeaning, selectedSequences); 
+
+#ifndef NDEBUG
+  BitSet<uint64_t> everywhereTmp(finalSequences[0]->size()); 
+  everywhereTmp.set();
+  for(nat i = 0;  i < finalSequences.size(); ++i)
+    everywhereTmp.andify(*(finalSequences[i]));
+  assert(everywhereTmp.count() == 0); 
+
+  BitSet<uint64_t> noWhereTmp(finalSequences[0]->size()); 
+  noWhereTmp.set();
+  for(nat i =0; i < finalSequences.size(); ++i)
+    noWhereTmp.orify(*(finalSequences[i])); 
+  noWhereTmp.flip();
+  assert(noWhereTmp.count() == 0);   
+#endif
 }
 
+
+
+
+void SequenceFinalizer::printBinary(FILE *fh)
+{
+  // write fixed 
+  nat num = fixedMutations.size(); 
+  BIN_WRITE(num, fh);  
+  for(auto mut :  fixedMutations)
+    mut->printRaw(fh);
+  
+  // write mutations 
+  num = mutationsInSeqs.size();
+  BIN_WRITE(num, fh); 
+  for(auto mut : mutationsInSeqs)
+    mut->printRaw(fh);
+  
+  num = finalSequences.size();
+  BIN_WRITE(num,fh); 
+  for(auto bv : finalSequences)
+    {
+      // cout << *bv << endl; 
+      bv->printRaw(fh);   
+    }
+}
 
 
 
@@ -190,3 +243,6 @@ bool operator==(Node &lhs, SelectedMutation &rhs)
 {
   return rhs == lhs; 
 }
+
+
+

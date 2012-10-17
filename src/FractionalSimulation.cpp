@@ -33,7 +33,7 @@ FractionalSimulation::FractionalSimulation(ThreadPool &_tp,InfoFile &info, const
   
   for(nat i = 0; i < chromosomes.size(); ++i)
     {
-      info.write("\t\tCHROM %d (length=%d) gen1 pop1\t=> E(non-neut mutations) = %g\tE(neut mutations) = %g\tE(recomb) = %g\n" ,
+      info.write("\t\tCHROM %d (length=%d) gen1 pop1\t=> E(non-neut mutations/gen) = %g\tE(neut mutations/gen) = %g\tE(recomb/gen) = %g\n" ,
 		 i , chromosomes[i]->getSeqLen(), 
 		 (PopulationManager::getLamdbaForParam( (*popMan)[0].getMutationRate(0), chromosomes[i]->getSeqLen(), *popMan, 0, 0) *  (isNeutral ?  0 : chromosomes[i]->getSelectProb())),
 		 (PopulationManager::getLamdbaForParam( (*popMan)[0].getMutationRate(0), chromosomes[i]->getSeqLen(), *popMan, 0, 0) * (isNeutral ? 1 : chromosomes[i]->getNeutralProb() )), 
@@ -48,6 +48,9 @@ FractionalSimulation::~FractionalSimulation()
     delete chromosomes[i] ; 
   for(HaploTimeWindow *haplo : haplotypesWindows)
     delete haplo; 
+  for(Graph *graph : graphs)
+    delete graph; 
+  
   delete init; 
 }
 
@@ -326,8 +329,15 @@ void FractionalSimulation::printArgs(string id)
 void FractionalSimulation::printSequencesRaw(string id)
 {
   nat numHaplo = popMan->getTotalNumHaploByGen(genCnt.getCurrentGeneration() - 1); 
+  
+  stringstream fileName; 
+  fileName << SEQ_FILE_NAME << "." << id ; 
+  FILE *fh = openFile(fileName.str(), "w"); 
 
-  for(nat i = 0; i < chromosomes.size(); ++i)
+  nat numChrom = chromosomes.size(); 
+  BIN_WRITE(numChrom,fh);
+
+  for(nat i = 0; i < numChrom; ++i)
     {
       // set everything up 
       Graph &graph = *(graphs[i]); 
@@ -341,24 +351,17 @@ void FractionalSimulation::printSequencesRaw(string id)
       assert(rawNeutralSequences.size() == numHaplo); 
 
       for(nat i = 0; i < numHaplo; ++i)
-	selectedSeqs.push_back(h.at(i));       
-      
+	selectedSeqs.push_back(h.at(i)); 
 
       // a lot of preprocessing to get useful bitvectors 
       SequenceFinalizer finalizer;
       finalizer.computeFinalSequences(rawNeutralSequences, rawBvMeaning, selectedSeqs, 
 				      chrom.getFixedMutations(0) // TODO pops
 				      );      
-      
-
-      vector<BitSet<uint64_t>*> seqs = finalizer.getFinalSequences();
-      for(auto seq : seqs )
-	cout << *seq << endl; 
-
-      // now print the final sequences 
-      assert(0); 
-      
+      finalizer.printBinary(fh);
     }
+
+  fclose(fh); 
 }
 #else 
 void FractionalSimulation::printSequencesRaw(string id)
@@ -401,15 +404,15 @@ void FractionalSimulation::finalize()
   for(nat i = 0; i < numChrom; ++i)
     {
       Graph &graph = *(graphs[i]); 
-      if( graph.getNumberOfMutations())
-	{
-	  // cout << "NUM MUT: " << graph.getNumberOfMutations() << endl; 
-	  graph.createSequencesInGraph(*(chromosomes[i]));
-	}
-      else 
-	{	  
-	  cout << "NOTICE: no neutral mutations can occur for this selection configuration, no graph produced." << endl; 
-	}
+      // if( graph.getNumberOfMutations())
+      // 	{
+      // 	  // cout << "NUM MUT: " << graph.getNumberOfMutations() << endl; 
+	graph.createSequencesInGraph(*(chromosomes[i]));
+      // 	}
+      // else 
+      // 	{	  
+      // 	  cout << "NOTICE: no neutral mutations can occur for this selection configuration, no graph produced." << endl; 
+      // 	}
     }
 }
 

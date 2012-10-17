@@ -14,6 +14,7 @@ class Simulation
 {  
 public: 
   Simulation(InfoFile &info, ProgramOptions &theProgOpt);   
+  ~Simulation(); 
   void run(); 
 
 private: 
