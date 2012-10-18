@@ -255,7 +255,7 @@ void FractionalSimulation::mutateSelectedSites(ThreadPool &tp)
 	  SelectedMutation &mut = chromosome.getSelectedMutation(mem, rng);
 	  mut.generation = currentGen; 
 	  mut.indiNr = mutNum; 
-	  tmp->mutate(mut, true, false);
+	  tmp->mutate(mut, true, false, true );
 
 	  haplos.setCurrentConfiguration(mutNum, tmp); 
 	}
@@ -404,15 +404,7 @@ void FractionalSimulation::finalize()
   for(nat i = 0; i < numChrom; ++i)
     {
       Graph &graph = *(graphs[i]); 
-      // if( graph.getNumberOfMutations())
-      // 	{
-      // 	  // cout << "NUM MUT: " << graph.getNumberOfMutations() << endl; 
-	graph.createSequencesInGraph(*(chromosomes[i]));
-      // 	}
-      // else 
-      // 	{	  
-      // 	  cout << "NOTICE: no neutral mutations can occur for this selection configuration, no graph produced." << endl; 
-      // 	}
+      graph.createSequencesInGraph(*(chromosomes[i]));
     }
 }
 

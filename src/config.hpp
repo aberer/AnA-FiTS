@@ -30,7 +30,7 @@
 // #define DEBUG_POP_PARAM_PARSE  
 
 // expensive 
-// #define  DEBUG_CHECK_ARRAY_CONSISTENCY
+#define  DEBUG_CHECK_ARRAY_CONSISTENCY
 
 ///////////////////
 // DEBUG_FORWARD //
@@ -41,11 +41,11 @@
 // #define DEBUG_PRINT_POP_EVERY_GEN
 
 // #define DEBUG_SHOW_POPSIZE
-// #define DEBUG_SHOW_GENS
+#define DEBUG_SHOW_GENS
 
 // #define DEBUG_PRECOMPUTE 
 // #define DEBUG_RECMAN
-// #define DEBUG_REPORT_FIXATIONS
+#define DEBUG_REPORT_FIXATIONS
 // #define DEBUG_HAPLO_WINDOW 
 // #define DEBUG_FITNESS
 // #define DEBUG_FITNESS_FUNC

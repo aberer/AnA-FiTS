@@ -19,7 +19,7 @@ public:
   SequenceArray& operator=(const SequenceArray& rhs); 
 
   // OPERATORS
-  void mutate(MUTATION &mut, bool replace, bool insertAnyway);  
+  void mutate(MUTATION &mut, bool replace, bool insertAnyway, bool consistencyCheck);  
   void recombine(const SequenceArray &seqA, const SequenceArray &seqB, Recombination *start, nat length); 
   void remove(MUTATION *mut);
   void removeAt(nat index); 
@@ -66,7 +66,7 @@ private:
   SequenceArray(const SequenceArray &rhs); 
   void resize();
   void checkConsistency(); 
-  void mutate_helper(MUTATION &mut, bool replace, bool insertAnyway); 
+  void mutate_helper(MUTATION &mut, bool replace, bool insertAnyway, bool consistencyCheck); 
   
   template<class MUT>
   friend ostream& operator<<(ostream &stream, const SequenceArray<MUT> &rhs);    
@@ -144,7 +144,7 @@ SequenceArray<MUTATION>::~SequenceArray()
 
 
 template<class MUTATION>
-void SequenceArray<MUTATION>::mutate_helper(MUTATION &mut, bool replace, bool insertAnyway)
+void SequenceArray<MUTATION>::mutate_helper(MUTATION &mut, bool replace, bool insertAnyway, bool consistencyCheck)
 {
   if(capacity == numElem )
     resize();
@@ -179,7 +179,8 @@ void SequenceArray<MUTATION>::mutate_helper(MUTATION &mut, bool replace, bool in
     }
 
 #ifndef NDEBUG
-  checkConsistency();
+  if(consistencyCheck)
+    checkConsistency();
 #endif  
 }
 
@@ -206,6 +207,12 @@ void SequenceArray<MUTATION>::recombine(const SequenceArray &seqA, const Sequenc
   assert(this != &seqA); 
   assert(this != &seqB); 
   erase();
+  
+  cout << "seqA:\t" << seqA << endl; 
+  cout << "seqB:\t" << seqB << endl; 
+  for(nat i = 0; i < length ; ++i)
+    cout << start[i].absPos << ",";   
+  cout << endl << endl; 
   
   const SequenceArray *primaryDonor = &seqA, 
     *otherDonor = &seqB; 
@@ -279,8 +286,15 @@ void SequenceArray<MUTATION>::checkConsistency()
 {
 #ifdef DEBUG_CHECK_ARRAY_CONSISTENCY
   // cout << "checking consistency " << endl; 
-  for(nat i = 0; i < numElem; ++i)
+  for(nat i = 0; i < numElem; ++i)    
     assert(array[i]); 
+
+  for(nat i = 1; i < numElem; ++i)
+    {
+      if(NOT (array[i-1]->absPos < array[i]->absPos))
+	cout << "wrong order!\t" << *(array[i-1]) << "\t\t"  << *(array[i]) << endl; 
+      assert(array[i-1]->absPos < array[i]->absPos );   
+    }
 #endif
 }
 

@@ -1,21 +1,21 @@
 #include "SequenceArray.hpp"
 
 
-template<> void SelectedArray::mutate(SelectedMutation &mut, bool replace, bool insertAnyway) 
+template<> void SelectedArray::mutate(SelectedMutation &mut, bool replace, bool insertAnyway, bool consistencyCheck) 
 {
   assert(NOT (insertAnyway && replace) ); 
   fitness *= mut.fitness;
   assert(fitness != 0); 
   assert(this) ; 
-  mutate_helper(mut, replace, insertAnyway); 
+  mutate_helper(mut, replace, insertAnyway, consistencyCheck);
   assert(fitness != 0); 
 }
 
 template<>		       
-void NeutralArray::mutate(NeutralMutation &mut, bool replace, bool insertAnyway ) 
+void NeutralArray::mutate(NeutralMutation &mut, bool replace, bool insertAnyway, bool consistencyCheck ) 
 {
   assert(NOT (insertAnyway && replace) ); 
-  mutate_helper(mut, replace, insertAnyway); 
+  mutate_helper(mut, replace, insertAnyway, consistencyCheck); 
 }
 
 

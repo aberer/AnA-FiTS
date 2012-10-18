@@ -71,7 +71,8 @@ void Chromosome::cleanFixedMutations(SelectedArray** seqBegin,SelectedArray** se
       foundNewOne = false;
       nat i = 0; 
       SelectedMutation *init = currentMut; 
-      while(i < uniqueHaplotypes.getUsed())
+      nat end = uniqueHaplotypes.getUsed(); 
+      while(i < end)
 	{
 	  SelectedArray &seq =  *(uniqueHaplotypes.at(i));
 
@@ -129,12 +130,22 @@ void Chromosome::cleanFixedMutations(SelectedArray** seqBegin,SelectedArray** se
 
 	  for(nat j = 0; j < uniqueHaplotypes.getUsed();++j)
 	    {
+	      auto tmp = uniqueHaplotypes.at(j); 
+	      // cout <<  *tmp  << endl; 
+	      
 	      assert(uniqueHaplotypes.at(j)->getIfPresent(currentMut->absPos)->absPos == currentMut->absPos); 
 	      uniqueHaplotypes.at(j)->removeAt(currentIndex[j]) ;
 	    }
 	  
 	  for(nat j = 0; j < uniqueHaplotypes.getUsed(); ++j)
-	    assert(uniqueHaplotypes.at(j)->getIfPresent(currentMut->absPos) == nullptr); 
+	    {
+	      if(uniqueHaplotypes.at(j)->getIfPresent(currentMut->absPos) != nullptr)
+		{
+		  auto tmp  = uniqueHaplotypes.at(j)->getIfPresent(currentMut->absPos); 
+		  // cout << *tmp << endl; 
+		}
+	      assert(uniqueHaplotypes.at(j)->getIfPresent(currentMut->absPos) == nullptr); 
+	    }
 
 	  insertFixedMutation(currentMut, popId);
 
@@ -165,6 +176,6 @@ void Chromosome::cleanFixedMutations(SelectedArray** seqBegin,SelectedArray** se
 void Chromosome::insertFixedMutation(SelectedMutation *mut, nat popId)
 {
   SelectedArray *array = fixedMutations[popId];  
-  array->mutate(*mut, false, true); //  :TODO: correct? was true,nothing before   
+  array->mutate(*mut, false, true, false); //  :TODO: correct? was true,nothing before   
 }
 
