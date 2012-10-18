@@ -15,7 +15,6 @@
  */ 
 
 
-
 char toChar(Base base)
 {
   switch(base)
@@ -52,15 +51,15 @@ void helpMessage()
 } 
 
 
-void intToBinaryChar(nat num, char *&result)
+void charToBinaryChar(nat num, char *&result)
 {
   nat ctr = 0; 
   for(nat i = 1; i < 256 ; i *= 2)
     {
-    if(num & i)
-      result[ctr++] = '1'; 
-    else 
-      result[ctr++] = '0'; 
+      if(num & i)
+	result[ctr++] = '1'; 
+      else 
+	result[ctr++] = '0'; 
     }
 }
 
@@ -72,9 +71,8 @@ void precomputeBvToChar(char **&result)
     result[i] = (char*) calloc(256,  sizeof(char)); 
   
   for(nat i = 0; i < 256; ++i)
-    intToBinaryChar(i, result[i]); 
+    charToBinaryChar(i, result[i]); 
 }
-
 
 
 void printBitvectors(bool toStdout, FILE *ifh, FILE *ofh, char **precomputed, nat numMut)
@@ -129,7 +127,6 @@ void printBitvectors(bool toStdout, FILE *ifh, FILE *ofh, char **precomputed, na
 	fprintf(ofh, "\n"); 
     }  
 }
-
 
 
 void printMutations(FILE *ifh, FILE *ofh, bool toStdout, nat& numMut)

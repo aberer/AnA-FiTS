@@ -28,8 +28,8 @@ RAND_INCLUDE=-Ilib/RandomLib/include
 INCLUDES = $(RAND_INCLUDE) -Ilib/gtest/include
 
 # -flto
-# 
-LANG = -DNDEBUG -Wno-sign-compare -Wall -std=c++0x  -Wno-unused-variable -Wextra -Wno-unused-parameter -fpermissive #  -Wstrict-aliasing=2  -Wfloat-equal # is permissive a prolem?  
+# -DNDEBUG
+LANG =  -Wno-sign-compare -Wall -std=c++0x  -Wno-unused-variable -Wextra -Wno-unused-parameter -fpermissive #  -Wstrict-aliasing=2  -Wfloat-equal # is permissive a prolem?  
 OPT = -O3 -march=native -mtune=native -funroll-all-loops 
 OPT_UNKNOWN = -D_HAS_EXCEPTIONS=0  -D_STATIC_CPPLIB -ffast-math -fno-common
 

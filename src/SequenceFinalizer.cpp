@@ -103,6 +103,7 @@ void SequenceFinalizer::annotateRelevantMutations(BitSet<uint64_t> &notPresent, 
 }
 
 
+
 void SequenceFinalizer::createMergedBitvectors(BitSet<uint64_t> &notPresent, BitSet<uint64_t> &fixedRawMut, vector<BitSet<uint64_t>*> rawNeutralSequences, vector<Node*> bvMeaning, vector<SelectedArray*> selectedSequences)
 {
   assert(rawNeutralSequences.size() == selectedSequences.size()); 

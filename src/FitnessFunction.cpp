@@ -40,7 +40,14 @@ FitnessFunction::FitnessFunction(vector<string> args)
       // cout << "building normal distributtion" << endl; 
       FITNESS_TYPE tmpSel = atof(args[1].c_str());
       probNeutral = 1 - tmpSel; 
+      // cout << "probability of neutral mutation is " << probNeutral << endl;       
       mean = atof(args[2].c_str());
+      if(mean > 1 )
+	{
+	  cerr << "If selection coefficients are drawn from a normal distribution, the mean of this distribution cannot be > 1" << endl; 
+	  abort(); 
+	}
+
       sd = atof(args[3].c_str()); 
     }
   else if( NOT modeString.compare("4") )
