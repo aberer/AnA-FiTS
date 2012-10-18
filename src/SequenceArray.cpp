@@ -76,34 +76,6 @@ void SelectedArray::printSeq(FILE *fp) const
 }
 
 
-
-
-
-// #define ALTERNATIVE_COLLECTION
-#ifdef ALTERNATIVE_COLLECTION
-template<>
-void NeutralArray::conditionallyJoinOtherSeq(const NeutralArray &rhs, seqLen_t start, seqLen_t end)
-{
-  auto startPtr = rhs.getStartByPos(start); 
-  auto endPtr = rhs.getEndByPos(end);  
-
-  // nothing to do 
-  if(startPtr == endPtr)
-    return; 
-
-  while(capacity < numElem + rhs.numElem)
-    resize();
-
-  nat otherSize = rhs.size(); 
-
-  for( ; startPtr != endPtr ; ++startPtr) 
-    {
-      assert((*startPtr)->absPos <= start &&  (*startPtr)->absPos =< end); 
-      this->mutate(**startPtr, false, false);
-    }
-}
-
-#else 
 // :TODO: does not resolve everything: what about two mutations in the same position in the same generation ?
 template<>
 void NeutralArray::conditionallyJoinOtherSeq(const NeutralArray &rhs, seqLen_t start, seqLen_t end)
@@ -119,8 +91,6 @@ void NeutralArray::conditionallyJoinOtherSeq(const NeutralArray &rhs, seqLen_t s
     indexHere = 0,
     indexRhs = 0; 
 
-  // while(indexRhs < rhs.numElem && rhs.array[indexRhs]->absPos < start)
-  //   indexRhs ++;
   
   indexRhs = rhs.searchIndexSmallerThan(start);
   
@@ -159,9 +129,4 @@ void NeutralArray::conditionallyJoinOtherSeq(const NeutralArray &rhs, seqLen_t s
     assert(array[i-1]->absPos < array[i]->absPos);
 #endif
 }
-
-
-#endif
-
-
 

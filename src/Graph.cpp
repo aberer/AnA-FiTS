@@ -311,11 +311,6 @@ void Graph::printRaw(FILE *fh)
 }
 
 
-
-
-
-
-#ifdef USE_BVBASED_EXTRACTION
 void Graph::createSequencesInGraph(const Chromosome &chromo)
 {
   seqLen_t start = 0; 
@@ -344,32 +339,7 @@ void Graph::createSequencesInGraph(const Chromosome &chromo)
 	nodMan.createSequenceForNode(node);  
     }
 }
-#else 
-void Graph::createSequencesInGraph(const Chromosome &chromo)
-{
-  seqLen_t start = 0; 
-  seqLen_t end = chromo.getSeqLen();
 
-  for(Node *node : previousState)    
-    if(node)
-      nodMan.markAncestrialMaterial(*node, start, end); 
-
-  for(Node *node : previousState)    
-    if(node)
-      nodMan.determineCoalescentNodes(node);
-
-  nodMan.getCoalStatistic();
-  
-  for(Node *node : previousState)
-    {
-#ifdef DEBUG_SEQUENCE_EXTRACTION
-      cout << "START sequence extraction" << endl; 
-#endif
-      if(node)
-	nodMan.simulateNode(node);      
-    }
-}
-#endif
 
 
 

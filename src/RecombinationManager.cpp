@@ -61,86 +61,6 @@ ostream& operator<<(ostream &stream, const RecombinationManager &rhs)
 }
 
 
-// #define USE_UNOPTIMIZED_PRECOMPUTE  
-#ifdef USE_UNOPTIMIZED_PRECOMPUTE 
-// :WARNING: do not clean up the following function. We may need the mapping again later   
-// void RecombinationManager::precompute(seqLen_t seqLen)
-// {   
-//   nat maxPopsize = popParams[0].getMaximumPopSize();
-//   // nat numSelectedSites = chromo.getNumSelected();
-  
-//   // seqLen_t seqLen =  chromo.getSeqLen();
-
-//   byte *numRecPerIndi = (byte*)calloc(maxPopsize, sizeof(byte));   
-//   // seqLen_t *startPos = (seqLen_t*)calloc(numSelectedSites+1, sizeof(seqLen_t)); 
-//   // seqLen_t *length = (seqLen_t*) calloc(numSelectedSites+1, sizeof(seqLen_t)); 
-//   // float *betweenSelRecombProb = (float*)calloc(numSelectedSites+1, sizeof(float)); 
-//   // seqLen_t maximum = 0; 
-
-//   // startPos[0] = 0; 
-//   // for(nat i = 1; i <= numSelectedSites ; ++i)
-//   //   {
-//       // cout << i << endl; 
-//       // startPos[i] = chromo.getPosition(i-1) ;  
-//       // length[i-1] = (i == numSelectedSites ? seqLen : startPos[i] )  - startPos[i-1]; 
-//     //   if(length[i-1] > maximum)
-//     // 	maximum = length[i-1]; 
-//     // }
-
-//   // length[numSelectedSites] = seqLen - startPos[numSelectedSites]; 
-//   // if(length[numSelectedSites] > maximum)
-//     // maximum = length[numSelectedSites];
-  
-//   // normalize 
-//   // for(nat i = 0; i <= numSelectedSites; ++i)
-//   //   betweenSelRecombProb[i] = (float)length[i] / (float)maximum; 
-
-//   determineRecsPerGen(seqLen, popParams[0]);  
-//   recombs = (Recombination*)calloc(totalRec, sizeof(Recombination)); 
-
-//   auto recC = 0U; 
-//   for(nat genC = 0; genC < numGen ; ++genC)
-//     {
-//       auto numRec = numRecPerGen[genC]; 
-//       firstRecPerGen.at(genC) = (numRec > 0 )  ? &(recombs[recC]) : nullptr; 
-
-// #ifdef DEBUG_RECMAN
-//       cout << "gen " << genC << "\t" << numRecPerGen.at(genC) << endl; 
-// #endif
-
-//       if( numRec)
-// 	{
-// 	  // compute a map: how many recs per individual in generation 
-// 	  // TODO 0
-// 	  nat popSizeL = popParams[0].getPopSizeByGeneration(genC);
-// 	  memset(numRecPerIndi, 0, sizeof(byte) * maxPopsize); 
-// 	  for(nat recPerGC = 0; recPerGC < numRec; ++recPerGC) 
-// 	    numRecPerIndi[rand.Integer<nat>(popSizeL)]++; 
-
-// 	  // compute recombinations
-// 	  for(nat i = 0; i < popSizeL ; ++i) 
-// 	    { 
-// 	      nat numRecHere =  numRecPerIndi[i]; 
-// 	      for(nat numRecIndi = 0 ; numRecIndi <  numRecHere ; ++numRecIndi)
-// 		{
-// 		  Recombination& rec = recombs[recC++]; 
-// 		  assert(recC <= totalRec); 
-
-// 		  rec.absPos = rand.Integer(seqLen); 
-// 		  rec.haploIndiNr = i; 
-// 		}
-// 	    }
-// 	} 
-//     } 
-//   // free(startPos); 
-//   // free(length);
-//   // free(betweenSelRecombProb); 
-//   free(numRecPerIndi); 
-// }
-
-#else
-
-
 void RecombinationManager::precompute(ThreadPool &tp, const PopulationManager &popMan)
 {
   numRecPerGen = vector<nat>(this->getNumGen()); 
@@ -192,5 +112,5 @@ void RecombinationManager::precompute(ThreadPool &tp, const PopulationManager &p
     } 
   free(numRecPerIndi); 
 }
-#endif
+
 

@@ -40,7 +40,6 @@ public:
   vector<Node*>& getBvMeaning(){return bvMeaning;}
   nat getNumberOfNodesUsed(){return highestId; }
   
-#ifdef USE_BVBASED_EXTRACTION
   void initBvMeaning();
   void createSequenceForNode(Node *node); 
   // TODO make some stuff private 
@@ -48,9 +47,7 @@ public:
   void accumulateMutationsBv(Node *node, BitSet<uint64_t> *bv, seqLen_t start, seqLen_t end); 
   nat getStartIdx(seqLen_t start); 
   nat getEndIdx(seqLen_t start); 
-#else 
-  void simulateNode(Node *node); 
-#endif
+
 
 private:
   Node** relevantNodes; 
@@ -64,10 +61,6 @@ private:
 
   nat getTrueAncestor(Node *node); 
   void resize();
-#ifdef USE_BVBASED_EXTRACTION
-  void handleAncestor(NeutralArray *seq, Node *anc , seqLen_t start, seqLen_t end); 
-  void gatherMutations(Node *node, NeutralArray* seq, seqLen_t start, seqLen_t end);
-#endif
   NeutralMutation* createNeutralMutation(Node *node);
 };
 

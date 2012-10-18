@@ -34,13 +34,9 @@ public:
   // OBSERVERS
   nat getNumberOfMutations() {return mutNodes.getNumberUsed(); }
   vector<Node*>& getState() {return previousState; }
-#ifdef USE_BVBASED_EXTRACTION
   void getRawSequences(vector<BitSet<uint64_t>*> &bvs); 
   vector<Node*>& getBvMeaning(){return nodMan.getBvMeaning();} // bad style =( 
   BitSet<uint64_t>* getBvFromNode(Node *node){return nodMan.getInfo(node->id)->bv; }
-#else
-  NeutralArray* getSequenceFromNode(Node *node){ return nodMan.getInfo(node->id)->sequence; }
-#endif
   void printRaw(FILE *fh);
 
 private: 

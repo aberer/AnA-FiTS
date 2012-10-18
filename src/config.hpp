@@ -1,21 +1,19 @@
 // #define PRODUCTIVE
 
 
-#define USE_BVBASED_EXTRACTION
 
 
 ///////////////////
 // OPTIMIZATION  //
 ///////////////////
-// #define USE_UNOPTIMIZED_PRECOMPUTE  
 
 // #define _TEST
 
 #define CONSOLE_OUTPUT
 // #define PRINT_SEQ_STDOUT
 
-// not sure, if double really works
 #define FITNESS_TYPE double
+
 
 // #define DEBUG_ALT_CLEANUP 
 // #define DEBUG_REORDER 
@@ -41,7 +39,7 @@
 // #define DEBUG_PRINT_POP_EVERY_GEN
 
 // #define DEBUG_SHOW_POPSIZE
-#define DEBUG_SHOW_GENS
+// #define DEBUG_SHOW_GENS
 
 // #define DEBUG_PRECOMPUTE 
 // #define DEBUG_RECMAN

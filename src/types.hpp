@@ -7,6 +7,7 @@ typedef uint32_t seqLen_t;
 typedef unsigned long long popSize_t; 
 typedef unsigned char byte; 
 
+
 template<typename LARGE, typename PART>
 union pun_t
 {

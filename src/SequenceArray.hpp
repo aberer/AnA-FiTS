@@ -19,7 +19,7 @@ public:
   SequenceArray& operator=(const SequenceArray& rhs); 
 
   // OPERATORS
-  void mutate(MUTATION &mut, bool replace, bool insertAnyway, bool consistencyCheck);  
+  void mutate(MUTATION &mut, bool replace, bool insertAnyway, bool consistencyCheck);
   void recombine(const SequenceArray &seqA, const SequenceArray &seqB, Recombination *start, nat length); 
   void remove(MUTATION *mut);
   void removeAt(nat index); 

@@ -43,23 +43,17 @@ struct Node
  */
 struct NodeExtraInfo
 {
-#ifdef USE_BVBASED_EXTRACTION
   BitSet<uint64_t> *bv; 
-#else 
-  NeutralArray *sequence; 
-#endif
   seqLen_t start; 
   seqLen_t end;
 
-  // the following stuff could be compressed into a byte 
+  nat bvIdx; 
+
+  // TODO the following stuff could be compressed into a byte 
   nat referenced; 
   bool wasInitialized;
   bool skip;
   bool invertedOrientation; 
-
-#ifdef USE_BVBASED_EXTRACTION
-  nat bvIdx; 
-#endif
 }; 
 
 

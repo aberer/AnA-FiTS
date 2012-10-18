@@ -3,9 +3,7 @@
 #include "types.hpp"
 #include "common.hpp"
 
-// #include "Node.hpp"
 #include "Base.hpp"
-
 
 #include <fstream>
 
@@ -46,7 +44,7 @@ struct NeutralMutation
   void claim() {inUse = true; }
   void unclaim() {inUse = false; }
   void printRaw(FILE *fh);
- };
+ } ;
 
 
 ostream& operator<<(ostream &stream, const Base base); 

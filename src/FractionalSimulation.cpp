@@ -325,7 +325,6 @@ void FractionalSimulation::printArgs(string id)
 
 
 
-#ifdef USE_BVBASED_EXTRACTION
 void FractionalSimulation::printSequencesRaw(string id)
 {
   nat numHaplo = popMan->getTotalNumHaploByGen(genCnt.getCurrentGeneration() - 1); 
@@ -363,27 +362,7 @@ void FractionalSimulation::printSequencesRaw(string id)
 
   fclose(fh); 
 }
-#else 
-void FractionalSimulation::printSequencesRaw(string id)
-{
-  nat numHaplo = popMan->getTotalNumHaploByGen(genCnt.getCurrentGeneration() - 1); 
-  BinaryWriter writer(id, numHaplo);
 
-  // first unclaim everything all selected mutations, neutral mutations never have been claimed before 
-  for(nat i = 0; i < tp.getNumberOfThreads() ; ++i)    
-    tp[i].getMutationMemory().unclaimAll();
-
-  nat numChrom = chromosomes.size();  
-  writer.writeInt(numChrom); 
-  for(nat i = 0; i < numChrom; ++i)
-    {
-      Graph &graph = *(graphs[i]);
-      HaploTimeWindow &w = *(haplotypesWindows[i]);
-      Chromosome &chrom = *(chromosomes[i]); 
-      writer.write(graph, w, chrom); 
-    }
-}
-#endif
 
 
 void FractionalSimulation::finalize()

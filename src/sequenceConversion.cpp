@@ -111,7 +111,7 @@ void printBitvectors(bool toStdout, FILE *ifh, FILE *ofh, char **precomputed, na
 	  	   precomputed[converter.part[7]]
 	  	   );
 	  else 
-	    fprintf(ofh, "%s%s%s%s%s%s%s%s\n", 
+	    fprintf(ofh, "%s%s%s%s%s%s%s%s", 
 	  	    precomputed[converter.part[0]],
 	  	    precomputed[converter.part[1]],
 	  	    precomputed[converter.part[2]],
