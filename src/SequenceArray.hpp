@@ -208,11 +208,11 @@ void SequenceArray<MUTATION>::recombine(const SequenceArray &seqA, const Sequenc
   assert(this != &seqB); 
   erase();
   
-  cout << "seqA:\t" << seqA << endl; 
-  cout << "seqB:\t" << seqB << endl; 
-  for(nat i = 0; i < length ; ++i)
-    cout << start[i].absPos << ",";   
-  cout << endl << endl; 
+  // cout << "seqA:\t" << seqA << endl; 
+  // cout << "seqB:\t" << seqB << endl; 
+  // for(nat i = 0; i < length ; ++i)
+  //   cout << start[i].absPos << ",";   
+  // cout << endl << endl; 
   
   const SequenceArray *primaryDonor = &seqA, 
     *otherDonor = &seqB; 

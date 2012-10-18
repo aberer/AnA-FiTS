@@ -5,7 +5,6 @@
 
 Chromosome::Chromosome(seqLen_t seqLen, bool _isNeutral, FitnessFunction fFun, nat _id, nat numPop)
   : seqLen(seqLen)
-  , uniqueHaplotypes(1000) // :MAGIC:
   , seqRep(seqLen)
   , mutMan(seqLen,fFun)
   , id(_id)
@@ -29,7 +28,7 @@ void Chromosome::init(Randomness &rng)
 }
 
 
-void Chromosome::updateUniqueHaplotypes(SelectedArray** seqBegin,SelectedArray** seqEnd)
+void Chromosome::updateUniqueHaplotypes(SelectedArray** seqBegin,SelectedArray** seqEnd, DynArraySequential<SelectedArray*> &uniqueHaplotypes)
 {
   uniqueHaplotypes.resetUsed();
   for(auto seqI  = seqBegin; seqI != seqEnd; ++seqI)
@@ -48,13 +47,13 @@ void Chromosome::updateUniqueHaplotypes(SelectedArray** seqBegin,SelectedArray**
 #define CURRENT_IS_LESS ( currentMut->absPos < seq.at(currentIndex[i])->absPos   )
 
 // :BUG: 
-void Chromosome::cleanFixedMutations(SelectedArray** seqBegin,SelectedArray** seqEnd, nat popId, ThreadPool &tp)
+void Chromosome::cleanFixedMutations(SelectedArray** seqBegin,SelectedArray** seqEnd, nat popId, ThreadPool &tp, DynArraySequential<SelectedArray*> &uniqueHaplotypes)
 {
 #ifdef DEBUG_ALT_CLEANUP
   cout << "cleaning up chromo " <<  id << endl; 
 #endif
 
-  updateUniqueHaplotypes(seqBegin, seqEnd);  
+  updateUniqueHaplotypes(seqBegin, seqEnd, uniqueHaplotypes);  
 
 #ifdef DEBUG_ALT_CLEANUP
   cout << "Total of  "<<   uniqueHaplotypes.getUsed() << endl; 
@@ -118,6 +117,8 @@ void Chromosome::cleanFixedMutations(SelectedArray** seqBegin,SelectedArray** se
 	  i++;
 	}
       
+
+      // fixed mutation found 
       if(currentMut && init == currentMut)
 	{
 	  // assert that everybody has it 
@@ -131,21 +132,13 @@ void Chromosome::cleanFixedMutations(SelectedArray** seqBegin,SelectedArray** se
 	  for(nat j = 0; j < uniqueHaplotypes.getUsed();++j)
 	    {
 	      auto tmp = uniqueHaplotypes.at(j); 
-	      // cout <<  *tmp  << endl; 
 	      
 	      assert(uniqueHaplotypes.at(j)->getIfPresent(currentMut->absPos)->absPos == currentMut->absPos); 
 	      uniqueHaplotypes.at(j)->removeAt(currentIndex[j]) ;
 	    }
 	  
 	  for(nat j = 0; j < uniqueHaplotypes.getUsed(); ++j)
-	    {
-	      if(uniqueHaplotypes.at(j)->getIfPresent(currentMut->absPos) != nullptr)
-		{
-		  auto tmp  = uniqueHaplotypes.at(j)->getIfPresent(currentMut->absPos); 
-		  // cout << *tmp << endl; 
-		}
-	      assert(uniqueHaplotypes.at(j)->getIfPresent(currentMut->absPos) == nullptr); 
-	    }
+	    assert(uniqueHaplotypes.at(j)->getIfPresent(currentMut->absPos) == nullptr); 
 
 	  insertFixedMutation(currentMut, popId);
 
@@ -160,17 +153,12 @@ void Chromosome::cleanFixedMutations(SelectedArray** seqBegin,SelectedArray** se
       seqI->resetVisited();
     }  
 
-  // unclaim mutations
-  for(nat i = 0; i < tp.getNumberOfThreads() ;++i)
-    {
-      ResizMemArena<SelectedMutation> &mem = tp[i].getMutationMemory(); 
-      mem.unclaimAll();
-    }
-
   // reclaim mutations
   for(SelectedArray* seqI : uniqueHaplotypes)
     seqI->claimMutations();
 }
+
+
 
 
 void Chromosome::insertFixedMutation(SelectedMutation *mut, nat popId)
@@ -178,4 +166,3 @@ void Chromosome::insertFixedMutation(SelectedMutation *mut, nat popId)
   SelectedArray *array = fixedMutations[popId];  
   array->mutate(*mut, false, true, false); //  :TODO: correct? was true,nothing before   
 }
-

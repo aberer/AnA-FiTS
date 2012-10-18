@@ -392,11 +392,12 @@ void FractionalSimulation::finalize()
 
   for(nat i = 0; i < haplotypesWindows.size(); ++i)
     {
+      DynArraySequential<SelectedArray*> uniqs(1000) ; 
       HaploTimeWindow &h  = *(haplotypesWindows[i]) ;
       h.switchPastAndPresent();
       
       auto curSeqIter = h.start();
-      chromosomes[i]->cleanFixedMutations(curSeqIter, curSeqIter + parNum, 0, tp); // :TODO: for all popultaions
+      chromosomes[i]->cleanFixedMutations(curSeqIter, curSeqIter + parNum, 0, tp, uniqs); // :TODO: for all popultaions
     }
 
   // neutral part 
@@ -409,15 +410,32 @@ void FractionalSimulation::finalize()
 }
 
 
+
+// cleans fixed mutations and determines which mutations are actually in use (memory management wise)
 inline void FractionalSimulation::cleanFixed()
 {
   nat parNum = popMan->getTotalNumHaploByGen(genCnt.getCurrentGeneration());
+  vector<DynArraySequential<SelectedArray*>*> uniqueHaplos;
 
   // reset mutation references 
   nat numChrom = chromosomes.size();
   for(nat i = 0; i < numChrom; ++i)    
     {
+      auto uniqs = new  DynArraySequential<SelectedArray*> (1000); 
+      uniqueHaplos.push_back(uniqs); 
       auto begin = haplotypesWindows[i]->start(); 
-      chromosomes[i]->cleanFixedMutations(begin , begin + parNum, 0 , tp ); // :TODO: for all populations
+      chromosomes[i]->cleanFixedMutations(begin , begin + parNum, 0 , tp, *uniqs ); // :TODO: for all populations
     }
+
+  // release all mutation instances   
+  for(nat i = 0; i < tp.getNumberOfThreads() ;++i)
+    {
+      ResizMemArena<SelectedMutation> &mem = tp[i].getMutationMemory(); 
+      mem.unclaimAll();
+    }
+
+  // reclaim mutations
+  for( DynArraySequential<SelectedArray*> *uniqs : uniqueHaplos)
+    for(SelectedArray* seqI : *uniqs)
+      seqI->claimMutations();  
 }

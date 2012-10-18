@@ -25,7 +25,7 @@ public:
   ~Chromosome();
   
   // OPERATORS 
-  void cleanFixedMutations(SelectedArray** seqBegin,SelectedArray** seqEnd, nat popId, ThreadPool &tp);   
+  void cleanFixedMutations(SelectedArray** seqBegin,SelectedArray** seqEnd, nat popId, ThreadPool &tp, DynArraySequential<SelectedArray*> &uniqueHaplotypes);   
   SelectedMutation& getSelectedMutation(ResizMemArena<SelectedMutation> &mem, Randomness &rng);
   bool locusIsNeutral(seqLen_t locus);
   void init(Randomness &rng); 
@@ -43,7 +43,6 @@ public:
 
 private:
   seqLen_t seqLen; 
-  DynArraySequential<SelectedArray*> uniqueHaplotypes;
   SeqRep seqRep;
   MutationManager mutMan; 
   nat id;   
@@ -51,7 +50,7 @@ private:
   bool isNeutral;
   
   void insertFixedMutation(SelectedMutation *mut, nat popId); 
-  void updateUniqueHaplotypes(SelectedArray** seqBegin,SelectedArray** seqEnd);
+  void updateUniqueHaplotypes(SelectedArray** seqBegin,SelectedArray** seqEnd,DynArraySequential<SelectedArray*> &uniqueHaplotypes);
   void replaceInAllSequences(nat numMutations, const DynArraySequential<uint16_t> &indicesInOld); 
 };
 
