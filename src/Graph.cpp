@@ -305,7 +305,7 @@ void Graph::printRaw(FILE *fh)
       
       if(myInfo->skip)	
 	continue;
-      else 	
+      else 
 	node->printRaw(fh);
     }
 }

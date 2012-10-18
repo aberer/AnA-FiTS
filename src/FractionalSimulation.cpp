@@ -2,7 +2,6 @@
 #include "ProgramOptions.hpp"
 #include "SequenceArray.hpp"
 #include "Ancestry.hpp"
-#include "BinaryWriter.hpp"
 #include "SequenceFinalizer.hpp"
 
 #include  <fstream>

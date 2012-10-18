@@ -143,12 +143,10 @@ nat NodeManager::getTrueAncestor(Node *node)
     case MUTATION:
       {
 	if(NODE_IS_RELEVANT(node->loc,myInfo->start, myInfo->end) ) 
-	  {
-	    return node->id;
-	  }
+	  return node->id;
 	else
 	  {
-	    myInfo->skip = true; 
+	    myInfo->skip = true;
 	    return getTrueAncestor(getNode(node->ancId1)); 
 	  }
 	break; 
@@ -159,7 +157,8 @@ nat NodeManager::getTrueAncestor(Node *node)
 	  return node->id; 	
 	else 
 	  {
-	    myInfo->skip = true; 
+	    cout << "skipping node " << node->id << endl; 
+	    myInfo->skip = true;
 	    if(myInfo->start <= node->loc)
 	      return getTrueAncestor(getNode(node->ancId1)); 
 	    else 

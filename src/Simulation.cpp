@@ -50,34 +50,6 @@ void Simulation::run()
 
   fractionalSimulation->simulate();
   fractionalSimulation->finalize();
-  
-#ifdef VERIFICATION
-  vector<Graph*> graphs = fractionalSimulation->getGraphs();
-  assert(graphs.size() == 1);
-  Graph* myGraph = graphs[0];
-  vector<Node*> state = myGraph->getState();
-  vector<Chromosome*> chrs =  fractionalSimulation->getChromosomes();
-
-  vector<NeutralArray*> slowSequences; 
-  myGraph->getSequencesSlow(slowSequences, *(chrs[0]));
-
-  vector<NeutralArray*> fastSequences; 
-  for(int i = 0; i < 1000; ++i)
-    {
-      Node *node = state[i]; 
-      NeutralArray *seq = myGraph->getSequenceFromNode(node);
-      fastSequences.push_back(seq); 
-    }
-
-  assert(fastSequences.size() == slowSequences.size()); 
-
-  for(int i = 0; i < slowSequences.size(); ++i)
-    {
-      cout << "slow: "  << *(slowSequences[i]) << endl; 
-      cout << "fast: " << *(fastSequences[i]) << endl; 
-      cout << endl; 
-    }  
-#endif
 
   string runid = progOpt.get<string>("runId"); 
   fractionalSimulation->printSequencesRaw(runid); 

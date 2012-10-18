@@ -1,8 +1,6 @@
 // #define PRODUCTIVE
 
 
-
-
 ///////////////////
 // OPTIMIZATION  //
 ///////////////////
@@ -19,11 +17,11 @@
 // #define DEBUG_REORDER 
 
 
-// TODO does this work? 
-// #define FEATURE_REDUCE_GRAPH
+// :TRICKY: this works, but on default calls will not yield any
+// improvement. It is good, if the analysis is broken down into steps
+// because of memory, then the graph will be reduced.  #define
+// FEATURE_REDUCE_GRAPH
 
-// EFFICIENCY
-#define EFFICIENCY_INIT_MEMBLOCK
 
 // #define DEBUG_POP_PARAM_PARSE  
 
@@ -57,5 +55,3 @@
 // #define DEBUG_HOOKUP 
 // #define DEBUG_BACKTRACE 
 // #define DEBUG_SEQUENCE_EXTRACTION
-
-// #define VERIFICATION
