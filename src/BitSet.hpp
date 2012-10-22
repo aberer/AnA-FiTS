@@ -46,6 +46,7 @@ public:
 
   nat count() const;
   void resize(uint64_t size);
+  void resizeLazy(uint64_t size); 
 
   friend ostream& operator<<(ostream &stream, const BitSet &rhs)    
   {   
@@ -218,6 +219,7 @@ template<typename T> nat BitSet<T>::count() const
 
 template<typename T> void BitSet<T>::resize(uint64_t size)
 {
+  cout << "resizing bv to "<< size << endl; 
   nat newInternalSize = BitSet::convertToInternalSize(size);   
   if(newInternalSize != length)
     {
@@ -231,6 +233,25 @@ template<typename T> void BitSet<T>::resize(uint64_t size)
       this->numElems = size; 
       memset(this->bv, 0, sizeof(T) * length);
     }  
+}
+
+
+template<typename T> void BitSet<T>::resizeLazy(uint64_t size)
+{
+  nat newInternalSize = BitSet::convertToInternalSize(size); 
+
+  if(newInternalSize > length)
+    {
+      this->bv = (T*)realloc(this->bv, newInternalSize *  sizeof(T)); 
+      memset(bv, 0 , newInternalSize * sizeof(T)); 
+      this->length = newInternalSize; 
+      this->numElems = size; 
+    }
+  else
+    {
+      this->numElems = size; 
+      memset(this->bv, 0, sizeof(T) * length);
+    }
 }
 
 
@@ -258,7 +279,13 @@ template<typename T> void BitSet<T>::set(nat pos)
 
 template<typename T> bool BitSet<T>::test(nat pos)  const 
 { 
-  assert(pos < numElems) ; 
+#ifndef NDEBUG  
+  if(pos >= numElems)
+    {
+      cout << "trying to set " << pos << " while largest element is "   <<  numElems << endl; 
+      assert(pos < numElems) ; 
+    }
+#endif
   return (bv[pos >> divOp ] & mask[pos & maxElem]); 
 }
 

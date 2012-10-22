@@ -16,6 +16,9 @@ NodeManager::NodeManager(nat initSize)
 
 NodeManager::~NodeManager()
 {  
+  // delete the hacky starting node bv  
+  delete extraInfo[0].bv ; 
+
   nat end = allocatedSeqs.getUsed(); 
   for(nat i = 0; i < end; ++i)
     delete allocatedSeqs.at(i); 
@@ -29,7 +32,7 @@ NodeManager::~NodeManager()
     delete allocatedBvs.at(i); 
 
   free(relevantNodes); 
-  free(extraInfo); 
+  free(extraInfo);   
 }
 
 
@@ -311,8 +314,10 @@ void NodeManager::initBvMeaning()
 	   return a->base < b->base; 
 	 else 
 	   {	     
-	     assert(0); 
-	     return false; 
+	     return a->indiNr < b->indiNr; 
+	     // cout << "different nodes totally equal:  " << *a << "\t" << *b << endl; 
+	     // assert(0); 
+	     // return false; 
 	   }
        } ); 
   

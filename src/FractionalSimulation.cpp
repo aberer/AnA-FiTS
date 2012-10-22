@@ -14,6 +14,7 @@ FractionalSimulation::FractionalSimulation(ThreadPool &_tp,InfoFile &info, const
   , cleanFixPeriod(progOpt.get<nat>("cleanF"))
   , tp(_tp) 
   , chromosomes(_chromosomes)
+  , memLimitWasSet(progOpt.hasOption("memory"))
 {
   popMan = unique_ptr<PopulationManager>(new PopulationManager(popParams)); 
 
@@ -49,7 +50,7 @@ FractionalSimulation::~FractionalSimulation()
     delete haplo; 
   for(Graph *graph : graphs)
     delete graph; 
-  
+
   delete init; 
 }
 
@@ -60,10 +61,11 @@ FractionalSimulation::~FractionalSimulation()
 void FractionalSimulation::sampleParentsByFitness(ThreadPool &tp)
 {
   nat currentGen = genCnt.getCurrentGeneration();
-  nat numHaploPrev = popMan->getTotalNumIndiByGen(currentGen);
+  nat numHaploPrev = currentGen == 0 ? popMan->getTotalNumIndiByGen(0) : popMan->getTotalNumIndiByGen(currentGen-1);
 
 #ifdef DEBUG_SHOW_POPSIZE
-  cout << "gen " << genCnt.getCurrentGeneration() << "\t" << numHaploPrev  << endl; 
+  nat numInNow = popMan->getTotalNumIndiByGen(currentGen); 
+  cout << "sampling for gen " << genCnt.getCurrentGeneration() << "\tnumInPrev=" << numHaploPrev << "\tnumInNow=" << numInNow   << endl; 
 #endif
 
   // resample 
@@ -94,7 +96,7 @@ void FractionalSimulation::createRecombinants(ThreadPool &tp)
   FreeRing &fr = tp[0].getFreeRing();  
 
 #ifndef NDEBUG
-  nat numHaploNow = popMan->getTotalNumHaploByGen(currentGen);
+  nat numHaploPrev = currentGen == 0 ? popMan->getTotalNumHaploByGen(currentGen) : popMan->getTotalNumHaploByGen(currentGen-1);
 #endif
 
   nat numChrom = chromosomes.size(); 
@@ -131,9 +133,10 @@ void FractionalSimulation::createRecombinants(ThreadPool &tp)
 	    }
 	  
 	  nat ancestorA = ancestry->getAddrOfParent(currentGen, chromId,start->haploIndiNr); 
-	  assert(ancestorA < numHaploNow); 
+	  
+	  assert(ancestorA < numHaploPrev); 
 	  SelectedArray *anc1 = haplos.getPreviousConfiguration(ancestorA),
-	    *anc2 = haplos.getPreviousConfiguration(GET_OTHER_ANCESTOR(ancestorA));	  
+	    *anc2 = haplos.getPreviousConfiguration(GET_OTHER_ANCESTOR(ancestorA));
 
 	  assert( genCnt.getCurrentGeneration() == 0 ||  ancestorA < popMan->getTotalNumHaploByGen(genCnt.getCurrentGeneration()-1)); 
 
@@ -267,8 +270,11 @@ void FractionalSimulation::simulate()
   while(genCnt.hasToSimulate())
     {
       genCnt.determineNextSection(*popMan, chromosomes);
-      // cout << "GenerationCounter: simulating from " << genCnt.getStartOfSection() << " until " << genCnt.getEndOfSection() << endl; 
       
+#ifdef CONSOLE_OUTPUT      
+      if(memLimitWasSet)
+	cout << "running partial simulation from " << genCnt.getStartOfSection() << " to " << genCnt.getEndOfSection() << " (imposed by memory limit)" << endl; 
+#endif
       // set up ancestry 
       ancestry = new Ancestry(tp, chromosomes, genCnt, *popMan); 
       ancestry->fillWithRandomIndividuals(tp); 
@@ -326,7 +332,7 @@ void FractionalSimulation::printArgs(string id)
 
 void FractionalSimulation::printSequencesRaw(string id)
 {
-  nat numHaplo = popMan->getTotalNumHaploByGen(genCnt.getCurrentGeneration() - 1); 
+  nat numHaplo = popMan->getTotalNumHaploByGen(genCnt.getCurrentGeneration() -1); 
   
   stringstream fileName; 
   fileName << SEQ_FILE_NAME << "." << id ; 
@@ -346,6 +352,7 @@ void FractionalSimulation::printSequencesRaw(string id)
       graph.getRawSequences(rawNeutralSequences); 
       vector<Node*>& rawBvMeaning = graph.getBvMeaning();
       vector<SelectedArray*> selectedSeqs; 
+
       assert(rawNeutralSequences.size() == numHaplo); 
 
       for(nat i = 0; i < numHaplo; ++i)

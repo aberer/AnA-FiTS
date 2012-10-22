@@ -164,5 +164,5 @@ void Chromosome::cleanFixedMutations(SelectedArray** seqBegin,SelectedArray** se
 void Chromosome::insertFixedMutation(SelectedMutation *mut, nat popId)
 {
   SelectedArray *array = fixedMutations[popId];  
-  array->mutate(*mut, false, true, false); //  :TODO: correct? was true,nothing before   
+  array->mutate(*mut, false, true, false); 
 }

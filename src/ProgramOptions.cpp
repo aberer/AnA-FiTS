@@ -19,7 +19,8 @@ ProgramOptions::ProgramOptions(int argc, char **argv)
   po::options_description tuning("Tuning parameters");
   tuning.add_options()
     ("cleanF,Z", po::value<nat>()->default_value(100), "check every <x> generations for fixed mutations.")
-    ("memory,M", po::value<string>(), "recommend  memory limit (e.g., specify 1G or 500M). Note: the same seed will not result in a reproducible run with varying values of -M. AnA-FiTS can not guarantee to stay below the limit.")
+    ("memory,M", po::value<string>(), "advise  memory limit (e.g., specify 1G or 500M). Note: seeds are not reproducible, if various values for -M are used.\
+ AnA-FiTS can not guarantee to stay below the memory limit.")
     ; 
   
   po::options_description prog("Program flags"); 
@@ -113,15 +114,15 @@ ProgramOptions::ProgramOptions(int argc, char **argv)
     }  
 
   // :BUG: did not work on hitssv109
-  // try    
-  //   {
+  try    
+    {
   po::notify(vm); 
-  //   }
-  // catch (po::required_option requiredOption)
-  //   {
-  //     std::cerr << "Option > --" << requiredOption.get_option_name() << " < is mandatory! \n For help on how to specfiy it correctly, consider --help " << endl; 
-  //     abort();
-  //   }
+    }
+  catch (po::required_option requiredOption)
+    {
+      std::cerr << "Option > --" << requiredOption.get_option_name() << " < is mandatory! \n For help on how to specfiy it correctly, consider --help " << endl; 
+      abort();
+    }
 
   // :KLUDGE:
   if(this->get<vector<string>>("selCoef").size() > 7)

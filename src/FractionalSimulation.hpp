@@ -39,6 +39,7 @@ private:
   vector<Graph*> graphs;  
   vector<Chromosome*> chromosomes;
   bool isNeutral; 
+  bool memLimitWasSet; 
 
   // METHODS
   void sampleParentsByFitness(ThreadPool &tp);   
@@ -55,11 +56,6 @@ private:
   friend class PopulationTest;
 };
 
-
-
-
 ////////////////////
 // IMPLEMENTATION //
 ////////////////////
-
-

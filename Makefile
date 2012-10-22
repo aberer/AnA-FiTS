@@ -27,7 +27,7 @@ LFLAGS =  -L./lib  $(LFLAGS_RAND) $(LFLAGS_OPTPARS) $(LFLAGS_LIKWID) $(LFLAGS_AS
 RAND_INCLUDE=-Ilib/RandomLib/include
 INCLUDES = $(RAND_INCLUDE) -Ilib/gtest/include
 
-# -flto
+# -flto 
 # -DNDEBUG
 LANG =  -Wno-sign-compare -Wall -std=c++0x  -Wno-unused-variable -Wextra -Wno-unused-parameter -fpermissive #  -Wstrict-aliasing=2  -Wfloat-equal # is permissive a prolem?  
 OPT = -O3 -march=native -mtune=native -funroll-all-loops 

@@ -55,7 +55,7 @@ void intNormalizer(T number,unsigned int &m, unsigned int &r2)
 {
   number--; 
   number = number ? number : 1U; 
-  // :TODO: 
+  // :TRICKY: this case shoudl never occur in our case 
   // T  n1 = ~number ? number + 1U : 1U;    
   T n1 = number + 1U; 
   T r1 =  (numeric_limits<T>::max() - number) / n1; 

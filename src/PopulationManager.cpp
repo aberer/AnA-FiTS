@@ -36,6 +36,8 @@ nat PopulationManager::getMaximumPopSize(nat popId, nat start, nat end) const
 }
 
 
+#include <iostream>
+
 
 // :TRICKY: this includes padding
 nat PopulationManager::getNumBytesForGeneration(nat gen) const
@@ -46,12 +48,7 @@ nat PopulationManager::getNumBytesForGeneration(nat gen) const
   nat numPrev = (gen == 0 ? popParam.getPopSizeByGeneration(0) : popParam.getPopSizeByGeneration(gen-1)) ; 
   nat bytes = mapToBytesNeeded(numPrev) * numHere; 
   bytes += ADD_PADDING_16(bytes);
+
   return bytes; 
 }
 
-
-// nat PopulationManager::getHaploForGeneration(nat gen)
-// {
-//   const PopulationParams &popParam = (*this)[0]; 
-//   return popParam.getPopSizeByGeneration(gen); 
-// }

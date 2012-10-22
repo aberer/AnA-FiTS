@@ -4,8 +4,8 @@
 Survivors::Survivors(nat lastPopsize, nat maxPopSize, nat _startGen, nat _endGen)
   : TimeSection(_startGen, _endGen)
   , capacity(maxPopSize * 10 )
-  , setMaker(MULT_2(maxPopSize))
-  , highestIndex(this->getEndGen() - this->getStartGen() -1)
+  , setMaker(maxPopSize)
+  , highestIndex(this->getEndGen() - this->getStartGen() -1 ) 
   , currentGenerationBackwards(0) 
 {
   survivors = (int*)calloc(capacity, sizeof(int));
@@ -38,13 +38,15 @@ void Survivors::resize()
 
 void Survivors::initializePresentGeneration(nat howMany)
 {
-  reserve(howMany); 
+  reserve(howMany, howMany); 
 
   for(nat i = 0; i < howMany; ++i)
     {
       *nextSurvivor = i; 
       ++nextSurvivor;
     }  
+  
+  cout << "initializing survivors with " << howMany << endl; 
   
   prepareNextGenBackwards(); 	
 }

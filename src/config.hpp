@@ -36,7 +36,7 @@
 // #define DEBUG_MUT_SEL
 // #define DEBUG_PRINT_POP_EVERY_GEN
 
-// #define DEBUG_SHOW_POPSIZE
+#define DEBUG_SHOW_POPSIZE
 // #define DEBUG_SHOW_GENS
 
 // #define DEBUG_PRECOMPUTE 

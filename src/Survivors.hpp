@@ -18,11 +18,10 @@ public:
   void prepareNextGenBackwards(); 
   int* getFirstSurvivorBackwards(nat fromLastGeneration) const ; 
   int* getFirstSurvivorForward(nat genNum) const ;  
-  // void setFirstSuvivorRelativeToNow(nat fromLastGeneration, nat *firstSurvivor) ; 
   void addSurvivor(int idx); 
   int* getLastSurvivor() const;
   void printGen(nat gen) const; 
-  void reserve(nat num);
+  void reserve(nat num, nat numInPrev);
 
 private:
   int *survivors; 
@@ -85,18 +84,11 @@ inline int* Survivors::getFirstSurvivorForward(nat genNum) const
 }    // usual numbering gen 0 was first gen in past  
 
 
-// inline void Survivors::setFirstSuvivorRelativeToNow(nat fromLastGeneration, nat *firstSurvivor) 
-// {   
-//   survivorAccCountByGen[fromLastGeneration] = firstSurvivor - survivors;
-// }
-
 
 inline void Survivors::prepareNextGenBackwards()
 {
-  // cout << highestIndex - currentGenerationBackwards  << "\t" << setMaker.count() << endl;
   currentGenerationBackwards++; 
   survivorAccCountByGen[currentGenerationBackwards] = nextSurvivor - survivors;   
-  setMaker.reset();
 }
 
 inline int* Survivors::getLastSurvivor() const {return nextSurvivor ; } 
@@ -112,10 +104,12 @@ inline void Survivors::addSurvivor(int idx)
 }
 
 
-inline void Survivors::reserve(nat num)
+inline void Survivors::reserve(nat num, nat numInPrev)
 {
   nat numUsed = nextSurvivor - survivors; 
-  // cout  << "RESERVE " << numUsed <<  " / " << capacity << " used" << endl;
   while( capacity <  numUsed + num ) 
     resize();
+  
+  setMaker.resizeLazy(numInPrev);
 }
+

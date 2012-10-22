@@ -45,8 +45,9 @@ nat Ancestry::initMemBlock(const PopulationManager &popMan)
 
   nat endGen = this->getEndGen();
   for(nat i = this->getStartGen(); i < endGen; ++i)
-    { 
+    {
       nat numIndi = popMan.getTotalNumHaploByGen(i);
+      
       length[getGenIdx(i)] = numIndi; 
       totalNumIndi += numIndi; 
       totalByteNeeded += popMan.getNumBytesForGeneration(i); 
@@ -57,13 +58,19 @@ nat Ancestry::initMemBlock(const PopulationManager &popMan)
   memoryBlockIndi = (uint8_t*) malloc_aligned(totalByteNeeded, 16); 
 
   // initialize offset-array
-  genStartIndi[0] = memoryBlockIndi; 
+  genStartIndi[0] = memoryBlockIndi ; 
   for(nat i = this->getStartGen() + 1 ; i < endGen; ++i)
-    genStartIndi[this->getGenIdx(i)] = genStartIndi[this->getGenIdx(i-1)] + popMan.getNumBytesForGeneration(i); 
+    {
+      genStartIndi[this->getGenIdx(i)] = genStartIndi[this->getGenIdx(i-1)] + popMan.getNumBytesForGeneration(i-1); 
+      // cout << this->getGenIdx(i) - 1  << "\t" << genStartIndi + i <<"\t" <<  (genStartIndi[i] - genStartIndi[i-1] ) << endl; // 
+    }
 
   return totalNumIndi; 
 }
 
+
+
+#define TEST 
 
 
 void Ancestry::fillWithRandomIndividuals_parallel(ThreadPool &tp, nat tid)
@@ -71,7 +78,6 @@ void Ancestry::fillWithRandomIndividuals_parallel(ThreadPool &tp, nat tid)
   nat numGen = this->getNumGen();  
   Randomness &rng = tp[tid].getRNG();  
   nat perThread = numGen / tp.getLoadBalancer().getTotalJobs();  
-  // cout << "one job consists of " << perThread << " generations" << endl; 
   
   nat ticket; 
   while(tp.getLoadBalancer().getTicket(ticket))
@@ -82,18 +88,19 @@ void Ancestry::fillWithRandomIndividuals_parallel(ThreadPool &tp, nat tid)
       for(nat i = start; i < end; ++i)
       	{
       	  nat numInPrev = (i == 0) ? DIVIDE_2(length[0]) : DIVIDE_2(length[i-1]);
-	  uint32_t lengthHere = length[i];
-	  
+	  uint32_t lengthHere = length[i]; 
+
       	  if(numInPrev <= numeric_limits<uint8_t>::max())
-	    rng.IntegerArray<uint8_t>(static_cast<uint8_t*>(this->genStartIndi[i]), lengthHere, numInPrev); 
+	    rng.IntegerArray<uint8_t>(reinterpret_cast<uint8_t*>(this->genStartIndi[i]), lengthHere, numInPrev); 
       	  else if(numInPrev <= numeric_limits<uint16_t>::max()) 
 	    rng.IntegerArray<uint16_t>(reinterpret_cast<uint16_t*>(this->genStartIndi[i]), lengthHere, numInPrev);
       	  else if(numInPrev <= numeric_limits<uint32_t>::max())
 	    rng.IntegerArray<uint32_t>(reinterpret_cast<uint32_t*>(this->genStartIndi[i]), lengthHere, numInPrev); 
       	  else
-      	    assert(0);
-
-	  // cout << "initialized " << i << endl; 
+	    {
+	      cerr << "too many individuals for AnA-FiTS. If you seriously want to simulate on that scale, please contact Andre." << endl; 
+	      assert(0);
+	    } 
       	}
     }
 }
@@ -159,20 +166,15 @@ void Ancestry::insertNeutralMutations(ThreadPool& tp,  Graph &graph, const Survi
   
   totalMiss += ctr; 
   total += numMut; 
-  
-  // cout << "["  << genNum << "] num mut neutral: " << ctr << "/" << numMut<< endl; 
-
-  // if(genNum == 0)
-  //   cout << "final result: " << totalMiss << "/" << total << endl; 
 }
 
 
 void Ancestry::updateGraph_inner(ThreadPool &tp, Survivors &survivors, Chromosome &chromosome, const PopulationManager &popMan, Graph &graph, nat maxPopSize)
 {  
   RecombinationManager &recMan = *(recMans[chromosome.getId()]); 
-  maxPopSize = MULT_2(maxPopSize); 
+  cout << "memory  " << maxPopSize << endl; 
+  // maxPopSize = MULT_2(maxPopSize); 
   RegionManager regMan(maxPopSize, chromosome.getSeqLen());
-  // RecombinationManager &recMan = chromosome.getRecombinationManager();
   
   // EVENTS: this stores the FIRST event for an individual 
   Recombination **events = (Recombination**) calloc( maxPopSize, sizeof(Recombination*)); 
@@ -182,19 +184,20 @@ void Ancestry::updateGraph_inner(ThreadPool &tp, Survivors &survivors, Chromosom
   for(int curGenIdx = this->getEndGen() - 1 ; curGenIdx >= signed(startGen); --curGenIdx)
     {
       nat currentPopSize = popMan.getTotalNumHaploByGen(curGenIdx);
+      nat prevPopsize = curGenIdx == 0 ? initNum : popMan.getTotalNumHaploByGen(curGenIdx-1);
 
-      survivors.reserve(currentPopSize); 
+      survivors.reserve(currentPopSize, prevPopsize); 
       
       Recombination *recIterOrig = recMan.getFirstRecByGen(curGenIdx); 
       Recombination *recIterEnd = recMan.getLastRecByGen(curGenIdx); 
       nat numRec = recMan.getNumRecByGen(curGenIdx); 
       
 #ifdef DEBUG_UPDATE_GRAPH
-      cout << ">>>>>>>>>>>>>>>> GENERATION "  << curGenIdx << "\tnumber of recs "<< numRec << endl; 
+      cout << ">>>>>>>>>>>>>>>> GENERATION "  << curGenIdx << "\tnumber of recs "<< numRec << "\tcurrentPopSize=" << currentPopSize << endl; 
 #endif
       
       // set up an array for quick look-ups       
-      events = (Recombination**)myRealloc(events, currentPopSize * sizeof(Recombination*));
+      events = (Recombination**)myRealloc(events, currentPopSize * sizeof(Recombination*));      
       memset(events, 0, currentPopSize *  sizeof(Recombination*)); 
       for(nat j = 0;  j < numRec; ++j)	
 	{
@@ -325,7 +328,7 @@ void Ancestry::updateGraph(ThreadPool &tp, Chromosome &chromosome, Graph &graph,
 {
 
   nat firstGen = genCnt.getStartOfSection(), 
-    lastGen = genCnt.getEndOfSection(), 
+    lastGen = genCnt.getIdOfLastGenInSection(),
     numGen = lastGen - firstGen; 
   
 
@@ -336,10 +339,11 @@ void Ancestry::updateGraph(ThreadPool &tp, Chromosome &chromosome, Graph &graph,
   nat
     chromId = chromosome.getId() ,
     lastPopsize = popMan.getTotalNumHaploByGen(lastGen), 
-    maxPopSize = popMan.getMaximumPopSize(0, firstGen, lastGen);
+    maxPopSize = popMan.getMaximumPopSize(0, firstGen, lastGen+1);
 
   Randomness &rng = tp[0].getRNG();
-
+  maxPopSize *= 2; 
+  
   Survivors survivors(lastPopsize, maxPopSize, genCnt.getStartOfSection(), genCnt.getEndOfSection());
   updateGraph_inner(tp, survivors, chromosome, popMan, graph, maxPopSize);
   graph.hookup(survivors, *this, popMan, chromosome, rng, genCnt.getStartOfSection(), genCnt.getEndOfSection());  

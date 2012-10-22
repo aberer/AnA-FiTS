@@ -94,10 +94,11 @@ void SequenceFinalizer::annotateRelevantMutations(BitSet<uint64_t> &notPresent, 
 	   return a->generation < b->generation; 
 	 else if(a->base != b->base)
 	   return a->base < b->base; 
-	 else 
+	 else  
 	   {
-	     assert(0) ; 
-	     return false; 
+	     // TODO very strange ... occurs with -T g 500 1e-3
+	     return a->indiNr < b->indiNr ;  
+	     // return false; 
 	   }
        } ); 
 }

@@ -19,7 +19,12 @@ public:
 
   // ACCESSORS
   nat getStartOfSection() const {return(startOfSection);}
+
+  // the id is exclusive!!!
   nat getEndOfSection() const {return(endOfSection);}
+  // :TRICKY: use that when you want the last id (instead of the previous function )
+  nat getIdOfLastGenInSection() const {return endOfSection-1; }
+
   nat getCurrentGeneration() const {return(currentGen);}
   nat getTotalNumGen() const {return(totalNum);}
   bool hasToSimulate() const { return currentGen != totalNum; }

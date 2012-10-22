@@ -93,11 +93,14 @@ void Graph::propagateSurvivorNodes(nat genC, nat chromId, Node **nowBuffer, Node
 
       assert(iterValue >= 0); 
       nowBuffer[iterValue] = prevBuffer[ancest];
+
+#ifndef NDEBUG 
+      startingNodePresent |= (nowBuffer[iterValue] == nullptr ); 
+      if( nowBuffer[iterValue] == nullptr)
+	cout << "starting node present in " << iterValue << " in gen " << genC << endl; 
+
       assert(NOT nowBuffer[iterValue]
 	     || nodMan.getNode(GET_ID_IF(nowBuffer[iterValue]))->originGen <= genC); 
-
-#ifndef NDEBUG
-      startingNodePresent |= (nowBuffer[iterValue] == nullptr ); 
 #endif
       
 #ifdef DEBUG_HOOKUP
@@ -106,6 +109,7 @@ void Graph::propagateSurvivorNodes(nat genC, nat chromId, Node **nowBuffer, Node
 	   << endl;
 #endif
     }
+
 
 #ifndef NDEBUG
   if(NOT survivorsContainStartingNode)
@@ -116,9 +120,6 @@ void Graph::propagateSurvivorNodes(nat genC, nat chromId, Node **nowBuffer, Node
 }
 
 
-
-// #define  NEW 
-// #ifdef NEW 
 Node* Graph::hookRecombinations(Node *anc1, Node *anc2)
 {
   Node *tmp = buffer.at(0); 
@@ -148,37 +149,6 @@ Node* Graph::hookRecombinations(Node *anc1, Node *anc2)
 
   return current;   
 }
-// #else 
-// // :BUG:
-// Node* Graph::hookRecombinations(Node *anc1, Node *anc2)
-// {
-//   Node *lastNode  = buffer.at(buffer.getUsed() -1 ); 
-//   NodeExtraInfo *infoTmp = nodMan.getInfo(lastNode->id);
-//   Node *current = infoTmp->invertedOrientation ? anc1 : anc2; 
-      
-//   // :TRICKY: starting with LAST event
-//   for(nat i = buffer.getUsed(); i > 0;  --i)
-//     {
-//       Node *tmp = buffer.at(i-1);
-//       NodeExtraInfo *info = nodMan.getInfo(tmp->id);
-      
-//       tmp->ancId1 =  info->invertedOrientation ? GET_ID_IF(anc2) : GET_ID_IF(anc1); 
-//       tmp->ancId2 = GET_ID_IF(current);
-//       current = tmp; 
-//       assert((tmp->ancId1 != tmp->ancId2));       // sameBefore
-//     }
-
-// #ifdef DEBUG_HOOKUP
-//   Node *tmp1 = nodMan.getNode(current->ancId1);
-//   Node *tmp2 = nodMan.getNode(current->ancId2);
-  
-//   cout << "REC:"  << *current
-//        << " ===>" << (GET_ID_IF(tmp2))
-//        << "\t===>" << (GET_ID_IF(tmp1)) << "\t" << endl; 
-// #endif
-//   return current;
-// }
-// #endif
 
 
 void Graph::insertMutEvents(nat genC, AddrArrayBackwardIter<Node,true> &mutBackIter, Node** nodeBufferNowGen, Chromosome &chrom, Randomness &rng)
@@ -199,7 +169,7 @@ void Graph::insertMutEvents(nat genC, AddrArrayBackwardIter<Node,true> &mutBackI
       node->base = chrom.mutateSite(rng, node->loc);
       
 #ifdef DEBUG_HOOKUP
-      cout << "MUT: [" << *node  << "]" << "\t===>"  << (nodeBufferNowGen[indiNr] ? nodeBufferNowGen[indiNr]->id : 0) << endl; 
+      cout << "MUT: [" << *node  << "]" << "\t===>"  << (nodeBufferNowGen[indiNr] ? nodeBufferNowGen[indiNr]->id : 0) << endl;
 #endif
       
       nodeBufferNowGen[indiNr] = node;
@@ -213,7 +183,7 @@ void Graph::insertMutEvents(nat genC, AddrArrayBackwardIter<Node,true> &mutBackI
  *   * when recombinations are introduced, the "directions" of these nodes have to alternate
  *   * laying the mutations on top of the recombinations should not be a problem  
  */
-void Graph::hookup(const Survivors &survivors, const Ancestry &ancestry, const PopulationManager &popMan, Chromosome &chrom, Randomness &rng, nat startGen, nat endGen)
+void Graph::hookup(const Survivors &survivors, const Ancestry &ancestry, const PopulationManager &popMan, Chromosome &chrom, Randomness &rng, nat startGen, nat endOfSection)
 {
   nat chromId = chrom.getId(); 
 
@@ -231,7 +201,7 @@ void Graph::hookup(const Survivors &survivors, const Ancestry &ancestry, const P
   AddrArrayBackwardIter<Node,true> recBackIter; 
   recNodes.getEnd(recBackIter);
 
-  for(nat genC = startGen; genC < endGen; ++genC)
+  for(nat genC = startGen; genC < endOfSection; ++genC)
     {
 #ifdef DEBUG_HOOKUP
       cout << "======== hooking up generation "  << genC << endl; 
@@ -250,10 +220,12 @@ void Graph::hookup(const Survivors &survivors, const Ancestry &ancestry, const P
   // we swapped once too much  
   std::swap(nodeBufferNowGen, nodeBufferPrevGen); 
   
-  nat lastSize = popMan.getTotalNumHaploByGen(endGen);
+  nat lastSize = popMan.getTotalNumHaploByGen(endOfSection-1);
+  cout << "for hookup: last gen=" <<  endOfSection-1 << "\tlastSize=" << lastSize << endl; 
+
   previousState.resize(lastSize);
   for(nat i = 0; i < lastSize; ++i)
-    previousState[i] = nodeBufferNowGen[i];
+    previousState[i] = nodeBufferNowGen[i];  
 
   free(nodeBufferPrevGen);
   free(nodeBufferNowGen); 
