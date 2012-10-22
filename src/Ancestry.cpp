@@ -1,6 +1,8 @@
 #include "Ancestry.hpp"
 #include "GenerationCounter.hpp"
 
+#include <iostream>
+
 
 Ancestry::Ancestry(ThreadPool &tp, vector<Chromosome*> chromosomes, GenerationCounter &genCnt, const PopulationManager &popMan) 
   : TimeSection(genCnt.getStartOfSection(), genCnt.getEndOfSection())
@@ -47,8 +49,15 @@ nat Ancestry::initMemBlock(const PopulationManager &popMan)
   for(nat i = this->getStartGen(); i < endGen; ++i)
     {
       nat numIndi = popMan.getTotalNumHaploByGen(i);
+
+      if(numIndi == 0)
+	{
+	  cerr << "error: population gets completely extinct." << endl; 
+	  abort(); 
+	}
       
       length[getGenIdx(i)] = numIndi; 
+
       totalNumIndi += numIndi; 
       totalByteNeeded += popMan.getNumBytesForGeneration(i); 
       assert(NOT MODULO_16(totalByteNeeded)); 
@@ -87,8 +96,8 @@ void Ancestry::fillWithRandomIndividuals_parallel(ThreadPool &tp, nat tid)
 
       for(nat i = start; i < end; ++i)
       	{
-      	  nat numInPrev = (i == 0) ? DIVIDE_2(length[0]) : DIVIDE_2(length[i-1]);
-	  uint32_t lengthHere = length[i]; 
+      	  nat numInPrev = (i == 0) ? DIVIDE_2(length[0]) : DIVIDE_2(length[i-1]);	  
+	  uint32_t lengthHere = length[i]; 	  
 
       	  if(numInPrev <= numeric_limits<uint8_t>::max())
 	    rng.IntegerArray<uint8_t>(reinterpret_cast<uint8_t*>(this->genStartIndi[i]), lengthHere, numInPrev); 

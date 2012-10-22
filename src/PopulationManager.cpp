@@ -1,5 +1,6 @@
 #include "PopulationManager.hpp"
 
+#include <iostream>
 
 PopulationManager::PopulationManager(vector<PopulationParams> _pp)
   : popParams(_pp)
@@ -28,6 +29,13 @@ nat PopulationManager::getMaximumPopSize(nat popId, nat start, nat end) const
   for(nat i = start; i < end; ++i)
     {
       nat tmp = popParams[popId].getPopSizeByGeneration(i); 
+      
+      if(tmp == 0)
+	{
+	  std::cerr << "error: population " << popId << " gets extinguished in generation " << i << endl; 
+	  abort();
+	}
+
       if(tmp > result)
 	result = tmp; 
     }

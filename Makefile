@@ -2,9 +2,17 @@ Q ?= @
 CCACHE := $(shell which ccache)
 CXX :=  $(Q) $(CCACHE) $(lastword $(wildcard /usr/bin/g++-* )) 
 RM := $(Q)rm -fr 
-GITVERSION := $(shell git log | grep Date  | cut -f 2,3 -d ':' | sed 's/[ ]*....\(.*\)/\1/' | tr -d ':' | tr ' ' '-' | head -n 1 )
-
+GITVERSION:=-$(shell ./utils/versionString.sh)
 PROGNAME=AnA-FiTS
+
+
+NEW_VERSION_WORKS:=$(shell which git > /dev/null  ; echo $$?)
+ifeq ($(NEW_VERSION_WORKS),0)
+NEW_VERSION:=$(shell git describe 2> /dev/null)
+else 
+NEW_VERSION:=$(shell cat src/version.hpp | cut -f 3 -d ' ')
+endif
+
 
 # compiles with sse2 support, if available 
 HAVE_SSE2 = $(shell grep "flags\b.*\bsse2\b" /proc/cpuinfo 2> /dev/null | tail -1 | wc -l | tr -d ' \t')
@@ -50,18 +58,18 @@ RAND_OBJ=lib/RandomLib/src/Random.o
 # DO NOT CHANGE CONTENTS BELOW THIS LINE 
 
 # targets 
-TARGET_TEST := test-$(PROGNAME)-$(GITVERSION)
-TARGET_DEBUG := debug-$(PROGNAME)-$(GITVERSION)
-TARGET_PROFILE := profile-$(PROGNAME)-$(GITVERSION)
-TARGET := $(PROGNAME)-$(GITVERSION)
+TARGET_TEST := test-$(PROGNAME)$(GITVERSION)
+TARGET_DEBUG := debug-$(PROGNAME)$(GITVERSION)
+TARGET_PROFILE := profile-$(PROGNAME)$(GITVERSION)
+TARGET := $(PROGNAME)$(GITVERSION)
 ALL_TARGETS := $(TARGET) $(TARGET_DEBUG) $(TARGET_PROFILE) $(TARGET_TEST)
 
 SRCDIR := src/
 TESTSRC := tests/
-OBJDIR := build/release-$(GITVERSION)/
-TEST_OBJ_DIR := build/test-$(GITVERSION)/
-DEBUG_OBJ_DIR := build/debug-$(GITVERSION)/
-PROFILE_OBJ_DIR := build/profile-$(GITVERSION)/
+OBJDIR := build/release$(GITVERSION)/
+TEST_OBJ_DIR := build/test$(GITVERSION)/
+DEBUG_OBJ_DIR := build/debug$(GITVERSION)/
+PROFILE_OBJ_DIR := build/profile$(GITVERSION)/
 
 SRC_FILES := $(filter-out  %sequenceConversion.cpp %_flymake.cpp %_flymake.hpp %_flymake_master.cpp, $(wildcard $(SRCDIR)/*.cpp))
 TEST_FILES := $(filter-out %_flymake.cpp %_flymake.hpp %_flymake_master.cpp, $(wildcard $(TESTSRC)/*.cpp))
@@ -78,9 +86,9 @@ DEBUG_OBJS := $(DEBUG_OBJS:.cpp=.o)
 PROFILE_OBJS := $(addprefix $(PROFILE_OBJ_DIR),  $(notdir $(SRC_FILES)))
 PROFILE_OBJS := $(PROFILE_OBJS:.cpp=.o)
 
-release :  $(OBJDIR) $(TARGET)  convertSeq
-dist:  depend  $(OBJDIR) $(TARGET) 
-all : depend release   test #  debug  # profile
+release :  $(OBJDIR) $(TARGET)  convertSeq vupdate 
+dist:  depend  $(OBJDIR) $(TARGET)  vupdate 
+all : depend release   vupdate  test #  debug  # profile 
 
 debug: depend  $(DEBUG_OBJ_DIR) $(TARGET_DEBUG)
 profile: depend $(PROFILE_OBJ_DIR) $(TARGET_PROFILE)
@@ -92,11 +100,11 @@ cppcheck:
 
 runProfile:  profile 
 	@echo [GOOGLE-PROF]
-	@./profile-ffits-$(GITVERSION) > /dev/zero 2>/dev/zero
+	@./profile-ffits$(GITVERSION) > /dev/zero 2>/dev/zero
 	@echo [DISPLAYING]
-	@LANG=C google-pprof --nodefraction=0.02 --web ./profile-ffits-$(GITVERSION) ./ffits.prof > /dev/zero 2> /dev/zero
+	@LANG=C google-pprof --nodefraction=0.02 --web ./profile-ffits$(GITVERSION) ./ffits.prof > /dev/zero 2> /dev/zero
 	@echo [VALGRIND]
-	@valgrind -q  --tool=callgrind ./profile-ffits-$(GITVERSION)   > /dev/zero 
+	@valgrind -q  --tool=callgrind ./profile-ffits$(GITVERSION)   > /dev/zero 
 
 check-syntax:
 	$(CXX) $(LANG) -Wstrict-overflow -Wall -Wextra -pedantic -fsyntax-only $(INCLUDES) $(CHK_SOURCES) 
@@ -157,15 +165,14 @@ clean:
 	@echo "[CLEAN]"
 	$(RM) $(OBJDIR) $(TEST_OBJ_DIR) $(DEBUG_OBJ_DIR) $(PROFILE_OBJ_DIR) $(ALL_TARGETS) $(RAND_OBJ) convertSeq  *~ \#* callgrind* cachegrind*  gmon.out ffits.prof 
 
-.PHONY : clean depend
+.PHONY : clean depend vupdate  doc 
 
 DEPFILE  =  .depends
 DEPTOKEN = '\# MAKEDEPENDS'
 DEPFLAGS = -Y -f $(DEPFILE) -s $(DEPTOKEN) 
 
-
-
-
+vupdate : 
+	@echo "#define VERSION \"$(NEW_VERSION)\"" > src/version.hpp
 
 # BEGIN  intermediate section for the convert tool  (TODO integrate better)
 convertSeq : $(OBJDIR)/sequenceConversion.o $(OBJDIR)/BitSet.o    
@@ -173,23 +180,21 @@ convertSeq : $(OBJDIR)/sequenceConversion.o $(OBJDIR)/BitSet.o
 	$(CXX) -o $@  $^ $(LFLAGS)  
 ## END 
 
+doc: doc/manual.pdf
 
-
+doc/manual.pdf : doc/manual.tex
+	cd doc  ; pdflatex manual.tex ; cd .. ;
 
 depend :
 	@echo [DEPEND]
 	@rm -f $(DEPFILE)
 	@echo $(DEPTOKEN) > $(DEPFILE)
-	@makedepend $(DEPFLAGS) -a -p build/release-$(GITVERSION)/ -- $(CFLAGS) -- $(SRC_FILES)  > /dev/zero 2> /dev/zero
-	@makedepend $(DEPFLAGS) -a  -p build/debug-$(GITVERSION)/ -- $(CFLAGS) -- $(SRC_FILES)  > /dev/zero 2> /dev/zero
-	@makedepend $(DEPFLAGS) -a  -p build/test-$(GITVERSION)/ -- $(CFLAGS) -- $(SRC_FILES) $(TEST_FILES)  > /dev/zero 2> /dev/zero
-	@makedepend $(DEPFLAGS) -a  -p build/profile-$(GITVERSION)/ -- $(CFLAGS) -- $(SRC_FILES)  > /dev/zero 2> /dev/zero
+	@makedepend $(DEPFLAGS) -a -p build/release$(GITVERSION)/ -- $(CFLAGS) -- $(SRC_FILES)  > /dev/zero 2> /dev/zero
+	@makedepend $(DEPFLAGS) -a  -p build/debug$(GITVERSION)/ -- $(CFLAGS) -- $(SRC_FILES)  > /dev/zero 2> /dev/zero
+	@makedepend $(DEPFLAGS) -a  -p build/test$(GITVERSION)/ -- $(CFLAGS) -- $(SRC_FILES) $(TEST_FILES)  > /dev/zero 2> /dev/zero
+	@makedepend $(DEPFLAGS) -a  -p build/profile$(GITVERSION)/ -- $(CFLAGS) -- $(SRC_FILES)  > /dev/zero 2> /dev/zero
 	@cat $(DEPFILE) | sed "s/\/src\///" | sed "s/\/tests\///" > tmp 
 	@mv tmp $(DEPFILE)
 	@cd src;  ctags -Re * 
 
 sinclude $(DEPFILE) 
-
-
-
-

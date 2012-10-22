@@ -1,6 +1,6 @@
-#define PRODUCTIVE
+#include "version.hpp"
 
-#define VERSION "1.0"
+#define PRODUCTIVE
 
 ///////////////////
 // OPTIMIZATION  //
@@ -25,7 +25,7 @@
 // #define DEBUG_POP_PARAM_PARSE  
 
 // expensive 
-#define  DEBUG_CHECK_ARRAY_CONSISTENCY
+// #define  DEBUG_CHECK_ARRAY_CONSISTENCY
 
 ///////////////////
 // DEBUG_FORWARD //

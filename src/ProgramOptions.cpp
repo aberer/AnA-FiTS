@@ -109,7 +109,7 @@ ProgramOptions::ProgramOptions(int argc, char **argv)
   
   if(vm.count("version"))
     {
-      cout << "AnA-FiTS -- v." << VERSION  << endl; 
+      cout << "AnA-FiTS -- " << VERSION  << endl; 
       exit(0); 
     }  
 
