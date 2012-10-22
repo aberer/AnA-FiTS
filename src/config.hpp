@@ -15,8 +15,6 @@
 
 
 // #define DEBUG_ALT_CLEANUP 
-// #define DEBUG_REORDER 
-
 
 // :TRICKY: this works, but on default calls will not yield any
 // improvement. It is good, if the analysis is broken down into steps
