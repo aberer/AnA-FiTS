@@ -54,7 +54,8 @@ void Graph::touchNode(seqLen_t loc, nat indiNr, nat genNum, NodeType type, bool 
   if(type == RECOMBINATION)
     {
       NodeExtraInfo *info = nodMan.getInfo(node->id); 
-      info->invertedOrientation = invertedOrientation; 
+      if(invertedOrientation)
+	info->invertOrientation();
     }
 }
 
@@ -96,9 +97,6 @@ void Graph::propagateSurvivorNodes(nat genC, nat chromId, Node **nowBuffer, Node
 
 #ifndef NDEBUG 
       startingNodePresent |= (nowBuffer[iterValue] == nullptr ); 
-      if( nowBuffer[iterValue] == nullptr)
-	cout << "starting node present in " << iterValue << " in gen " << genC << endl; 
-
       assert(NOT nowBuffer[iterValue]
 	     || nodMan.getNode(GET_ID_IF(nowBuffer[iterValue]))->originGen <= genC); 
 #endif
@@ -124,14 +122,14 @@ Node* Graph::hookRecombinations(Node *anc1, Node *anc2)
 {
   Node *tmp = buffer.at(0); 
   NodeExtraInfo *info = nodMan.getInfo(tmp->id); 
-  Node *current = info->invertedOrientation ? anc1 : anc2; 
+  Node *current = info->hasInvertedOrientation() ? anc1 : anc2; 
   
   for(nat i = 0; i < buffer.getUsed(); ++i) 
     {
       tmp = buffer.at(i); 
       info = nodMan.getInfo(tmp->id);
       
-      tmp->ancId1 = info->invertedOrientation ? GET_ID_IF(anc2) : GET_ID_IF(anc1) ; 
+      tmp->ancId1 = info->hasInvertedOrientation() ? GET_ID_IF(anc2) : GET_ID_IF(anc1) ; 
       tmp->ancId2 = GET_ID_IF(current); 
 
       current = tmp; 
@@ -221,7 +219,6 @@ void Graph::hookup(const Survivors &survivors, const Ancestry &ancestry, const P
   std::swap(nodeBufferNowGen, nodeBufferPrevGen); 
   
   nat lastSize = popMan.getTotalNumHaploByGen(endOfSection-1);
-  cout << "for hookup: last gen=" <<  endOfSection-1 << "\tlastSize=" << lastSize << endl; 
 
   previousState.resize(lastSize);
   for(nat i = 0; i < lastSize; ++i)
@@ -261,7 +258,7 @@ void Graph::printRaw(FILE *fh)
       assert(node); 
       auto myInfo = nodMan.getInfo(node->id); 
       
-      if(NOT myInfo->skip)
+      if(NOT myInfo->isSkip())
 	++numberOfNodes; 
     }
 
@@ -275,7 +272,7 @@ void Graph::printRaw(FILE *fh)
 
       auto myInfo = nodMan.getInfo(node->id); 
       
-      if(myInfo->skip)	
+      if(myInfo->isSkip())	
 	continue;
       else 
 	node->printRaw(fh);

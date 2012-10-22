@@ -47,7 +47,7 @@ ostream& operator<<(ostream &stream, const NodeExtraInfo &rhs)
 	 << ", start=" << rhs.start
 	 << ", end=" << rhs.end
 	 << ", refed=" << rhs.referenced
-	 << ", wasInit="<< rhs.wasInitialized;  
+	 << ", wasInit="<< rhs.isInitialized();  
   return stream; 
 }
 

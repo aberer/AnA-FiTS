@@ -8,7 +8,6 @@ RegionManager::RegionManager(nat maxPopSize, seqLen_t  seqLen)
     maxReg = (seqLen_t*)calloc(maxPopSize, sizeof(seqLen_t));
     for(nat i = 0; i < maxPopSize; ++i) 
       maxReg[i] = seqLen;
-    std::cout << "initializing region manager with " << maxPopSize << endl; 
 
     regionNow = new Region(maxPopSize, seqLen, maxReg); 
     regionPrev =  new Region(maxPopSize, seqLen, maxReg); 

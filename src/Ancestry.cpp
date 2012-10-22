@@ -172,8 +172,6 @@ void Ancestry::insertNeutralMutations(ThreadPool& tp,  Graph &graph, const Survi
 void Ancestry::updateGraph_inner(ThreadPool &tp, Survivors &survivors, Chromosome &chromosome, const PopulationManager &popMan, Graph &graph, nat maxPopSize)
 {  
   RecombinationManager &recMan = *(recMans[chromosome.getId()]); 
-  cout << "memory  " << maxPopSize << endl; 
-  // maxPopSize = MULT_2(maxPopSize); 
   RegionManager regMan(maxPopSize, chromosome.getSeqLen());
   
   // EVENTS: this stores the FIRST event for an individual 

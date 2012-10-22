@@ -96,7 +96,7 @@ void SequenceFinalizer::annotateRelevantMutations(BitSet<uint64_t> &notPresent, 
 	   return a->base < b->base; 
 	 else  
 	   {
-	     // TODO very strange ... occurs with -T g 500 1e-3
+	     // :TRICKY: very strange ... occurs with -T g 500 1e-3
 	     return a->indiNr < b->indiNr ;  
 	     // return false; 
 	   }
@@ -117,9 +117,10 @@ void SequenceFinalizer::createMergedBitvectors(BitSet<uint64_t> &notPresent, Bit
   for(nat i = 0; i < numSequences; ++i)
     finalSequences.push_back(new BitSet<uint64_t>(mutationsInSeqs.size())); 
   
-  nat bvIdx = 0 ; 
+  nat bvIdx = 0 ;   
   for(auto iter : mutationsInSeqs ) 
     {
+      // cout << "mut " << bvIdx << " / " <<  mutationsInSeqs.size() << endl;  
       // update neutral index 
       while(neutralIndex < neutralBsLen && ( fixedRawMut.test(neutralIndex) || notPresent.test(neutralIndex)))
 	++neutralIndex;
@@ -174,8 +175,8 @@ void SequenceFinalizer::computeFinalSequences(vector<BitSet<uint64_t>*> rawNeutr
   tmp.andify(mutationsNotPresent); 
   assert(tmp.count() == 0);
 #endif
-
-  annotateFixedMutations(fixedSelected, fixedRawMut, bvMeaning);
+  
+  annotateFixedMutations(fixedSelected, fixedRawMut, bvMeaning);  
   annotateRelevantMutations(mutationsNotPresent, fixedRawMut, bvMeaning, selectedSequences); 
   createMergedBitvectors(mutationsNotPresent, fixedRawMut,  rawNeutralSequences, bvMeaning, selectedSequences); 
 
@@ -213,12 +214,10 @@ void SequenceFinalizer::printBinary(FILE *fh)
     mut->printRaw(fh);
   
   num = finalSequences.size();
-  BIN_WRITE(num,fh); 
+  BIN_WRITE(num,fh);   
+  nat ctr = 0; 
   for(auto bv : finalSequences)
-    {
-      // cout << *bv << endl; 
-      bv->printRaw(fh);   
-    }
+    bv->printRaw(fh);   
 }
 
 

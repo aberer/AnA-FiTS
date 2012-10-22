@@ -73,12 +73,12 @@ void NodeManager::checkConsistency()
 void NodeManager::markAncestrialMaterial(Node &node, seqLen_t start, seqLen_t end)
 {
   NodeExtraInfo *info = getInfo(node.id);   
-  bool wasInit = info->wasInitialized; 
+  bool wasInit = info->isInitialized(); 
 
   if(NOT wasInit)
     {
       info->start = start; 
-      info->wasInitialized = true; 
+      info->initialize(); 
       assert(info->referenced == 0); 
     }
   
@@ -149,7 +149,7 @@ nat NodeManager::getTrueAncestor(Node *node)
 	  return node->id;
 	else
 	  {
-	    myInfo->skip = true;
+	    myInfo->skip();
 	    return getTrueAncestor(getNode(node->ancId1)); 
 	  }
 	break; 
@@ -161,7 +161,7 @@ nat NodeManager::getTrueAncestor(Node *node)
 	else 
 	  {
 	    cout << "skipping node " << node->id << endl; 
-	    myInfo->skip = true;
+	    myInfo->skip();
 	    if(myInfo->start <= node->loc)
 	      return getTrueAncestor(getNode(node->ancId1)); 
 	    else 
@@ -364,7 +364,7 @@ void NodeManager::accumulateMutationsBv(Node *node, BitSet<uint64_t> *bv, seqLen
 }
 
 
-// TODO init with end 
+// :TODO: init with end 
 nat NodeManager::findInBv(seqLen_t key ) const
 {
   int low = 0; 
@@ -393,10 +393,11 @@ void NodeManager::handleAncestorBv(BitSet<uint64_t> *bv, Node *anc, seqLen_t sta
       createSequenceForNode( anc); 
       assert(start < end); 
 
-      // TODO correct end!!! 
       nat startIdx = findInBv(start), 
 	endIdx = findInBv(end); 
-      // cout << "=> copying from " << startIdx << " to " << endIdx << endl; 
+      
+      if(endIdx != bvMeaning.size() &&  bvMeaning[endIdx]->loc == end)
+      	++endIdx; 
 
       assert(start <= end); 
       assert(startIdx <= endIdx); 

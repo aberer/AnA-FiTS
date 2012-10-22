@@ -42,12 +42,6 @@ public:
   
   void initBvMeaning();
   void createSequenceForNode(Node *node); 
-  // TODO make some stuff private 
-  void handleAncestorBv(BitSet<uint64_t> *bv, Node *node, seqLen_t start, seqLen_t end); 
-  void accumulateMutationsBv(Node *node, BitSet<uint64_t> *bv, seqLen_t start, seqLen_t end); 
-  nat getStartIdx(seqLen_t start); 
-  nat getEndIdx(seqLen_t start); 
-
 
 private:
   Node** relevantNodes; 
@@ -59,6 +53,10 @@ private:
   DynArraySequential<BitSet<uint64_t>*> allocatedBvs; 
   vector<Node*> bvMeaning;   
 
+  void handleAncestorBv(BitSet<uint64_t> *bv, Node *node, seqLen_t start, seqLen_t end); 
+  void accumulateMutationsBv(Node *node, BitSet<uint64_t> *bv, seqLen_t start, seqLen_t end); 
+  nat getStartIdx(seqLen_t start); 
+  nat getEndIdx(seqLen_t start); 
   nat getTrueAncestor(Node *node); 
   void resize();
   NeutralMutation* createNeutralMutation(Node *node);

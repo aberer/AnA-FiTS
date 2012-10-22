@@ -46,7 +46,7 @@ void Survivors::initializePresentGeneration(nat howMany)
       ++nextSurvivor;
     }  
   
-  cout << "initializing survivors with " << howMany << endl; 
+  // cout << "initializing survivors with " << howMany << endl; 
   
   prepareNextGenBackwards(); 	
 }

@@ -23,7 +23,6 @@ public:
 
   // :TODO: currently gen independant  
   double getRecombinationRate(nat gen ) const {return recombinationRate; }
-  // double getGeneConverBsionRate(nat gen ) const {return geneConversionRate; }
   double getMutationRate( nat gen ) const  {  return mutationRate ; ;} // is neutral ?
   void parseEvents(vector<string> stringEvents, nat id);
 
@@ -36,8 +35,6 @@ private:
   double recombinationRate ; 
   // double geneConversionRate; 
   double mutationRate; 
-
-  // :TODO: neutrality 
   bool isNeutral; 
 };
 

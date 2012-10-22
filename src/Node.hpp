@@ -48,15 +48,21 @@ struct NodeExtraInfo
   seqLen_t end;
 
   nat bvIdx; 
+  nat referenced;   
 
-  // TODO the following stuff could be compressed into a byte 
-  nat referenced; 
-  bool wasInitialized;
-  bool skip;
-  bool invertedOrientation; 
+  uint8_t someInfo; 
+  
+  bool isInitialized() const {return someInfo & 1 ;   }
+  bool isSkip() const {return someInfo & 2; }
+  bool hasInvertedOrientation() const {return someInfo & 4; }
+
+  void initialize(){ someInfo |= 1; }
+  void skip() { someInfo |= 2; }
+  void invertOrientation(){ someInfo |= 4; }
 }; 
 
 
 ostream& operator<<(ostream &stream, const NodeType &rhs); 
 ostream& operator<<(ostream &stream, const Node &rhs); 
 ostream& operator<<(ostream &stream, const NodeExtraInfo &rhs); 
+

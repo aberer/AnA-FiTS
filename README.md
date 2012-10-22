@@ -22,3 +22,6 @@ development:
 * xutils-dev (makedepend)
 * exuberant-ctags
 * maybe libjudy-dev
+
+
+For anything else, please consult the manual.

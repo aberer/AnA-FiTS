@@ -114,15 +114,19 @@ ProgramOptions::ProgramOptions(int argc, char **argv)
     }  
 
   // :BUG: did not work on hitssv109
+#ifdef  PRODUCTIVE
   try    
     {
+#endif
   po::notify(vm); 
+#ifdef PRODUCTIVE
     }
   catch (po::required_option requiredOption)
     {
       std::cerr << "Option > --" << requiredOption.get_option_name() << " < is mandatory! \n For help on how to specfiy it correctly, consider --help " << endl; 
       abort();
     }
+#endif
 
   // :KLUDGE:
   if(this->get<vector<string>>("selCoef").size() > 7)
