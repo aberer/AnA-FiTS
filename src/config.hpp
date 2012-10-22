@@ -1,5 +1,6 @@
 #define PRODUCTIVE
 
+#define VERSION "1.0"
 
 ///////////////////
 // OPTIMIZATION  //

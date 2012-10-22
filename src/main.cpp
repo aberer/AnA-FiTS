@@ -36,7 +36,7 @@ void playground(ProgramOptions &progOpt){  cerr << "PLAYGROUND MODE " << endl;
 
 void printInfo(InfoFile &info, int argc, char **argv)
 {
-  info.write("This is AnA-FiTS version %g released by Andre J. Aberer\n", float(VERSION)); 
+  info.write("This is AnA-FiTS version %s released by Andre J. Aberer\n", VERSION); 
   info.write("For any inquiries, please send a mail to andre <dot> aberer <at> h-its <dot> org.\n\n"); 
 
   info.write("AnA-FiTS was called as\n\t"); 

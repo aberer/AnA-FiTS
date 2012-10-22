@@ -37,7 +37,6 @@
 using namespace std; 
 
 #define NOT ! 
-// #define NOT_EQUAL_0(x) ( NOT x )
 #define EQUAL_1(x) (x & 1)
 #define SWAP(a, b) (((a) ^= (b)), ((b) ^= (a)), ((a) ^= (b)))
 
@@ -123,7 +122,6 @@ FILE* openFile(string name, string mode);
 #define INIT_FITNESS  1.0
 
 #define NUMBER_PARENTS 2
-#define VERSION 0.9
 
 
 // this is a bad hack 
