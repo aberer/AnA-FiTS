@@ -21,4 +21,4 @@ lengths="250000000 243000000 198000000 192000000 181000000 171000000 158000000 1
 fitnessModel="2 $rateNonNeutral 10 2000 $rateNonNeutral 1 500"
 rate="2.5e-8"
 
-$executable -m $rate -r $rate -W $fitnessModel -N $numIndi -L $lengths
+$executable -m $rate -r $rate -W $fitnessModel -N $numIndi -L $lengths -n humanGenome.indi$numIndi

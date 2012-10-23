@@ -271,10 +271,7 @@ NeutralMutation* NodeManager::createNeutralMutation(Node *node)
 void NodeManager::computeOptimalRefed()
 {
   if( NOT autoNumRef)
-    {
-      cout << "refed already set" << endl; 
-      return; 
-    }
+    return; 
 
   getCoalStatistic();  
 }

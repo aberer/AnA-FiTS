@@ -36,7 +36,6 @@ void BinaryWriter::writeSequences(Graph &graph, HaploTimeWindow &haplo, Chromoso
   // assert(rawNeutralSequences.size() == numHaplo); 
   for(nat i = 0; i < rawNeutralSequences.size(); ++i)      
     selectedSeqs.push_back(haplo.at(i)); 
-  cout << "total of " << rawNeutralSequences.size() << endl; 
   
   // a lot of preprocessing to get useful bitvectors 
   SequenceFinalizer finalizer;
