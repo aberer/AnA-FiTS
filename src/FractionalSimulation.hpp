@@ -20,12 +20,12 @@ public:
   FractionalSimulation(ThreadPool &tp,InfoFile &info, const ProgramOptions &progOp, nat numGen, vector<Chromosome*> chromosomes, vector<PopulationParams> popParams); 
   ~FractionalSimulation();
   void simulate(); 
-  void printSequencesRaw(string id); 
-  void printArgs(string id ); 
-  void finalize(); 
+  void finalize(nat chromId); 
+  void deleteGraph(nat chromId); 
 
-  vector<Graph*> getGraphs(){ return graphs; }
-  vector<Chromosome*> getChromosomes(){return chromosomes; }
+  Graph* getGraphHandle(nat chromId){return graphs[chromId]; }
+  HaploTimeWindow* getHaploWindowHandle(nat chromId) {return haplotypesWindows[chromId]; }
+  vector<Chromosome*> getChromosomes(){return chromosomes; }  
 
 private:
   vector<HaploTimeWindow*> haplotypesWindows;  // PER chromosome 

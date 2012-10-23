@@ -238,7 +238,7 @@ void Graph::hookup(const Survivors &survivors, const Ancestry &ancestry, const P
 
 						
 
-void Graph::printRaw(FILE *fh)
+void Graph::printRaw(FILE *fh) 
 {
   // print survivors first 
   nat num = previousState.size();
@@ -297,13 +297,8 @@ void Graph::createSequencesInGraph(const Chromosome &chromo)
     if(node)
       nodMan.determineCoalescentNodes(node);
 
-// #ifdef DEBUG_GET_COAL_STATISTIC
-				// nodMan.getCoalStatistic();
-// #endif
-
   nodMan.initBvMeaning();
-  nodMan.computeOptimalRefed();
-  
+  nodMan.computeOptimalRefed();  
 
   // a slight hack to initialize the dummy node 
   nat numNeutMut = getBvMeaning().size();

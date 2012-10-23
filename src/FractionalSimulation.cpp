@@ -48,12 +48,21 @@ FractionalSimulation::~FractionalSimulation()
     delete chromosomes[i] ; 
   for(HaploTimeWindow *haplo : haplotypesWindows)
     delete haplo; 
-  for(Graph *graph : graphs)
-    delete graph; 
+
+
+  // :TRICKY: this must be done outside this class to save memory
+  // for(Graph *graph : graphs)
+  //   delete graph; 
 
   delete init; 
 }
 
+
+
+void FractionalSimulation::deleteGraph(nat chromId)
+{
+  delete graphs[chromId]; 
+}
 
 // TODO check, if parents selfs (which is not possible)
 // TODO selfing 
@@ -312,86 +321,78 @@ void FractionalSimulation::simulate()
 }
 
 
-void FractionalSimulation::printArgs(string id)
-{  
-  stringstream fileName; 
-  fileName << ARG_FILE_NAME  << "." << id ; 
-  FILE *fh = openFile(fileName.str(), "w"); 
+// void FractionalSimulation::printArgs(string id, nat chromId)
+// {  
+//   stringstream fileName; 
+//   fileName << ARG_FILE_NAME  << "." << id ; 
+//   FILE *fh = openFile(fileName.str(), "w"); 
 
-  nat numChrom = chromosomes.size(); 
-  BIN_WRITE(numChrom,fh); 
-  nat c = 0;
-  for(nat i = 0; i < numChrom; ++i)
-    {
-      Graph &graph = *(graphs[i]);
-      graph.printRaw(fh); 
-    }
-}
+//   nat numChrom = chromosomes.size(); 
+//   BIN_WRITE(numChrom,fh); 
+//   nat c = 0;
+//   for(nat i = 0; i < numChrom; ++i)
+//     {
+//       Graph &graph = *(graphs[i]);
+//       graph.printRaw(fh); 
+//     }
+// }
 
 
 
-void FractionalSimulation::printSequencesRaw(string id)
-{
-  nat numHaplo = popMan->getTotalNumHaploByGen(genCnt.getCurrentGeneration() -1); 
+// void FractionalSimulation::printSequencesRaw(string id )
+// {
+//   nat numHaplo = popMan->getTotalNumHaploByGen(genCnt.getCurrentGeneration() -1); 
   
-  stringstream fileName; 
-  fileName << SEQ_FILE_NAME << "." << id ; 
-  FILE *fh = openFile(fileName.str(), "w"); 
+//   stringstream fileName; 
+//   fileName << SEQ_FILE_NAME << "." << id ; 
+//   FILE *fh = openFile(fileName.str(), "w"); 
 
-  nat numChrom = chromosomes.size(); 
-  BIN_WRITE(numChrom,fh);
+//   nat numChrom = chromosomes.size(); 
+//   BIN_WRITE(numChrom,fh);
 
-  for(nat i = 0; i < numChrom; ++i)
-    {
-      // set everything up 
-      Graph &graph = *(graphs[i]); 
-      HaploTimeWindow  &h = *(haplotypesWindows[i]); 
-      Chromosome &chrom = *(chromosomes[i]); 
+//   for(nat i = 0; i < numChrom; ++i)
+//     {
+//       // set everything up 
+//       Graph &graph = *(graphs[i]); 
+//       HaploTimeWindow  &h = *(haplotypesWindows[i]); 
+//       Chromosome &chrom = *(chromosomes[i]); 
 
-      vector<BitSet<uint64_t>*> rawNeutralSequences; 
-      graph.getRawSequences(rawNeutralSequences); 
-      vector<Node*>& rawBvMeaning = graph.getBvMeaning();
-      vector<SelectedArray*> selectedSeqs; 
+//       vector<BitSet<uint64_t>*> rawNeutralSequences; 
+//       graph.getRawSequences(rawNeutralSequences); 
+//       vector<Node*>& rawBvMeaning = graph.getBvMeaning();
+//       vector<SelectedArray*> selectedSeqs; 
 
-      assert(rawNeutralSequences.size() == numHaplo); 
+//       assert(rawNeutralSequences.size() == numHaplo); 
 
-      for(nat i = 0; i < numHaplo; ++i)
-	selectedSeqs.push_back(h.at(i)); 
+//       for(nat i = 0; i < numHaplo; ++i)
+// 	selectedSeqs.push_back(h.at(i)); 
 
-      // a lot of preprocessing to get useful bitvectors 
-      SequenceFinalizer finalizer;
-      finalizer.computeFinalSequences(rawNeutralSequences, rawBvMeaning, selectedSeqs, 
-				      chrom.getFixedMutations(0) // TODO pops
-				      );      
-      finalizer.printBinary(fh);
-    }
+//       // a lot of preprocessing to get useful bitvectors 
+//       SequenceFinalizer finalizer;
+//       finalizer.computeFinalSequences(rawNeutralSequences, rawBvMeaning, selectedSeqs, 
+// 				      chrom.getFixedMutations(0) // TODO pops
+// 				      );      
+//       finalizer.printBinary(fh);
+//     }
 
-  fclose(fh); 
-}
+//   fclose(fh); 
+// }
 
 
 
-void FractionalSimulation::finalize()
+void FractionalSimulation::finalize(nat chromId)
 {
   nat parNum = popMan->getTotalNumHaploByGen(genCnt.getCurrentGeneration() -1); 
 
-  for(nat i = 0; i < haplotypesWindows.size(); ++i)
-    {
-      DynArraySequential<SelectedArray*> uniqs(1000) ; 
-      HaploTimeWindow &h  = *(haplotypesWindows[i]) ;
-      h.switchPastAndPresent();
+  DynArraySequential<SelectedArray*> uniqs(1000) ; 
+  HaploTimeWindow &h  = *(haplotypesWindows[chromId]) ;
+  h.switchPastAndPresent();
       
-      auto curSeqIter = h.start();
-      chromosomes[i]->cleanFixedMutations(curSeqIter, curSeqIter + parNum, 0, tp, uniqs); // :TODO: for all popultaions
-    }
+  auto curSeqIter = h.start();
+  chromosomes[chromId]->cleanFixedMutations(curSeqIter, curSeqIter + parNum, 0, tp, uniqs); // :TODO: for all popultaions
 
-  // neutral part 
-  nat numChrom = chromosomes.size();
-  for(nat i = 0; i < numChrom; ++i)
-    {
-      Graph &graph = *(graphs[i]); 
-      graph.createSequencesInGraph(*(chromosomes[i]));
-    }
+  Graph &graph = *(graphs[chromId]); 
+  graph.createSequencesInGraph(*(chromosomes[chromId]));
 }
 
 

@@ -38,7 +38,7 @@ public:
   void getRawSequences(vector<BitSet<uint64_t>*> &bvs); 
   vector<Node*>& getBvMeaning(){return nodMan.getBvMeaning();} // bad style =( 
   BitSet<uint64_t>* getBvFromNode(Node *node){return nodMan.getInfo(node->id)->bv; }
-  void printRaw(FILE *fh);
+  void printRaw(FILE *fh) ;
 
 private: 
   // ATTRIBUTES  

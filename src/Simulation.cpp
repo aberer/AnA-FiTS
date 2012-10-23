@@ -1,5 +1,6 @@
 #include "Simulation.hpp"
 #include "ProgramOptions.hpp"
+#include "BinaryWriter.hpp"
 #include "ThreadPool.hpp"
 
 #include <fstream>
@@ -42,18 +43,40 @@ Simulation::~Simulation()
 }
 
 
+
+#include <sstream>
+
 void Simulation::run()
 {     
 #ifdef DEBUG_TOPLEVEL
   cout << "number of generations:  " <<  numGen << endl; 
 #endif
-
+  
   fractionalSimulation->simulate();
-  fractionalSimulation->finalize();
+  
+  // we are doing this on a chromosome basis, in order to keep the
+  // memory consumption down for a large number of chromosomes
 
-  string runid = progOpt.get<string>("runId"); 
-  fractionalSimulation->printSequencesRaw(runid); 
-  fractionalSimulation->printArgs(runid);
+  string runid = progOpt.get<string>("runId");   
+  stringstream fileName; 
+  nat numChrom = chromosomes.size(); 
+  fileName << SEQ_FILE_NAME << "." << runid ; 
+  BinaryWriter seqWriter(fileName.str(),numChrom,0);
+  
+  stringstream fn2 ; 
+  fn2 << ARG_FILE_NAME  << "." << runid; 
+  BinaryWriter graphWriter(fn2.str(), 0,numChrom); 
+
+  for(nat i = 0; i < numChrom; ++i)
+    {
+      fractionalSimulation->finalize(i);
+      Graph *graph = fractionalSimulation->getGraphHandle(i);      
+      Chromosome *chrom = chromosomes[i]; 
+      HaploTimeWindow *haplo = fractionalSimulation->getHaploWindowHandle(i); 
+      seqWriter.writeSequences(*graph, *haplo, *chrom );
+      graphWriter.writeGraph(*graph);
+      fractionalSimulation->deleteGraph(i); 
+    }
 
   tp.joinThreads();
 }
