@@ -38,10 +38,17 @@ L="5000000 10000000"
 
 for N in $(echo $Ne) 
 do     
-    for l in $(echo $L)
+    for l in $(echo $L)    
     do 
-	$binary  $fitness -s $id -N $N -L $l -m $param -r $param -n run.$N.$l.$neutral.$id 
+	if [ "$L" == "10000000" -a "$N" == 10000 ]; then
+	    minusR="-R 7"
+	else 
+	    minusR=""
+	fi
+	$binary  $fitness -s $id -N $N -L $l -m $param -r $param -n run.$N.$l.$neutral.$id  $minusR
 	sleep 1 
+
+
     done
 done
 
