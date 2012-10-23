@@ -21,7 +21,7 @@ class NodeManager
 {
 public: 
   // LIFE CYCLE 
-  explicit NodeManager(nat initSize);
+  NodeManager(nat initSize, nat numRefForSim);
   ~NodeManager();
   
   // OPERATORS  
@@ -52,6 +52,7 @@ private:
   DynArraySequential<NeutralMutation*> allocatedMuts; 
   DynArraySequential<BitSet<uint64_t>*> allocatedBvs; 
   vector<Node*> bvMeaning;   
+  nat numRefForSim ;
 
   void handleAncestorBv(BitSet<uint64_t> *bv, Node *node, seqLen_t start, seqLen_t end); 
   void accumulateMutationsBv(Node *node, BitSet<uint64_t> *bv, seqLen_t start, seqLen_t end); 

@@ -1,13 +1,17 @@
 #include "NodeManager.hpp"
 #include <algorithm>
 
-NodeManager::NodeManager(nat initSize)
+NodeManager::NodeManager(nat initSize, nat _numRefForSim)
   : length(initSize)
   , highestId(1)          // 0 is the non-existing starting node
   , allocatedSeqs(100)
   , allocatedMuts(100)    
   , allocatedBvs(100)
+  , numRefForSim(_numRefForSim-1)
 {
+#ifdef DEBUG_SEQUENCE_EXTRACTION
+  cout << "needing " << numRefForSim << endl; 
+#endif
   relevantNodes = (Node**)calloc(length, sizeof(Node*)); 
   relevantNodes[0] = nullptr; 
   extraInfo = (NodeExtraInfo*) calloc(length, sizeof(NodeExtraInfo));   
@@ -262,7 +266,6 @@ NeutralMutation* NodeManager::createNeutralMutation(Node *node)
   return res; 
 }
 
-#define NUM_REF_FOR_SIM 1 
 
 void NodeManager::getCoalStatistic()
 {
@@ -271,13 +274,15 @@ void NodeManager::getCoalStatistic()
   for(nat i = 1; i < highestId ;++i) 
     {
       auto info = extraInfo[i]; 
-      if(info.referenced > NUM_REF_FOR_SIM)
+      if(info.referenced > numRefForSim)
 	coal++; 
       if(info.referenced == 0)
 	notatAll++;
     }
 
-  cout << "coalescent nodes: " << coal << "/" << highestId << "\t(" << notatAll << ")" << endl;
+  cout << "coal-nodes\t" << coal  << endl; 
+  cout << "graph size\t"<< highestId << endl; 
+  cout << "not visited\t" << notatAll << endl; 
 }
 
 
@@ -333,8 +338,8 @@ void NodeManager::initBvMeaning()
 
 void NodeManager::accumulateMutationsBv(Node *node, BitSet<uint64_t> *bv, seqLen_t start, seqLen_t end)
 {
-  assert(getInfo(node->id)->referenced <= NUM_REF_FOR_SIM); 
-
+  assert(getInfo(node->id)->referenced <= numRefForSim); 
+  
   assert(node->id != 0); 
   
   switch(node->type)
@@ -342,7 +347,9 @@ void NodeManager::accumulateMutationsBv(Node *node, BitSet<uint64_t> *bv, seqLen
     case MUTATION:
       {
 	auto info = getInfo(node->id); 	
-	bv->set(info->bvIdx);
+
+	if(start <= node->loc && node->loc <= end )
+	  bv->set(info->bvIdx);
 	Node *anc = getNode(node->ancId1); 
 	if(anc)
 	  handleAncestorBv(bv,anc,start,end); 
@@ -388,7 +395,7 @@ void NodeManager::handleAncestorBv(BitSet<uint64_t> *bv, Node *anc, seqLen_t sta
   const NodeExtraInfo *ancInfo = getInfo(anc->id);   
   assert(ancInfo->referenced); 
 
-  if(ancInfo->referenced > NUM_REF_FOR_SIM)
+  if(ancInfo->referenced > numRefForSim)
     {
       createSequenceForNode( anc); 
       assert(start < end); 
@@ -412,52 +419,41 @@ void NodeManager::handleAncestorBv(BitSet<uint64_t> *bv, Node *anc, seqLen_t sta
 void NodeManager::createSequenceForNode( Node *node)
 {
   if(NOT node || getInfo(node->id)->bv)
-    {      
-#ifdef DEBUG_SEQUENCE_EXTRACTION
-      if(node)
-	cout << "ALREADY" << *node << endl; 
-      else 
-	cout << "START" << endl; 
-#endif
-      return; 
+    return; 
+
+  auto info = getInfo(node->id);
+  if(NOT info->bv)
+    {
+      info->bv = new BitSet<uint64_t>(bvMeaning.size());
+      allocatedBvs.setNext(info->bv);
     }
-
-    auto info = getInfo(node->id);
-    if(NOT info->bv)
-      {
- 	info->bv = new BitSet<uint64_t>(bvMeaning.size());
-	allocatedBvs.setNext(info->bv);
-      }
     
-    switch(node->type)
+  switch(node->type)
+    {
+    case MUTATION:
       {
-      case MUTATION:
-	{
-	  Node *anc = getNode(node->ancId1);
-	  if(anc)
-	    handleAncestorBv(info->bv, anc, info->start, info->end);
+	Node *anc = getNode(node->ancId1);
+	if(anc)
+	  handleAncestorBv(info->bv, anc, info->start, info->end);
 
-	  info->bv->set(info->bvIdx);
-	  break; 
-	}
-      case RECOMBINATION:
-	{
-	  Node *anc1 = getNode(node->ancId1);
-	  Node *anc2 = getNode(node->ancId2);
-
-	  seqLen_t start = info->start,
-	    end = info->end; 
-	  
-	  if(anc1 && start < node->loc-1 )
-	    handleAncestorBv(info->bv,anc1, start, min(end, node->loc-1));
-	  if(anc2 && node->loc < end) 
-	    handleAncestorBv(info->bv,anc2, max(node->loc, start), end); 
-	  
-	  break; 
-	}
-      default: assert(0); 
+	info->bv->set(info->bvIdx);
+	break; 
       }
+    case RECOMBINATION:
+      {
+	Node *anc1 = getNode(node->ancId1);
+	Node *anc2 = getNode(node->ancId2);
+
+	seqLen_t start = info->start,
+	  end = info->end; 
+	  
+	if(anc1 && start < node->loc-1 )
+	  handleAncestorBv(info->bv,anc1, start, min(end, node->loc-1));
+	if(anc2 && node->loc < end) 
+	  handleAncestorBv(info->bv,anc2, max(node->loc, start), end); 
+	  
+	break; 
+      }
+    default: assert(0); 
+    }
 }
-
-
-

@@ -42,6 +42,6 @@ do
     do 
 	$binary  $fitness -s $id -N $N -L $l -m $param -r $param -n run.$N.$l.$neutral.$id 
 	sleep 1 
-    done 
+    done
 done
 

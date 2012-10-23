@@ -10,10 +10,10 @@
 #include <cstring>
 
 
-Graph::Graph(nat initSize)
+Graph::Graph(nat initSize, nat numRefForSim)
   : mutNodes(1000)
   , recNodes(1000)
-  , nodMan(1000)
+  , nodMan(1000, numRefForSim)
   , buffer(100)
 #ifndef NDEBUG
   , survivorsContainStartingNode(true)
@@ -293,20 +293,29 @@ void Graph::createSequencesInGraph(const Chromosome &chromo)
     if(node)
       nodMan.determineCoalescentNodes(node);
 
+#ifdef DEBUG_GET_COAL_STATISTIC
+  nodMan.getCoalStatistic();
+#endif
+
   nodMan.initBvMeaning();
 
   // a slight hack to initialize the dummy node 
   nat numNeutMut = getBvMeaning().size();
   NodeExtraInfo *info = nodMan.getInfo(0); 
   info->bv = new BitSet<uint64_t>(numNeutMut); 
-
+  
   for(nat i = 0; i < previousState.size(); ++i)
     {
       Node *node = previousState[i]; 
 
+#ifdef DEBUG_SEQUENCE_EXTRACTION      
+      cout << "starting extraction for sequence "  << i << "\t" << previousState.size() << endl; 
+#endif
+
       if(node)
 	nodMan.createSequenceForNode(node);  
     }
+  
 }
 
 

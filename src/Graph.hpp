@@ -24,7 +24,7 @@ class Graph
 {
 public: 
   // LIFE CYCLE
-  explicit Graph(nat initSize);
+  Graph(nat initSize, nat numRefForSim);
 
   // OPERATORS
   void touchNode(seqLen_t loc, nat indiNr, nat genNum, NodeType type , bool invertedOrientation); 
