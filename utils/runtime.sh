@@ -10,13 +10,13 @@ neutral=$1
 if [ "$neutral" == "0" ]; then
     fitness="-w"
 else     
-    fitness="-W 2 $neutral 10 2000000 $neutral 1 5000000"
+    fitness="-W 1 0.00000001 $neutral $neutral "
 fi
 
 id=$2
 
-Ne="100 1000 10000"
-L="10000 100000 1000000 10000000"
+Ne="100 500 1000 5000 10000"
+L="10000 50000  100000   500000 1000000  "
 param="2.5e-8" 
 
 
@@ -27,6 +27,21 @@ for N in $(echo $Ne)
 do     
     for l in $(echo $L)
     do 
-	$binary  $fitness -s $id -N $N -L $l -m $param -r $param -n run.$N.$l.$neutral.$id &
+	$binary  $fitness -s $id -N $N -L $l -m $param -r $param -n run.$N.$l.$neutral.$id  & 
+	sleep 1 
     done 
-done 
+done
+
+wait
+ 
+L="5000000 10000000"
+
+for N in $(echo $Ne) 
+do     
+    for l in $(echo $L)
+    do 
+	$binary  $fitness -s $id -N $N -L $l -m $param -r $param -n run.$N.$l.$neutral.$id 
+	sleep 1 
+    done 
+done
+
