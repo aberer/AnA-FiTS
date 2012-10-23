@@ -10,10 +10,14 @@
 #include <cstring>
 
 
-Graph::Graph(nat initSize, nat numRefForSim)
+Graph::Graph(nat initSize, const ProgramOptions &progOpt)
   : mutNodes(1000)
   , recNodes(1000)
-  , nodMan(1000, numRefForSim)
+  , nodMan(1000, 
+	   progOpt.hasOption("refForCoal") ? 
+	   progOpt.get<nat>("refForCoal") - 1 
+	   : 0 , 
+	   NOT progOpt.hasOption("refForCoal"))
   , buffer(100)
 #ifndef NDEBUG
   , survivorsContainStartingNode(true)
@@ -293,11 +297,13 @@ void Graph::createSequencesInGraph(const Chromosome &chromo)
     if(node)
       nodMan.determineCoalescentNodes(node);
 
-#ifdef DEBUG_GET_COAL_STATISTIC
-  nodMan.getCoalStatistic();
-#endif
+// #ifdef DEBUG_GET_COAL_STATISTIC
+				// nodMan.getCoalStatistic();
+// #endif
 
   nodMan.initBvMeaning();
+  nodMan.computeOptimalRefed();
+  
 
   // a slight hack to initialize the dummy node 
   nat numNeutMut = getBvMeaning().size();

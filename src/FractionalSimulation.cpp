@@ -18,14 +18,12 @@ FractionalSimulation::FractionalSimulation(ThreadPool &_tp,InfoFile &info, const
 {
   popMan = unique_ptr<PopulationManager>(new PopulationManager(popParams)); 
 
-  nat numRefForSim = progOpt.get<nat>("refForCoal"); 
-
   SelectedArray *selectedInit = new SelectedArray(100); // MAGIC 
   init = selectedInit; 
   for(auto chromo : chromosomes)
     {
       haplotypesWindows.push_back(new HaploTimeWindow (popParams[0].getPopSizeByGeneration(0), selectedInit));       
-      graphs.push_back(new Graph(MULT_2(popParams[0].getPopSizeByGeneration(0)),numRefForSim)); // :MAGIC: :KLUDGE:      
+      graphs.push_back(new Graph(MULT_2(popParams[0].getPopSizeByGeneration(0)), progOpt) ); // :MAGIC: :KLUDGE: 
     }
 
   isNeutral = progOpt.hasOption("neutral"); 

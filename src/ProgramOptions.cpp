@@ -21,7 +21,7 @@ ProgramOptions::ProgramOptions(int argc, char **argv)
     ("cleanF,Z", po::value<nat>()->default_value(100), "check every <x> generations for fixed mutations.")
     ("memory,M", po::value<string>(), "advise  memory limit (e.g., specify 1G or 500M). Note: seeds are not reproducible, if various values for -M are used.\
  AnA-FiTS can not guarantee to stay below the memory limit.")
-    ("refForCoal,R", po::value<nat>()->default_value(2), "number of references needed for explicit representation of an internal node (saves memory for large graphs, see manual for details)")
+    ("refForCoal,R", po::value<nat>(), "number of references needed for explicit representation of an internal node (saves memory for large graphs, see manual for details).")
     ; 
   
   po::options_description prog("Program flags"); 

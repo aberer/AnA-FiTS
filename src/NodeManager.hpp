@@ -21,7 +21,7 @@ class NodeManager
 {
 public: 
   // LIFE CYCLE 
-  NodeManager(nat initSize, nat numRefForSim);
+  NodeManager(nat initSize, nat numRefForSim, bool autoNumRef);
   ~NodeManager();
   
   // OPERATORS  
@@ -35,6 +35,7 @@ public:
   void checkConsistency();
   void determineCoalescentNodes(Node *node);   
   void setStartNode(Node *node);
+  void computeOptimalRefed(); 
 
   // OBSERVERS 
   vector<Node*>& getBvMeaning(){return bvMeaning;}
@@ -53,6 +54,7 @@ private:
   DynArraySequential<BitSet<uint64_t>*> allocatedBvs; 
   vector<Node*> bvMeaning;   
   nat numRefForSim ;
+  bool autoNumRef; 
 
   void handleAncestorBv(BitSet<uint64_t> *bv, Node *node, seqLen_t start, seqLen_t end); 
   void accumulateMutationsBv(Node *node, BitSet<uint64_t> *bv, seqLen_t start, seqLen_t end); 

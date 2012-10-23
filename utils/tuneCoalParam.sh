@@ -3,8 +3,8 @@
 
 binary=$(ls ./AnA-FiTS-* | tail -n 1 ) 
 
-Ne="100 500 1000 5000 10000"
-L="10000 50000 100000 500000 1000000"
+Ne="500 1000 5000"
+L="100000 500000"
 param="2.5e-8" 
 
 for tuneParam in $(seq 2 10  )
@@ -17,4 +17,5 @@ do
 	    sleep 1 
 	done 
     done
+    wait 
 done 

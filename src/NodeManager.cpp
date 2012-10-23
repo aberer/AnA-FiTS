@@ -1,13 +1,14 @@
 #include "NodeManager.hpp"
 #include <algorithm>
 
-NodeManager::NodeManager(nat initSize, nat _numRefForSim)
+NodeManager::NodeManager(nat initSize, nat _numRefForSim, bool _autoNumRef)
   : length(initSize)
   , highestId(1)          // 0 is the non-existing starting node
   , allocatedSeqs(100)
   , allocatedMuts(100)    
   , allocatedBvs(100)
-  , numRefForSim(_numRefForSim-1)
+  , numRefForSim(_numRefForSim)
+  , autoNumRef(_autoNumRef)
 {
 #ifdef DEBUG_SEQUENCE_EXTRACTION
   cout << "needing " << numRefForSim << endl; 
@@ -267,22 +268,49 @@ NeutralMutation* NodeManager::createNeutralMutation(Node *node)
 }
 
 
+void NodeManager::computeOptimalRefed()
+{
+  if( NOT autoNumRef)
+    {
+      cout << "refed already set" << endl; 
+      return; 
+    }
+
+  getCoalStatistic();  
+}
+
+
+
+#define THRESH 0.95  
+
 void NodeManager::getCoalStatistic()
 {
   nat notatAll = 0; 
   nat coal = 0;   
-  for(nat i = 1; i < highestId ;++i) 
+  
+  nat maxRef = 0; 
+  vector<nat> allRefs; 
+  for(nat i = 1 ; i < highestId; ++i)
     {
       auto info = extraInfo[i]; 
-      if(info.referenced > numRefForSim)
-	coal++; 
-      if(info.referenced == 0)
-	notatAll++;
+      if(allRefs.size() <= info.referenced )
+	allRefs.resize(info.referenced  + 1 ); 
+      allRefs[info.referenced]++; 
     }
 
-  cout << "coal-nodes\t" << coal  << endl; 
-  cout << "graph size\t"<< highestId << endl; 
-  cout << "not visited\t" << notatAll << endl; 
+  // cout << "graph size\t"<< highestId << endl; 
+
+  nat numBelow = 0;  
+  for(nat i = 1; i < allRefs.size(); ++i)
+    {
+      numBelow += allRefs[i-1]; 
+      if( float(numBelow) / float(highestId) >= THRESH )
+	{
+	  numRefForSim = i; 	
+	  cout << "setting optimal refed to " << numRefForSim << endl; 
+	  return ; 
+	}
+    }
 }
 
 

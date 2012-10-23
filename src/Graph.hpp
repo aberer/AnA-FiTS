@@ -1,6 +1,7 @@
 #pragma once 
 
 #include "common.hpp"
+#include "ProgramOptions.hpp"
 #include "NodeManager.hpp"
 #include "AddrArray.hpp"
 #include "Node.hpp"
@@ -24,7 +25,7 @@ class Graph
 {
 public: 
   // LIFE CYCLE
-  Graph(nat initSize, nat numRefForSim);
+  explicit Graph(nat initSize, const ProgramOptions &progOpt );
 
   // OPERATORS
   void touchNode(seqLen_t loc, nat indiNr, nat genNum, NodeType type , bool invertedOrientation); 
