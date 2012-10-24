@@ -304,7 +304,6 @@ void NodeManager::getCoalStatistic()
       if( float(numBelow) / float(highestId) >= THRESH )
 	{
 	  numRefForSim = i; 	
-	  cout << "setting optimal refed to " << numRefForSim << endl; 
 	  return ; 
 	}
     }

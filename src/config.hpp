@@ -1,6 +1,6 @@
 #include "version.hpp"
 
-// #define PRODUCTIVE
+#define PRODUCTIVE
 
 ///////////////////
 // OPTIMIZATION  //
@@ -50,7 +50,7 @@
 // BACKWARDS //
 ///////////////
 
-#define DEBUG_GET_COAL_STATISTIC
+// #define DEBUG_GET_COAL_STATISTIC
 // #define DEBUG_UPDATE_GRAPH
 // #define DEBUG_HOOKUP 
 // #define DEBUG_BACKTRACE 
