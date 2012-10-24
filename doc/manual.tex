@@ -331,8 +331,28 @@ reduced by a factor of 10. The remaining 90\% of mutations will be
 simulated using the graph based algorithm as described in the main
 paper. 
 
- 
-\section{Citation}
+
+\section{ Acknowledgments }
+\label{sec:acknowledgements}
+
+I want to give credit to two great implementations, on which AnA-FiTS
+builds: 
+
+\begin{itemize}
+\item libasmlib by Agner Fog (\url{http://www.agner.org}): I found it amazing
+  that there is still vectorized integer division provided by
+  Intel/AMD. Thanks to Agner for that.
+\item RandomLib by Charles Karney
+  (\url{http://randomlib.sourceforge.net/}): A well-crafted and
+  extremely fast random number generator. I found the source code to
+  be very interesting to read. 
+\end{itemize}
+
+AnA-FiTS comes with both libraries included for user convenience. If
+you find the libraries to be outdated, please update from the above
+site (resp. inform me about that). 
+
+\section{Citation and License }
 \label{sec:citation}
 
 If AnA-FiTS was useful for your scientific work, please cite as 
@@ -341,5 +361,9 @@ If AnA-FiTS was useful for your scientific work, please cite as
 \item Andre J. Aberer, Alexandros Stamatakis. AnA-FiTS: Rapid Forward
   Genome Simulation With Ancestries. 2012. \textit{unpublished.}
 \end{itemize}
+
+
+\noindent Note that, AnA-FiTS is released under the GNU general public
+license version 3. Refer to LICENSE.txt for further information. 
 
 \end{document}
