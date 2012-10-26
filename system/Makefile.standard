@@ -1,0 +1,34 @@
+##  the standard aliases 
+Q ?= @
+CCACHE := $(shell which ccache)
+CXX :=  $(Q) $(CCACHE) $(lastword $(wildcard /usr/bin/g++-* )) 
+RM := $(Q)rm -fr 
+GITVERSION:=-$(shell cat $(VERSIONFILE)  | cut -f 3 -d ' ' | tr -d '"' )
+
+
+
+## version related stuff 
+NEW_VERSION_WORKS:=$(shell which git > /dev/null  ; echo $$?)
+ifeq ($(NEW_VERSION_WORKS),0)
+NEW_VERSION:=$(shell git describe 2> /dev/null)
+else 
+NEW_VERSION:=$(shell cat $(VERSIONFILE) | cut -f 3 -d ' ')
+endif
+
+
+
+
+
+# compiles with sse2 support, if available 
+HAVE_SSE2 = $(shell grep "flags\b.*\bsse2\b" /proc/cpuinfo 2> /dev/null | tail -1 | wc -l | tr -d ' \t')
+ifeq ($(HAVE_SSE2),1)
+SSE_FLAG = -msse2 -DHAVE_SSE2
+else 
+CMP_MESSAGE= "\n\nWarning: Could not detect SSE2 support. Code may be slower. Most recent machines should have SSE2 support, pleaes contact the author.\n\n"
+endif
+
+# conditionally compile with 64-bit support  
+HAVE_64BIT =  $(shell grep "flags\b.*\blm\b" /proc/cpuinfo 2> /dev/null | tail -1 | wc -l | tr -d ' \t')
+ifeq ($(HAVE_64BIT),1)
+FLAG_64 += -DHAVE_64BIT
+endif

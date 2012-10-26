@@ -1,0 +1,3 @@
+
+%.pdf : %.tex 
+	cd `dirname $@`;  pdflatex `basename $<` ; cd .. ;

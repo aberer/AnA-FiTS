@@ -1,0 +1,103 @@
+# targets 
+TARGET_TEST := test-$(PROGNAME)$(GITVERSION)
+TARGET_DEBUG := debug-$(PROGNAME)$(GITVERSION)
+TARGET_PROFILE := profile-$(PROGNAME)$(GITVERSION)
+TARGET := $(PROGNAME)$(GITVERSION)
+ALL_TARGETS := $(TARGET) $(TARGET_DEBUG) $(TARGET_PROFILE) $(TARGET_TEST)
+
+OBJDIR := build/release$(GITVERSION)/
+TEST_OBJ_DIR := build/test$(GITVERSION)/
+DEBUG_OBJ_DIR := build/debug$(GITVERSION)/
+PROFILE_OBJ_DIR := build/profile$(GITVERSION)/
+
+SRC_FILES := $(filter-out  $(SRC_EXCLUDE), $(wildcard $(SRCDIR)/*.cpp))
+TEST_FILES := $(filter-out %_flymake.cpp %_flymake.hpp %_flymake_master.cpp, $(wildcard $(TESTSRC)/*.cpp))
+
+OBJS := $(addprefix $(OBJDIR),  $(notdir $(SRC_FILES))) 
+OBJS := $(OBJS:.cpp=.o) $(RAND_OBJ)
+
+TEST_OBJS := $(addprefix $(TEST_OBJ_DIR), $(filter-out main.cpp, $(notdir $(SRC_FILES)))) $(addprefix $(TEST_OBJ_DIR),  $(notdir $(TEST_FILES)))
+TEST_OBJS := $(TEST_OBJS:.cpp=.o)
+
+DEBUG_OBJS := $(addprefix $(DEBUG_OBJ_DIR),  $(notdir $(SRC_FILES)))
+DEBUG_OBJS := $(DEBUG_OBJS:.cpp=.o)
+
+PROFILE_OBJS := $(addprefix $(PROFILE_OBJ_DIR),  $(notdir $(SRC_FILES)))
+PROFILE_OBJS := $(PROFILE_OBJS:.cpp=.o)
+
+
+cmpMessage: 
+	@echo -n $(CMP_MESSAGE)
+
+cppcheck: 
+	cppcheck --force --inline-suppr  --quiet --enable=all --template=gcc $(SRCDIR) 
+
+
+
+check-syntax:
+	$(CXX) $(LANG) -Wstrict-overflow -Wall -Wextra -pedantic -fsyntax-only $(INCLUDES) $(CHK_SOURCES) 
+
+
+
+
+## make various directories
+$(OBJDIR):
+	@mkdir -p $@
+$(TEST_OBJ_DIR) :
+	@mkdir -p $@
+$(DEBUG_OBJ_DIR):
+	@mkdir -p $@
+$(PROFILE_OBJ_DIR):
+	@mkdir -p $@
+
+
+
+
+release :  $(OBJDIR) $(TARGET)  convertSeq vupdate  cmpMessage
+all : depend release    vupdate cmpMessage  test 
+
+debug: depend cmpMessage  $(DEBUG_OBJ_DIR) $(TARGET_DEBUG)
+profile: depend cmpMessage $(PROFILE_OBJ_DIR) $(TARGET_PROFILE)
+test : depend $(TEST_OBJ_DIR) $(TARGET_TEST)
+	./$(TARGET_TEST)
+
+
+
+# compile files 
+$(OBJDIR)%.o : $(SRCDIR)%.cpp 
+	@echo [CXX] $@
+	$(CXX) $(CFLAGS) $(INCLUDES) -c -o $@ $<
+
+$(TEST_OBJ_DIR)%.o : $(SRCDIR)%.cpp 
+	@echo [CXX] $@
+	$(CXX) -DTESTING_ENVIRONMENT $(DEBUG_CFLAGS) $(INCLUDES) -c -o $@ $<
+
+$(TEST_OBJ_DIR)%.o : $(TESTSRC)%.cpp  
+	@echo [CXX] $@
+	$(CXX) $(DEBUG_CFLAGS) $(INCLUDES) -c -o $@ $<
+
+$(DEBUG_OBJ_DIR)%.o : $(SRCDIR)%.cpp 
+	@echo [CXX] $@
+	$(CXX) $(DEBUG_CFLAGS) $(INCLUDES) -c -o $@ $<  $(LFLAGS)
+
+$(PROFILE_OBJ_DIR)%.o : $(SRCDIR)%.cpp 
+	@echo [CXX] $@
+	$(CXX) $(PROFILE_CFLAGS) $(INCLUDES) -c -o $@ $<
+
+
+# linking binaries 
+$(TARGET_TEST): $(TEST_OBJS) $(RAND_OBJ)
+	@echo [LINK] $@
+	$(CXX)  -DTESTING_ENVIRONMENT -o $@  $^ $(LFLAGS) $(LFLAGS_GTEST) 
+
+$(TARGET): $(OBJS)  $(RAND_OBJ)
+	@echo [LINK] $@
+	$(CXX) -o $@  $^ $(LFLAGS)  
+
+$(TARGET_DEBUG):  $(DEBUG_OBJS) $(RAND_OBJ)
+	@echo [LINK] $@
+	$(CXX) -o $@ $^ $(DEBUG_LFLAGS)
+
+$(TARGET_PROFILE) : $(PROFILE_OBJS)   $(RAND_OBJ)
+	@echo [LINK] $@
+	$(CXX) -o $@ $^  $(PROFILE_LFLAGS)

@@ -1,0 +1,17 @@
+DEPFILE  =  .depends
+DEPTOKEN = '\# MAKEDEPENDS'
+DEPFLAGS = -Y -f $(DEPFILE) -s $(DEPTOKEN) 
+
+depend :
+	@echo [DEPEND]
+	@rm -f $(DEPFILE)
+	@echo $(DEPTOKEN) > $(DEPFILE)
+	@makedepend $(DEPFLAGS) -a -p build/release$(GITVERSION)/ -- $(CFLAGS) -- $(SRC_FILES)  > /dev/zero 2> /dev/zero
+	@makedepend $(DEPFLAGS) -a  -p build/debug$(GITVERSION)/ -- $(CFLAGS) -- $(SRC_FILES)  > /dev/zero 2> /dev/zero
+	@makedepend $(DEPFLAGS) -a  -p build/test$(GITVERSION)/ -- $(CFLAGS) -- $(SRC_FILES) $(TEST_FILES)  > /dev/zero 2> /dev/zero
+	@makedepend $(DEPFLAGS) -a  -p build/profile$(GITVERSION)/ -- $(CFLAGS) -- $(SRC_FILES)  > /dev/zero 2> /dev/zero
+	@cat $(DEPFILE) | sed "s/\/src\///" | sed "s/\/tests\///" > tmp 
+	@mv tmp $(DEPFILE)
+	@cd src;  ctags -Re * 
+
+sinclude $(DEPFILE) 
