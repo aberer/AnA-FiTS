@@ -1,17 +1,16 @@
 #include "Simulation.hpp"
 #include "ProgramOptions.hpp"
 #include "BinaryWriter.hpp"
-#include "ThreadPool.hpp"
 
 #include <fstream>
 #include <vector>
 
 
-Simulation::Simulation(InfoFile &info, ProgramOptions &theProgOpt)   
+Simulation::Simulation(InfoFile &info, ProgramOptions &theProgOpt, ThreadPool &_tp)
   : progOpt(theProgOpt) 
   , numGen(progOpt.getNumberOfGenerations())
-  , tp(1, progOpt.get<nat>("seed"))
-{     
+  , tp(_tp)
+{
 
   // create chromosomes 
   Randomness &rng = tp[0].getRNG();
@@ -53,7 +52,10 @@ void Simulation::run()
 #endif
   
   fractionalSimulation->simulate();
-  
+}
+
+void Simulation::printResult()
+{
   // we are doing this on a chromosome basis, in order to keep the
   // memory consumption down for a large number of chromosomes
 
@@ -77,6 +79,5 @@ void Simulation::run()
       graphWriter.writeGraph(*graph);
       fractionalSimulation->deleteGraph(i); 
     }
-
-  tp.joinThreads();
+ 
 }

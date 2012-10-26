@@ -4,6 +4,8 @@
 #include "System.hpp"
 #include "InfoFile.hpp"
 #include "ProgramOptions.hpp"
+#include "ThreadPool.hpp"
+
 
 
 #ifdef PROFILE
@@ -56,6 +58,8 @@ int main(int argc, char **argv)
   InfoFile info(opts.get<string>("runId")); 
   printInfo(info, argc, argv); 
 
+  ThreadPool tp(1,opts.get<nat>("seed"));
+
   // if( opts.get<nat>("ploidy") != 2 ) 
   //   {
   //     cerr << "not implemented yet." << endl; 
@@ -68,13 +72,16 @@ int main(int argc, char **argv)
 #ifdef _TEST 
   playground(opts);
 #else 
-  Simulation sim(info, opts);
-  sim.run();  
+  Simulation sim(info, opts, tp);
+  sim.run(); 
+  sim.printResult();
 #endif 
 #ifdef PROFILE  
   ProfilerStop();
 #endif
   
+  tp.joinThreads();
+
   double elapsed = watch.getElapsed();
   info.write("elapsed time %g\n", elapsed); 
 #ifdef INFO_GENERAL

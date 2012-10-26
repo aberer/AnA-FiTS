@@ -13,15 +13,18 @@ class ProgramOptions;
 class Simulation
 {  
 public: 
-  Simulation(InfoFile &info, ProgramOptions &theProgOpt);   
-  ~Simulation(); 
-  void run(); 
+  Simulation(InfoFile &info, ProgramOptions &theProgOpt, ThreadPool &tp);
+  ~Simulation();
+  void run();
+  void printResult();
 
 private: 
   ProgramOptions &progOpt;
   nat numGen; 
-  ThreadPool tp; 
+  ThreadPool &tp; 
   FractionalSimulation *fractionalSimulation;
   vector<Chromosome*> chromosomes;
-  vector<PopulationParams> popParams;   
+  vector<PopulationParams> popParams; 
 }; 
+
+
