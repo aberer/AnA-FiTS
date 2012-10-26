@@ -16,7 +16,6 @@ INCLUDES = $(RAND_INCLUDE) -Ilib/gtest/include
 
 LANG = -DNDEBUG -Wno-sign-compare -Wall -std=c++0x  -Wno-unused-variable -Wextra -Wno-unused-parameter -fpermissive #  -Wstrict-aliasing=2  -Wfloat-equal -flto # is permissive a prolem?  
 OPT = -O3 -march=native -mtune=native -funroll-all-loops 
-# OPT_UNKNOWN = -D_HAS_EXCEPTIONS=0  -D_STATIC_CPPLIB -ffast-math -fno-common
 
 # specific 
 DEBUG_CFLAGS = $(SSE_FLAG) $(FLAG_64) $(LANG) $(DEBUG) -ggdb 
@@ -33,11 +32,13 @@ TESTSRC := tests/
 SRC_EXCLUDE:=%sequenceConversion.cpp %graphConversion.cpp %_flymake.cpp %_flymake.hpp %_flymake_master.cpp
 
 RAND_OBJ=lib/RandomLib/src/Random.o 
+TEST_OBJS+=$(RAND_OBJ)
 
 ## a hack
 firstTarget : release 
 
 include system/Makefile.build
+
 
 ## building the rng 
 $(RAND_OBJ) : 
@@ -63,6 +64,7 @@ convertSeq : $(OBJDIR)/sequenceConversion.o $(OBJDIR)/BitSet.o
 ## END 
 
 doc: doc/manual.pdf
+
 
 include system/Makefile.std-targets
 include system/Makefile.depend

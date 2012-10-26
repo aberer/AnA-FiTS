@@ -13,8 +13,8 @@ PROFILE_OBJ_DIR := build/profile$(GITVERSION)/
 SRC_FILES := $(filter-out  $(SRC_EXCLUDE), $(wildcard $(SRCDIR)/*.cpp))
 TEST_FILES := $(filter-out %_flymake.cpp %_flymake.hpp %_flymake_master.cpp, $(wildcard $(TESTSRC)/*.cpp))
 
-OBJS := $(addprefix $(OBJDIR),  $(notdir $(SRC_FILES))) 
-OBJS := $(OBJS:.cpp=.o) $(RAND_OBJ)
+OBJS := $(addprefix $(OBJDIR), $(notdir $(SRC_FILES))) 
+OBJS := $(OBJS:.cpp=.o) 
 
 TEST_OBJS := $(addprefix $(TEST_OBJ_DIR), $(filter-out main.cpp, $(notdir $(SRC_FILES)))) $(addprefix $(TEST_OBJ_DIR),  $(notdir $(TEST_FILES)))
 TEST_OBJS := $(TEST_OBJS:.cpp=.o)
@@ -86,7 +86,7 @@ $(PROFILE_OBJ_DIR)%.o : $(SRCDIR)%.cpp
 
 
 # linking binaries 
-$(TARGET_TEST): $(TEST_OBJS) $(RAND_OBJ)
+$(TARGET_TEST): $(TEST_OBJS)
 	@echo [LINK] $@
 	$(CXX)  -DTESTING_ENVIRONMENT -o $@  $^ $(LFLAGS) $(LFLAGS_GTEST) 
 
@@ -94,10 +94,10 @@ $(TARGET): $(OBJS)  $(RAND_OBJ)
 	@echo [LINK] $@
 	$(CXX) -o $@  $^ $(LFLAGS)  
 
-$(TARGET_DEBUG):  $(DEBUG_OBJS) $(RAND_OBJ)
+$(TARGET_DEBUG):  $(DEBUG_OBJS) 
 	@echo [LINK] $@
 	$(CXX) -o $@ $^ $(DEBUG_LFLAGS)
 
-$(TARGET_PROFILE) : $(PROFILE_OBJS)   $(RAND_OBJ)
+$(TARGET_PROFILE) : $(PROFILE_OBJS)  
 	@echo [LINK] $@
 	$(CXX) -o $@ $^  $(PROFILE_LFLAGS)

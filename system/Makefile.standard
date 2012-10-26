@@ -24,11 +24,13 @@ HAVE_SSE2 = $(shell grep "flags\b.*\bsse2\b" /proc/cpuinfo 2> /dev/null | tail -
 ifeq ($(HAVE_SSE2),1)
 SSE_FLAG = -msse2 -DHAVE_SSE2
 else 
-CMP_MESSAGE= "\n\nWarning: Could not detect SSE2 support. Code may be slower. Most recent machines should have SSE2 support, pleaes contact the author.\n\n"
+CMP_MESSAGE+="\n\nWarning: Could not detect SSE2 support. Code may be slower. Most recent machines should have SSE2 support, please contact the author, if you are sure that your machine does have SSE2 support.\n\n"
 endif
 
 # conditionally compile with 64-bit support  
 HAVE_64BIT =  $(shell grep "flags\b.*\blm\b" /proc/cpuinfo 2> /dev/null | tail -1 | wc -l | tr -d ' \t')
 ifeq ($(HAVE_64BIT),1)
 FLAG_64 += -DHAVE_64BIT
+else 
+CMP_MESSAGE+="\n\nWarning: Did not detect 64 bit support. Code may be slower. Most recent machines should have 64 bit support, please contact the author, if you are that your machine does have 64 bit support.\n\n"
 endif
