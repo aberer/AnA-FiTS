@@ -8,6 +8,15 @@
 
 #include <fstream> 
 
+
+#ifdef HAVE_64BIT
+typedef BitSet<uint64_t> BitSetSeq;  
+#else 
+typedef BitSet<uint32_t> BitSetSeq;  
+#endif
+
+
+
 enum NodeType : uint8_t { 
   NOTHING = 0, 
     START = 1,     
@@ -43,7 +52,7 @@ struct Node
  */
 struct NodeExtraInfo
 {
-  BitSet<uint64_t> *bv; 
+  BitSetSeq *bv; 
   seqLen_t start; 
   seqLen_t end;
 

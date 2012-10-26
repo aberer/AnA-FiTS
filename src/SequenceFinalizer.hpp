@@ -15,22 +15,22 @@ public:
   ~SequenceFinalizer(); 
   
   // operators 
-  void computeFinalSequences(vector<BitSet<uint64_t>*> rawNeutralSequences, vector<Node*> bvMeaning, vector<SelectedArray*> selectedSequences, SelectedArray *fixedSelected);
+  void computeFinalSequences(vector<BitSetSeq*> rawNeutralSequences, vector<Node*> bvMeaning, vector<SelectedArray*> selectedSequences, SelectedArray *fixedSelected);
   
   // observers 
-  vector<BitSet<uint64_t>*> getFinalSequences() {return finalSequences; } 
+  vector<BitSetSeq*> getFinalSequences() {return finalSequences; } 
   vector<SelectedMutation*> getMutations() {return mutationsInSeqs; }
   vector<SelectedMutation*> getFixedMutations(){ return fixedMutations; }
   void printBinary(FILE *fh);
   
 private: 
-  vector<BitSet<uint64_t>*> finalSequences;
+  vector<BitSetSeq*> finalSequences;
   vector<SelectedMutation*> mutationsInSeqs;
   vector<SelectedMutation*> fixedMutations;
   
-  void annotateFixedMutations(SelectedArray *fixedMutations, BitSet<uint64_t> &fixedNeutral, vector<Node*> &bvMeaning); 
-  void annotateRelevantMutations(BitSet<uint64_t> &notPresent, BitSet<uint64_t> &fixedRawMut, vector<Node*> bvMeaning, vector<SelectedArray*> selectedSequences); 
-  void createMergedBitvectors(BitSet<uint64_t> &notPresent, BitSet<uint64_t> &fixedRawMut, vector<BitSet<uint64_t>*> rawNeutralSequences, vector<Node*> bvMeaning, vector<SelectedArray*> selectedSequences); 
+  void annotateFixedMutations(SelectedArray *fixedMutations, BitSetSeq &fixedNeutral, vector<Node*> &bvMeaning); 
+  void annotateRelevantMutations(BitSetSeq &notPresent, BitSetSeq &fixedRawMut, vector<Node*> bvMeaning, vector<SelectedArray*> selectedSequences); 
+  void createMergedBitvectors(BitSetSeq &notPresent, BitSetSeq &fixedRawMut, vector<BitSetSeq*> rawNeutralSequences, vector<Node*> bvMeaning, vector<SelectedArray*> selectedSequences); 
 };
 
 

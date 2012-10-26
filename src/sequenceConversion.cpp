@@ -2,6 +2,7 @@
 
 #include "BitSet.hpp"
 #include "Base.hpp"
+#include "Node.hpp"
 
 #include <sstream>
 #include <string>
@@ -74,14 +75,20 @@ void precomputeBvToChar(char **&result)
     charToBinaryChar(i, result[i]); 
 }
 
+#ifdef HAVE_64BIT
+typedef uint64_t bvType; 
+#else 
+typedef uint32_t bvType; 
+#endif
+
 
 void printBitvectors(bool toStdout, FILE *ifh, FILE *ofh, char **precomputed, nat numMut)
 {
-  nat bvLength = BitSet<uint64_t>::convertToInternalSize(numMut);
+  nat bvLength = BitSetSeq::convertToInternalSize(numMut);
   
   nat numOfSeq;
   BIN_READ(numOfSeq, ifh);
-  uint64_t bv[bvLength];
+  bvType bv[bvLength];
   pun_t<uint64_t, uint8_t> converter;
  
   for(nat i = 0; i < numOfSeq; ++i)
@@ -98,26 +105,40 @@ void printBitvectors(bool toStdout, FILE *ifh, FILE *ofh, char **precomputed, na
 	  converter.whole = bv[j]; 
 
 	  if(toStdout)
-	    printf("%s%s%s%s%s%s%s%s", 
+	    printf(
+#ifdef HAVE_64BIT
+		   "%s%s%s%s%s%s%s%s", 
+#else 
+		   "%s%s%s%s", 
+#endif 
 	  	   precomputed[converter.part[0]],
 	  	   precomputed[converter.part[1]],
 	  	   precomputed[converter.part[2]],
-	  	   precomputed[converter.part[3]],
-	  	   precomputed[converter.part[4]],
-	  	   precomputed[converter.part[5]],
-	  	   precomputed[converter.part[6]],
-	  	   precomputed[converter.part[7]]
+	  	   precomputed[converter.part[3]]
+#ifdef HAVE_64BIT
+	  	   ,precomputed[converter.part[4]]
+	  	   ,precomputed[converter.part[5]]
+	  	   ,precomputed[converter.part[6]]
+	  	   ,precomputed[converter.part[7]]
+#endif
 	  	   );
 	  else 
-	    fprintf(ofh, "%s%s%s%s%s%s%s%s", 
+	    fprintf(ofh, 
+#ifdef HAVE_64BIT
+		   "%s%s%s%s%s%s%s%s", 
+#else 
+		   "%s%s%s%s", 
+#endif 
 	  	    precomputed[converter.part[0]],
 	  	    precomputed[converter.part[1]],
 	  	    precomputed[converter.part[2]],
-	  	    precomputed[converter.part[3]],
-	  	    precomputed[converter.part[4]],
-	  	    precomputed[converter.part[5]],
-	  	    precomputed[converter.part[6]],
-	  	    precomputed[converter.part[7]]
+	  	    precomputed[converter.part[3]]
+#ifdef HAVE_64BIT
+	  	    ,precomputed[converter.part[4]]
+	  	    ,precomputed[converter.part[5]]
+	  	    ,precomputed[converter.part[6]]
+	  	    ,precomputed[converter.part[7]]
+#endif
 	  	    ); 	  
 	} 
       

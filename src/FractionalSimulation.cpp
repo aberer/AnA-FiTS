@@ -321,65 +321,6 @@ void FractionalSimulation::simulate()
 }
 
 
-// void FractionalSimulation::printArgs(string id, nat chromId)
-// {  
-//   stringstream fileName; 
-//   fileName << ARG_FILE_NAME  << "." << id ; 
-//   FILE *fh = openFile(fileName.str(), "w"); 
-
-//   nat numChrom = chromosomes.size(); 
-//   BIN_WRITE(numChrom,fh); 
-//   nat c = 0;
-//   for(nat i = 0; i < numChrom; ++i)
-//     {
-//       Graph &graph = *(graphs[i]);
-//       graph.printRaw(fh); 
-//     }
-// }
-
-
-
-// void FractionalSimulation::printSequencesRaw(string id )
-// {
-//   nat numHaplo = popMan->getTotalNumHaploByGen(genCnt.getCurrentGeneration() -1); 
-  
-//   stringstream fileName; 
-//   fileName << SEQ_FILE_NAME << "." << id ; 
-//   FILE *fh = openFile(fileName.str(), "w"); 
-
-//   nat numChrom = chromosomes.size(); 
-//   BIN_WRITE(numChrom,fh);
-
-//   for(nat i = 0; i < numChrom; ++i)
-//     {
-//       // set everything up 
-//       Graph &graph = *(graphs[i]); 
-//       HaploTimeWindow  &h = *(haplotypesWindows[i]); 
-//       Chromosome &chrom = *(chromosomes[i]); 
-
-//       vector<BitSet<uint64_t>*> rawNeutralSequences; 
-//       graph.getRawSequences(rawNeutralSequences); 
-//       vector<Node*>& rawBvMeaning = graph.getBvMeaning();
-//       vector<SelectedArray*> selectedSeqs; 
-
-//       assert(rawNeutralSequences.size() == numHaplo); 
-
-//       for(nat i = 0; i < numHaplo; ++i)
-// 	selectedSeqs.push_back(h.at(i)); 
-
-//       // a lot of preprocessing to get useful bitvectors 
-//       SequenceFinalizer finalizer;
-//       finalizer.computeFinalSequences(rawNeutralSequences, rawBvMeaning, selectedSeqs, 
-// 				      chrom.getFixedMutations(0) // TODO pops
-// 				      );      
-//       finalizer.printBinary(fh);
-//     }
-
-//   fclose(fh); 
-// }
-
-
-
 void FractionalSimulation::finalize(nat chromId)
 {
   nat parNum = popMan->getTotalNumHaploByGen(genCnt.getCurrentGeneration() -1); 

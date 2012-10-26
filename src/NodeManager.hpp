@@ -51,13 +51,13 @@ private:
   nat highestId; 
   DynArraySequential<NeutralArray*> allocatedSeqs; // just for freeing them later 
   DynArraySequential<NeutralMutation*> allocatedMuts; 
-  DynArraySequential<BitSet<uint64_t>*> allocatedBvs; 
+  DynArraySequential<BitSetSeq*> allocatedBvs; 
   vector<Node*> bvMeaning;   
   nat numRefForSim ;
   bool autoNumRef; 
 
-  void handleAncestorBv(BitSet<uint64_t> *bv, Node *node, seqLen_t start, seqLen_t end); 
-  void accumulateMutationsBv(Node *node, BitSet<uint64_t> *bv, seqLen_t start, seqLen_t end); 
+  void handleAncestorBv(BitSetSeq *bv, Node *node, seqLen_t start, seqLen_t end); 
+  void accumulateMutationsBv(Node *node, BitSetSeq *bv, seqLen_t start, seqLen_t end); 
   nat getStartIdx(seqLen_t start); 
   nat getEndIdx(seqLen_t start); 
   nat getTrueAncestor(Node *node); 

@@ -303,7 +303,7 @@ void Graph::createSequencesInGraph(const Chromosome &chromo)
   // a slight hack to initialize the dummy node 
   nat numNeutMut = getBvMeaning().size();
   NodeExtraInfo *info = nodMan.getInfo(0); 
-  info->bv = new BitSet<uint64_t>(numNeutMut); 
+  info->bv = new BitSetSeq(numNeutMut); 
   
   for(nat i = 0; i < previousState.size(); ++i)
     {
@@ -353,7 +353,7 @@ void Graph::insertRecEvents(nat genC, nat chromId,  AddrArrayBackwardIter<Node,t
 }
 
 
-void Graph::getRawSequences(vector<BitSet<uint64_t>*> &bvs)
+void Graph::getRawSequences(vector<BitSetSeq*> &bvs)
 {
   for(Node *node : previousState)
     {      

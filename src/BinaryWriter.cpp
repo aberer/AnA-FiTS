@@ -28,7 +28,7 @@ void BinaryWriter::writeGraph(Graph& graph)
 
 void BinaryWriter::writeSequences(Graph &graph, HaploTimeWindow &haplo, Chromosome &chrom )
 {
-  vector<BitSet<uint64_t>*> rawNeutralSequences; 
+  vector<BitSetSeq*> rawNeutralSequences; 
   graph.getRawSequences(rawNeutralSequences); 
   vector<Node*>& rawBvMeaning = graph.getBvMeaning();
   vector<SelectedArray*> selectedSeqs; 

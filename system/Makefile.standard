@@ -32,5 +32,5 @@ HAVE_64BIT =  $(shell grep "flags\b.*\blm\b" /proc/cpuinfo 2> /dev/null | tail -
 ifeq ($(HAVE_64BIT),1)
 FLAG_64 += -DHAVE_64BIT
 else 
-CMP_MESSAGE+="\n\nWarning: Did not detect 64 bit support. Code may be slower. Most recent machines should have 64 bit support, please contact the author, if you are that your machine does have 64 bit support.\n\n"
+CMP_MESSAGE+="\n\nWarning: Did not detect 64 bit support. Code may be slower. Most recent machines should have 64 bit support, please contact the author, if you are sure that your machine does have 64 bit support.\n\n"
 endif

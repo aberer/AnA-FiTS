@@ -1,6 +1,8 @@
 #include "NodeManager.hpp"
 #include <algorithm>
 
+
+
 NodeManager::NodeManager(nat initSize, nat _numRefForSim, bool _autoNumRef)
   : length(initSize)
   , highestId(1)          // 0 is the non-existing starting node
@@ -360,7 +362,7 @@ void NodeManager::initBvMeaning()
 }
 
 
-void NodeManager::accumulateMutationsBv(Node *node, BitSet<uint64_t> *bv, seqLen_t start, seqLen_t end)
+void NodeManager::accumulateMutationsBv(Node *node, BitSetSeq *bv, seqLen_t start, seqLen_t end)
 {
   assert(getInfo(node->id)->referenced <= numRefForSim); 
   
@@ -414,7 +416,7 @@ nat NodeManager::findInBv(seqLen_t key ) const
 
 
 
-void NodeManager::handleAncestorBv(BitSet<uint64_t> *bv, Node *anc, seqLen_t start, seqLen_t end)
+void NodeManager::handleAncestorBv(BitSetSeq *bv, Node *anc, seqLen_t start, seqLen_t end)
 {
   const NodeExtraInfo *ancInfo = getInfo(anc->id);   
   assert(ancInfo->referenced); 
@@ -432,7 +434,7 @@ void NodeManager::handleAncestorBv(BitSet<uint64_t> *bv, Node *anc, seqLen_t sta
 
       assert(start <= end); 
       assert(startIdx <= endIdx); 
-      const BitSet<uint64_t> &ancbv =  *(ancInfo->bv); 
+      const BitSetSeq &ancbv =  *(ancInfo->bv); 
       bv->orifyPart(ancbv, startIdx, endIdx);
     }
   else 
@@ -448,7 +450,7 @@ void NodeManager::createSequenceForNode( Node *node)
   auto info = getInfo(node->id);
   if(NOT info->bv)
     {
-      info->bv = new BitSet<uint64_t>(bvMeaning.size());
+      info->bv = new BitSetSeq(bvMeaning.size());
       allocatedBvs.setNext(info->bv);
     }
     

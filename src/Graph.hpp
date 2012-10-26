@@ -35,9 +35,9 @@ public:
   // OBSERVERS
   nat getNumberOfMutations() {return mutNodes.getNumberUsed(); }
   vector<Node*>& getState() {return previousState; }
-  void getRawSequences(vector<BitSet<uint64_t>*> &bvs); 
+  void getRawSequences(vector<BitSetSeq*> &bvs); 
   vector<Node*>& getBvMeaning(){return nodMan.getBvMeaning();} // bad style =( 
-  BitSet<uint64_t>* getBvFromNode(Node *node){return nodMan.getInfo(node->id)->bv; }
+  BitSetSeq* getBvFromNode(Node *node){return nodMan.getInfo(node->id)->bv; }
   void printRaw(FILE *fh) ;
 
 private: 

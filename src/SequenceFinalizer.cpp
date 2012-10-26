@@ -27,7 +27,7 @@ SequenceFinalizer::~SequenceFinalizer()
 /** 
  * For simplicity not sorted currently
  */ 
-void SequenceFinalizer::annotateFixedMutations(SelectedArray *fixedSelectedMut, BitSet<uint64_t> &fixedNeutral, vector<Node*> &bvMeaning)
+void SequenceFinalizer::annotateFixedMutations(SelectedArray *fixedSelectedMut, BitSetSeq &fixedNeutral, vector<Node*> &bvMeaning)
 {  
   for(SelectedMutation** iter = fixedSelectedMut->begin(); iter != fixedSelectedMut->end(); ++iter)
     {
@@ -52,7 +52,7 @@ void SequenceFinalizer::annotateFixedMutations(SelectedArray *fixedSelectedMut, 
 }
 
 
-void SequenceFinalizer::annotateRelevantMutations(BitSet<uint64_t> &notPresent, BitSet<uint64_t> &fixedRawMut, vector<Node*> bvMeaning, vector<SelectedArray*> selectedSequences)
+void SequenceFinalizer::annotateRelevantMutations(BitSetSeq &notPresent, BitSetSeq &fixedRawMut, vector<Node*> bvMeaning, vector<SelectedArray*> selectedSequences)
 {
   // insert non-neutral mutations
   for(SelectedArray *seq : selectedSequences)
@@ -105,7 +105,7 @@ void SequenceFinalizer::annotateRelevantMutations(BitSet<uint64_t> &notPresent, 
 
 
 
-void SequenceFinalizer::createMergedBitvectors(BitSet<uint64_t> &notPresent, BitSet<uint64_t> &fixedRawMut, vector<BitSet<uint64_t>*> rawNeutralSequences, vector<Node*> bvMeaning, vector<SelectedArray*> selectedSequences)
+void SequenceFinalizer::createMergedBitvectors(BitSetSeq &notPresent, BitSetSeq &fixedRawMut, vector<BitSetSeq*> rawNeutralSequences, vector<Node*> bvMeaning, vector<SelectedArray*> selectedSequences)
 {
   assert(rawNeutralSequences.size() == selectedSequences.size()); 
   nat numSequences = rawNeutralSequences.size(); 
@@ -115,7 +115,7 @@ void SequenceFinalizer::createMergedBitvectors(BitSet<uint64_t> &notPresent, Bit
   nat neutralBsLen = bvMeaning.size(); 
 
   for(nat i = 0; i < numSequences; ++i)
-    finalSequences.push_back(new BitSet<uint64_t>(mutationsInSeqs.size())); 
+    finalSequences.push_back(new BitSetSeq(mutationsInSeqs.size())); 
   
   nat bvIdx = 0 ;   
   for(auto iter : mutationsInSeqs ) 
@@ -152,24 +152,24 @@ void SequenceFinalizer::createMergedBitvectors(BitSet<uint64_t> &notPresent, Bit
 }
 
 
-void SequenceFinalizer::computeFinalSequences(vector<BitSet<uint64_t>*> rawNeutralSequences, vector<Node*> bvMeaning, vector<SelectedArray*> selectedSequences, SelectedArray *fixedSelected)
+void SequenceFinalizer::computeFinalSequences(vector<BitSetSeq*> rawNeutralSequences, vector<Node*> bvMeaning, vector<SelectedArray*> selectedSequences, SelectedArray *fixedSelected)
 {  
   // determine mutations not occuring at all 
-  BitSet<uint64_t> mutationsNotPresent(bvMeaning.size()); 
-  for(BitSet<uint64_t> *bv : rawNeutralSequences)
+  BitSetSeq mutationsNotPresent(bvMeaning.size()); 
+  for(BitSetSeq *bv : rawNeutralSequences)
     mutationsNotPresent.orify(*bv);
   mutationsNotPresent.flip();    
 
   // determine fixed neutral mutations   
-  BitSet<uint64_t> fixedRawMut(bvMeaning.size()); 
+  BitSetSeq fixedRawMut(bvMeaning.size()); 
   fixedRawMut.set();
   assert(fixedRawMut.count() == bvMeaning.size()); 
   
-  for(BitSet<uint64_t> *bv : rawNeutralSequences)
+  for(BitSetSeq *bv : rawNeutralSequences)
     fixedRawMut.andify(*bv);
 
 #ifndef NDEBUG
-  BitSet<uint64_t> tmp(bvMeaning.size()); 
+  BitSetSeq tmp(bvMeaning.size()); 
   tmp.set();
   tmp.andify(fixedRawMut); 
   tmp.andify(mutationsNotPresent); 
@@ -181,13 +181,13 @@ void SequenceFinalizer::computeFinalSequences(vector<BitSet<uint64_t>*> rawNeutr
   createMergedBitvectors(mutationsNotPresent, fixedRawMut,  rawNeutralSequences, bvMeaning, selectedSequences); 
 
 #ifndef NDEBUG
-  BitSet<uint64_t> everywhereTmp(finalSequences[0]->size()); 
+  BitSetSeq everywhereTmp(finalSequences[0]->size()); 
   everywhereTmp.set();
   for(nat i = 0;  i < finalSequences.size(); ++i)
     everywhereTmp.andify(*(finalSequences[i]));
   assert(everywhereTmp.count() == 0); 
 
-  BitSet<uint64_t> noWhereTmp(finalSequences[0]->size()); 
+  BitSetSeq noWhereTmp(finalSequences[0]->size()); 
   noWhereTmp.set();
   for(nat i =0; i < finalSequences.size(); ++i)
     noWhereTmp.orify(*(finalSequences[i])); 
