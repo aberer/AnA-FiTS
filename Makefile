@@ -38,6 +38,8 @@ TEST_OBJS+=$(RAND_OBJ)
 ## a hack
 firstTarget : release 
 
+standardTargets : convertSeq convertGraph  vupdate  cmpMessage 
+
 include system/Makefile.build
 
 
@@ -49,7 +51,7 @@ $(RAND_OBJ) :
 
 clean:
 	@echo "[CLEAN]"
-	$(RM) $(OBJDIR) $(TEST_OBJ_DIR) $(DEBUG_OBJ_DIR) $(PROFILE_OBJ_DIR) $(ALL_TARGETS) $(RAND_OBJ) convertSeq  *~ \#* callgrind* cachegrind*  gmon.out ffits.prof 
+	$(RM) $(OBJDIR) $(TEST_OBJ_DIR) $(DEBUG_OBJ_DIR) $(PROFILE_OBJ_DIR) $(ALL_TARGETS) $(RAND_OBJ) convertGraph convertSeq  *~ \#* callgrind* cachegrind*  gmon.out ffits.prof 
 
 .PHONY : clean depend vupdate doc cmpMessage
 
@@ -62,6 +64,10 @@ vupdate :
 convertSeq : $(OBJDIR)/sequenceConversion.o $(OBJDIR)/BitSet.o    
 	@echo [LINK] $@
 	$(CXX) -o $@  $^ $(LFLAGS)  
+convertGraph : $(OBJDIR)/graphConversion.o
+	@echo [LINK] $@
+	$(CXX) -o $@ $^ $(LFLAGS)
+
 ## END 
 
 doc: doc/manual.pdf

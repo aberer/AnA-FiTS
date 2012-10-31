@@ -53,12 +53,12 @@ $(PROFILE_OBJ_DIR):
 
 
 
-release :  $(OBJDIR) $(TARGET)  convertSeq vupdate  cmpMessage
-all : depend release    vupdate cmpMessage  test 
+release :  $(OBJDIR) $(TARGET) standardTargets
+all : depend release test standardTargets
 
-debug: depend cmpMessage  $(DEBUG_OBJ_DIR) $(TARGET_DEBUG)
-profile: depend cmpMessage $(PROFILE_OBJ_DIR) $(TARGET_PROFILE)
-test : depend $(TEST_OBJ_DIR) $(TARGET_TEST)
+debug: depend  $(DEBUG_OBJ_DIR) $(TARGET_DEBUG) standardTargets
+profile: depend standardTargets $(PROFILE_OBJ_DIR) $(TARGET_PROFILE)
+test : depend $(TEST_OBJ_DIR) $(TARGET_TEST) standardTargets
 	./$(TARGET_TEST)
 
 

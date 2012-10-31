@@ -8,7 +8,6 @@
 #include <string>
 
 
-
 /** 
     This program can be used as an example of how to extract the
     binary information.  A program using binary information directly
@@ -93,59 +92,33 @@ void printBitvectors(bool toStdout, FILE *ifh, FILE *ofh, char **precomputed, na
  
   for(nat i = 0; i < numOfSeq; ++i)
     {
-      if(toStdout)
-	printf("%d\t", i);
-      else 
-	fprintf(ofh, "%d\t", i); 
+      fprintf(toStdout ? stdout : ofh , "%d\t", i); 
 
       fread(bv, bvLength, sizeof(uint64_t), ifh);
       
       for(nat j = 0; j < bvLength - 1; ++j)
 	{
 	  converter.whole = bv[j]; 
-
-	  if(toStdout)
-	    printf(
+	  
+	  fprintf(toStdout ?  stdout : ofh,	
 #ifdef HAVE_64BIT
-		   "%s%s%s%s%s%s%s%s", 
+		  "%s%s%s%s%s%s%s%s",		
 #else 
-		   "%s%s%s%s", 
+		  "%s%s%s%s",			
 #endif 
-	  	   precomputed[converter.part[0]],
-	  	   precomputed[converter.part[1]],
-	  	   precomputed[converter.part[2]],
-	  	   precomputed[converter.part[3]]
+		  precomputed[converter.part[0]],
+		  precomputed[converter.part[1]],
+		  precomputed[converter.part[2]],
+		  precomputed[converter.part[3]]
 #ifdef HAVE_64BIT
-	  	   ,precomputed[converter.part[4]]
-	  	   ,precomputed[converter.part[5]]
-	  	   ,precomputed[converter.part[6]]
-	  	   ,precomputed[converter.part[7]]
-#endif
-	  	   );
-	  else 
-	    fprintf(ofh, 
-#ifdef HAVE_64BIT
-		   "%s%s%s%s%s%s%s%s", 
-#else 
-		   "%s%s%s%s", 
-#endif 
-	  	    precomputed[converter.part[0]],
-	  	    precomputed[converter.part[1]],
-	  	    precomputed[converter.part[2]],
-	  	    precomputed[converter.part[3]]
-#ifdef HAVE_64BIT
-	  	    ,precomputed[converter.part[4]]
-	  	    ,precomputed[converter.part[5]]
-	  	    ,precomputed[converter.part[6]]
-	  	    ,precomputed[converter.part[7]]
-#endif
-	  	    ); 	  
-	} 
-      
-      if(toStdout)
-	printf("\n"); 
-      else 
-	fprintf(ofh, "\n"); 
+		  ,precomputed[converter.part[4]]
+		  ,precomputed[converter.part[5]]
+		  ,precomputed[converter.part[6]]
+		  ,precomputed[converter.part[7]]
+#endif		
+		  ); 
+	}       
+      fprintf(toStdout ? stdout : ofh, "\n"); 
     }  
 }
 
@@ -169,10 +142,7 @@ void printMutations(FILE *ifh, FILE *ofh, bool toStdout, nat& numMut)
       baseRep[0] = toChar(base);	  
       baseRep[1] = '\0'; 
 
-      if(toStdout)
-	printf("%d,%d,%f,%s;", pos, generation, fitness, baseRep); 
-      else 
-	fprintf(ofh, "%d,%d,%f,%s;", pos, generation, fitness, baseRep); 
+      fprintf(toStdout ? stdout : ofh, "%d,%d,%f,%s;", pos, generation, fitness, baseRep); 
     }
 
   numMut = nextNum; 
@@ -219,25 +189,14 @@ int main(int argc, char **argv)
   for(nat i = 0; i < numChrom; ++i)
     {
       nat numMut = 0; 
-      // print fixed mutations 
-      if(toStdout)
-	printf("// chromId %d\nfixed:\t", i); 
-      else 
-	fprintf(ofh,"// chromId %d\nfixed:\t", i);       
+      fprintf(toStdout ? stdout : ofh , "// chromId %d\nfixed:\t", i); 
       printMutations(ifh, ofh, toStdout, numMut);
-
 
       // print mutations 
-      if(toStdout)
-	printf("\nmutations:\t"); 
-      else 
-	fprintf(ofh, "\nmutations:\t"); 
+      fprintf(toStdout ? stdout : ofh, "\nmutations:\t"); 
       printMutations(ifh, ofh, toStdout, numMut);
-	  
-      if(toStdout)
-	printf("\n"); 
-      else 
-	fprintf(ofh, "\n"); 
+      
+      fprintf(toStdout ? stdout : ofh, "\n"); 
 
       // print bitvectors
       printBitvectors(toStdout, ifh, ofh, precomputedRep, numMut);

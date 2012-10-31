@@ -300,37 +300,3 @@ TEST(SequenceArrayTest, recombine)
   ASSERT_EQ(5U, recombinant.size());   
 }
 
-
-TEST(SequenceArrayTest, testJoin)
-{
-  NeutralArray seqA(10),
-    seqB(10); 
-
-  NeutralMutation
-    mut1({1,1000, Base::A, false}),
-    mut123 ({123,1000, Base::A, false}),
-    mut245({245, 1000, Base::T, false}), 
-    mut150({150, 1000, Base::T, false}), 
-    mut76({76, 10000, Base::T, false}); 
-  
-  seqA.mutate(mut123, true, false, true ); 
-  seqA.mutate(mut150, true, false, true);   
-
-  seqB.mutate(mut76, true, false, true ); 
-  seqB.mutate(mut245, true, false, true); 
-
-  seqA.conditionallyJoinOtherSeq(seqB,0,-1); 
-  NeutralMutation** array = seqA.begin();
-  ASSERT_EQ(76U, array[0]->absPos); 
-  ASSERT_EQ(123U, array[1]->absPos); 
-  ASSERT_EQ(150U, array[2]->absPos); 
-  ASSERT_EQ(245U, array[3]->absPos); 
-
-  NeutralArray seqC(10); 
-  seqC.mutate(mut1, true, false, true ); 
-  seqC.conditionallyJoinOtherSeq(seqA,130,250); 
-  array = seqC.begin();
-  ASSERT_EQ(1U, array[0]->absPos); 
-  ASSERT_EQ(150U, array[1]->absPos); 
-  ASSERT_EQ(245U, array[2]->absPos);
-}

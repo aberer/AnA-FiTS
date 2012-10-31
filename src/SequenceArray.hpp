@@ -30,7 +30,6 @@ public:
   void computeFitness(); 
   void resetVisited(){ wasVisited_v = false; }
   void claimMutations();
-  void conditionallyJoinOtherSeq(const SequenceArray &rhs, seqLen_t start, seqLen_t end); 
   MUTATION** getStartByPos(seqLen_t start) const;
   MUTATION** getEndByPos(seqLen_t end) const ;
 
