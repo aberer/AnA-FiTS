@@ -1,9 +1,0 @@
-*.user
-*.suo
-*.bak
-*.ncb
-Debug
-Release
-ReleaseSSE2
-UpgradeLog.XML
-_UpgradeReport_Files
