@@ -75,3 +75,16 @@ ostream& operator<<(ostream &stream, const NodeType &rhs);
 ostream& operator<<(ostream &stream, const Node &rhs); 
 ostream& operator<<(ostream &stream, const NodeExtraInfo &rhs); 
 
+
+
+
+struct readStruct
+{
+  nat id; 
+  seqLen_t loc; 
+  nat originGen; 
+  nat anc1; 
+  nat anc2; 
+  Base base; 
+  NodeType type ; 
+}; 

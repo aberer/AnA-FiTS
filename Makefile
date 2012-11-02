@@ -17,13 +17,13 @@ INCLUDES = $(RAND_INCLUDE) -Ilib/gtest/include
 
 LANG =  -Wno-sign-compare -Wall -std=c++0x  -Wno-unused-variable -Wextra -Wno-unused-parameter -fpermissive #  -Wstrict-aliasing=2  -Wfloat-equal -flto # is permissive a prolem?  
 
-OPT = -O3 -march=native -mtune=native -funroll-all-loops  -DNDEBUG
+OPT = -O3 -march=native -mtune=native -funroll-all-loops   -DNDEBUG
 
 # specific 
 DEBUG_CFLAGS = $(SSE_FLAG) $(FLAG_64) $(LANG) $(DEBUG) -ggdb 
 DEBUG_LFLAGS = $(LFLAGS) 
 
-CFLAGS =  $(SSE_FLAG) $(FLAG_64) $(LANG) $(OPT) $(FLAG_64) -fomit-frame-pointer
+CFLAGS = $(LANG) $(SSE_FLAG) $(FLAG_64) $(OPT) -fomit-frame-pointer
 
 PROFILE_CFLAGS = $(SSE_FLAG) $(FLAG_64) $(LANG) $(OPT) -DPROFILE -ggdb -pg
 PROFILE_LFLAGS = $(LFLAGS) $(LFLAGS_GPROF)
@@ -37,9 +37,9 @@ RAND_OBJ=lib/RandomLib/src/Random.o
 TEST_OBJS+=$(RAND_OBJ)
 
 ## a hack
-firstTarget : release
+firstTarget : release 
 
-standardTargets : vupdate  cmpMessage  convertSeq convertGraph
+standardTargets :     convertSeq convertGraph   vupdate  cmpMessage depend
 
 include system/Makefile.build
 

@@ -1,8 +1,8 @@
 #include "common.hpp"
 
+#include "Node.hpp"
 #include "BitSet.hpp"
 #include "Base.hpp"
-#include "Node.hpp"
 
 #include <sstream>
 #include <string>
@@ -21,41 +21,33 @@ void helpMessage()
 }
 
 
-char toChar(Base base)
-{
-  switch(base)
-    {
-    case A:
-      return 'A'; 
-    case C: 
-      return 'C' ; 
-    case G:
-      return 'G';
-    case T:
-      return 'T'; 
-    default : 
-      {
-	assert(0); 
-	return '0'; 
-      }
+// char toChar(Base base)
+// {
+//   switch(base)
+//     {
+//     case A:
+//       return 'A'; 
+//     case C: 
+//       return 'C' ; 
+//     case G:
+//       return 'G';
+//     case T:
+//       return 'T'; 
+//     default : 
+//       {
+// 	assert(0); 
+// 	return '0'; 
+//       }
       
-    }
-}
-
-struct readStruct
-{
-  nat id; 
-  seqLen_t loc; 
-  nat originGen; 
-  Base base; 
-  nat anc1; 
-  nat anc2; 
-  uint8_t type; 
-}; 
+//     }
+// }
 
 
-#define MUTTATION 2 
-#define RECOMBINATION 3   
+
+
+
+// #define MUTTATION 2 
+// #define RECOMBINATION 3   
 
 
 int main(int argc, char **argv)
@@ -65,7 +57,6 @@ int main(int argc, char **argv)
     *infile, 
     *outfile; 
   char c[2]; 
-
 
   if(argc == 2)
     {
@@ -99,34 +90,48 @@ int main(int argc, char **argv)
       fprintf(toStdout ? stdout : ofh, "// GRAPH %d\n", i); 
 
       nat num, tmp ; 
-      BIN_READ(num, ifh);
-      
+      BIN_READ(num, ifh);	// number of nodes 
+
       fprintf(toStdout ? stdout : ofh, "// survivingNodes "); 
       for(nat j = 0; j < num; ++j)
 	{
-	  BIN_READ(tmp, ofh); 
+	  BIN_READ(tmp, ifh); 
 	  fprintf(toStdout ? stdout : ofh, "%d;", tmp); 
 	}
+      fprintf(toStdout ? stdout : ofh, "\n"); 
 
       BIN_READ(num, ifh); 
-      readStruct allNodes[num]; 
+      readStruct allNodes[num];       
       fread(&allNodes, num, sizeof(readStruct), ifh); 
+
       for(nat j = 0; j < num; ++j)
 	{
 	  readStruct tmp = allNodes[j]; 
-	  if(tmp.type == MUTATION)
+	  switch(tmp.type)
 	    {
-	      c[0] = toChar(Base(tmp.base)); 
-	      c[1] ='\0'; 
+	    case MUTATION : 
+	      {
+		const char *c = BaseString[tmp.base]; 
 	      
-	      fprintf(toStdout ? stdout : ofh,  "%d\t(%d,%d,%s)\t%d\n", tmp.id, tmp.loc, tmp.originGen, c, tmp.anc1); 
-	    }
-	  else if(tmp.type == RECOMBINATION)
-	    fprintf(toStdout ? stdout : ofh,  "%d\t(%d,%d)\t%d,%d\n", tmp.id, tmp.loc, tmp.originGen, tmp.anc1, tmp.anc2); 
-	  else 
-	    {
-	      cerr << "unknown node type, please report this as bug" << endl; 
-	      abort(); 
+		fprintf(toStdout ? stdout : ofh,  "%d\t(%d,%d,%s)\t%d\n", tmp.id, tmp.loc, tmp.originGen, c, tmp.anc1); 
+		break; 
+	      }
+	    case RECOMBINATION: 
+	      {
+		fprintf(toStdout ? stdout : ofh,  "%d\t(%d,%d)\t%d,%d\n", tmp.id, tmp.loc, tmp.originGen, tmp.anc1, tmp.anc2); 
+	      }
+	      break; 
+	    case NOTHING : 
+	    case GENE_CONVERSION:  	      
+	    case COALESCENT:
+	      cerr << "encountered unused node type" << endl; 
+	      break; 
+	    default: 
+	      {
+		// cerr << "unknown node type, please report this as bug and tell the developer, I read a" << endl; 
+		cerr << "conversion failed, please file a bug report." << endl; 
+		abort(); 
+	      }
 	    }
 	}
     }

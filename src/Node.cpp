@@ -28,14 +28,28 @@ ostream& operator<<(ostream &stream, const NodeType &rhs)
 
 ostream& operator<<(ostream &stream, const Node &rhs)
 {
-  stream << 
-    "***id=" << rhs.id  << "***"<< 
-    ", indi=" << rhs.indiNr << 
-    ", loc="<< rhs.loc<< 
-    ", gen=" << rhs.originGen << 
-    ", anc1="<< rhs.ancId1 << 
-    ", anc2="<<rhs.ancId2 << 
-    ", type=" << rhs.type; 
+  if(rhs.type == NodeType::RECOMBINATION)
+    {
+      stream
+    << rhs.id << "\t" << "(" << rhs.loc <<  ","  <<  rhs.originGen
+    << ","<< rhs.indiNr <<  ")\t"   << rhs.ancId1 << "," << rhs.ancId2;   
+    }
+  else if( rhs.type == NodeType::MUTATION)
+    stream
+      << rhs.id << "\t" << "(" << rhs.loc <<  ","  <<  rhs.originGen
+      <<  "," << BaseString[rhs.base]<< "," << rhs.indiNr <<  ")\t"  
+      << rhs.ancId1;   
+  else 
+    assert(0); 
+  
+  // stream << 
+  //   "***id=" << rhs.id  << "***"<< 
+  //   ", indi=" << rhs.indiNr << 
+  //   ", loc="<< rhs.loc<< 
+  //   ", gen=" << rhs.originGen << 
+  //   ", anc1="<< rhs.ancId1 << 
+  //   ", anc2="<<rhs.ancId2 << 
+  //   ", type=" << rhs.type; 
     
   return stream;
 }
@@ -54,13 +68,17 @@ ostream& operator<<(ostream &stream, const NodeExtraInfo &rhs)
 
 void Node::printRaw(FILE *fh)
 {
-  BIN_WRITE(id, fh);   
-  BIN_WRITE(loc, fh); 
-  BIN_WRITE(originGen, fh); 
-  BIN_WRITE(base, fh);
-  BIN_WRITE(ancId1, fh); 
-  BIN_WRITE(ancId2, fh); 
-  BIN_WRITE(type, fh); 
+  readStruct tmp; 
+  
+  tmp.id = id; 
+  tmp.loc = loc; 
+  tmp.originGen = originGen; 
+  tmp.anc1 = ancId1; 
+  tmp.anc2 = ancId2; 
+  tmp.base = base; 
+  tmp.type = type;   
+  
+  fwrite(&tmp, 1, sizeof(readStruct), fh);
 
   // cout << id <<  "\t("
   //      << loc << ","

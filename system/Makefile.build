@@ -53,12 +53,12 @@ $(PROFILE_OBJ_DIR):
 
 
 
-release :  $(OBJDIR) $(TARGET) standardTargets
-all : depend release test standardTargets
+release :  $(OBJDIR) $(TARGET) standardTargets 
+all :  release test standardTargets
 
-debug: depend  $(DEBUG_OBJ_DIR) $(TARGET_DEBUG) standardTargets
-profile: depend standardTargets $(PROFILE_OBJ_DIR) $(TARGET_PROFILE)
-test : depend $(TEST_OBJ_DIR) $(TARGET_TEST) standardTargets
+debug:   $(DEBUG_OBJ_DIR) $(TARGET_DEBUG) standardTargets
+profile:  standardTargets $(PROFILE_OBJ_DIR) $(TARGET_PROFILE)
+test :  $(TEST_OBJ_DIR) $(TARGET_TEST) standardTargets
 	./$(TARGET_TEST)
 
 

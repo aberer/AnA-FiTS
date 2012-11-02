@@ -11,8 +11,8 @@ BinaryWriter::BinaryWriter(string fileName, nat numChromForSeq, nat numGraph)
   
   nat numToWrite = numChromForSeq == 0 ? numGraph : numChromForSeq; 
   BIN_WRITE(numToWrite,fh); 
-  
 }
+
 
 BinaryWriter::~BinaryWriter()
 {
