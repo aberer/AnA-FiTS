@@ -76,8 +76,10 @@ void precomputeBvToChar(char **&result)
 
 #ifdef HAVE_64BIT
 typedef uint64_t bvType; 
+#define NUM_BITS 64 
 #else 
 typedef uint32_t bvType; 
+#define NUM_BITS 32 
 #endif
 
 
@@ -89,6 +91,9 @@ void printBitvectors(bool toStdout, FILE *ifh, FILE *ofh, char **precomputed, na
   BIN_READ(numOfSeq, ifh);
   bvType bv[bvLength];
   pun_t<uint64_t, uint8_t> converter;
+  char tmpChar[1024]; 
+
+  bool spareBits = (numMut % NUM_BITS != 0); 
  
   for(nat i = 0; i < numOfSeq; ++i)
     {
@@ -96,7 +101,9 @@ void printBitvectors(bool toStdout, FILE *ifh, FILE *ofh, char **precomputed, na
 
       fread(bv, bvLength, sizeof(uint64_t), ifh);
       
-      for(nat j = 0; j < bvLength - 1; ++j)
+      for(nat j = 0; 
+	  j <  (  NOT spareBits ?  bvLength : bvLength - 1) ; 
+	  ++j)
 	{
 	  converter.whole = bv[j]; 
 	  
@@ -117,7 +124,36 @@ void printBitvectors(bool toStdout, FILE *ifh, FILE *ofh, char **precomputed, na
 		  ,precomputed[converter.part[7]]
 #endif		
 		  ); 
-	}       
+	}
+
+      if(spareBits)
+	{
+	  bvType lastByte = bv[bvLength-1]; 
+	  
+	  sprintf(tmpChar, 
+#ifdef HAVE_64BIT
+		  "%s%s%s%s%s%s%s%s",
+#else 
+		  "%s%s%s%s", 
+#endif
+		  precomputed[converter.part[0]],
+		  precomputed[converter.part[1]],
+		  precomputed[converter.part[2]],
+		  precomputed[converter.part[3]]
+#ifdef HAVE_64BIT
+		  ,precomputed[converter.part[4]]
+		  ,precomputed[converter.part[5]]
+		  ,precomputed[converter.part[6]]
+		  ,precomputed[converter.part[7]]
+#endif 
+		  ); 
+	  
+	  nat rest = numMut % NUM_BITS; 
+	  tmpChar[rest] = '\0'; 
+	  fprintf(toStdout ? stdout : ofh, "%s", tmpChar); 
+	  
+      }
+      
       fprintf(toStdout ? stdout : ofh, "\n"); 
     }  
 }

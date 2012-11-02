@@ -86,7 +86,7 @@ $(PROFILE_OBJ_DIR)%.o : $(SRCDIR)%.cpp
 
 
 # linking binaries 
-$(TARGET_TEST): $(TEST_OBJS)
+$(TARGET_TEST): $(TEST_OBJS) $(RAND_OBJ)
 	@echo [LINK] $@
 	$(CXX)  -DTESTING_ENVIRONMENT -o $@  $^ $(LFLAGS) $(LFLAGS_GTEST) 
 
@@ -94,10 +94,10 @@ $(TARGET): $(OBJS)  $(RAND_OBJ)
 	@echo [LINK] $@
 	$(CXX) -o $@  $^ $(LFLAGS)  
 
-$(TARGET_DEBUG):  $(DEBUG_OBJS) 
+$(TARGET_DEBUG):  $(DEBUG_OBJS) $(RAND_OBJ)
 	@echo [LINK] $@
 	$(CXX) -o $@ $^ $(DEBUG_LFLAGS)
 
-$(TARGET_PROFILE) : $(PROFILE_OBJS)  
+$(TARGET_PROFILE) : $(PROFILE_OBJS)  $(RAND_OBJ)
 	@echo [LINK] $@
 	$(CXX) -o $@ $^  $(PROFILE_LFLAGS)

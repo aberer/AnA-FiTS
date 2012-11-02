@@ -28,8 +28,9 @@ CMP_MESSAGE+="\n\nWarning: Could not detect SSE2 support. Code may be slower. Mo
 endif
 
 # conditionally compile with 64-bit support  
-HAVE_64BIT =  $(shell grep "flags\b.*\blm\b" /proc/cpuinfo 2> /dev/null | tail -1 | wc -l | tr -d ' \t')
-ifeq ($(HAVE_64BIT),1)
+#  HAVE_64BIT =  $(shell grep "flags\b.*\blm\b" /proc/cpuinfo 2> /dev/null | tail -1 | wc -l | tr -d ' \t')
+HAVE_64BIT:=$(shell getconf LONG_BIT )
+ifeq ($(HAVE_64BIT),64)
 FLAG_64 += -DHAVE_64BIT
 else 
 CMP_MESSAGE+="\n\nWarning: Did not detect 64 bit support. Code may be slower. Most recent machines should have 64 bit support, please contact the author, if you are sure that your machine does have 64 bit support.\n\n"

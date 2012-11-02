@@ -15,8 +15,9 @@ LFLAGS =  -L./lib  $(LFLAGS_RAND) $(LFLAGS_OPTPARS) $(LFLAGS_LIKWID) $(LFLAGS_AS
 RAND_INCLUDE=-Ilib/RandomLib/include
 INCLUDES = $(RAND_INCLUDE) -Ilib/gtest/include
 
-LANG = -DNDEBUG -Wno-sign-compare -Wall -std=c++0x  -Wno-unused-variable -Wextra -Wno-unused-parameter -fpermissive #  -Wstrict-aliasing=2  -Wfloat-equal -flto # is permissive a prolem?  
-OPT = -O3 -march=native -mtune=native -funroll-all-loops 
+LANG =  -Wno-sign-compare -Wall -std=c++0x  -Wno-unused-variable -Wextra -Wno-unused-parameter -fpermissive #  -Wstrict-aliasing=2  -Wfloat-equal -flto # is permissive a prolem?  
+
+OPT = -O3 -march=native -mtune=native -funroll-all-loops  -DNDEBUG
 
 # specific 
 DEBUG_CFLAGS = $(SSE_FLAG) $(FLAG_64) $(LANG) $(DEBUG) -ggdb 
@@ -36,17 +37,17 @@ RAND_OBJ=lib/RandomLib/src/Random.o
 TEST_OBJS+=$(RAND_OBJ)
 
 ## a hack
-firstTarget : release 
+firstTarget : release
 
-standardTargets : convertSeq convertGraph  vupdate  cmpMessage 
+standardTargets : vupdate  cmpMessage  convertSeq convertGraph
 
 include system/Makefile.build
 
 
 ## building the rng 
 $(RAND_OBJ) : 
-	@echo [CXX] lib/randomlib/src/Random.cpp
-	@$(CXX) -g -Wall -Wextra -O3 -funroll-loops -finline-functions -fomit-frame-pointer $(SSE_FLAG) $(RAND_INCLUDE) -c -o $@ lib/randomlib/src/Random.cpp
+	@echo [CXX] lib/RandomLib/src/Random.cpp
+	@$(CXX)  -Wall -Wextra -O3 -funroll-loops -finline-functions -fomit-frame-pointer $(SSE_FLAG) $(RAND_INCLUDE) -c -o $@ lib/RandomLib/src/Random.cpp
 
 
 clean:
@@ -61,10 +62,10 @@ vupdate :
 	@echo "#define VERSION \"$(NEW_VERSION)\"" > src/version.hpp
 
 # BEGIN  intermediate section for the convert tool
-convertSeq : $(OBJDIR)/sequenceConversion.o $(OBJDIR)/BitSet.o    
+convertSeq : $(OBJDIR)/sequenceConversion.o $(OBJDIR)/BitSet.o     
 	@echo [LINK] $@
 	$(CXX) -o $@  $^ $(LFLAGS)  
-convertGraph : $(OBJDIR)/graphConversion.o
+convertGraph :  $(OBJDIR)/graphConversion.o
 	@echo [LINK] $@
 	$(CXX) -o $@ $^ $(LFLAGS)
 

@@ -291,14 +291,15 @@ void Graph::createSequencesInGraph(const Chromosome &chromo)
 
   for(Node *node : previousState)    
     if(node)
-      nodMan.markAncestrialMaterial(*node, start, end); 
+      nodMan.markAncestrialMaterial(*node, start, end);  
 
   for(Node *node : previousState)    
     if(node)
       nodMan.determineCoalescentNodes(node);
+    
 
   nodMan.initBvMeaning();
-  nodMan.computeOptimalRefed();  
+  nodMan.computeOptimalRefed();
 
   // a slight hack to initialize the dummy node 
   nat numNeutMut = getBvMeaning().size();

@@ -98,10 +98,6 @@ void NodeManager::markAncestrialMaterial(Node &node, seqLen_t start, seqLen_t en
   if(info->end < end )
     info->end = end; 
 
-#ifdef DEBUG_BACKTRACE
-  cout << (NOT wasInit ? " INIT: " : "") << " entering " << node << "\t" << *info << endl; 
-#endif
-
   assert(start < end && info->start < info->end);   
   
   if( NOT node.id ) 		// excluding start node 
