@@ -11,7 +11,7 @@ make vupdate
 
 git tag -d "$1 "
 git commit -a -m "automated pre-tag commit"
-git tag -a "$1" -m "release verison $1" 
+git tag -a "$1" -m "release version $1" 
 git push
 git push --tags
 

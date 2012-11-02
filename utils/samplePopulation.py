@@ -3,16 +3,31 @@
 import sys 
 import random 
 
-if len(sys.argv) != 2 : 
-    print "USAGE: ./convertSeq <anafits-file> |  ./samplePopulation.py <num>"
-    sys.exit(1)
+
+def helpMsg():
+    print "USAGE: ./convertSeq <anafits-file> |  ./samplePopulation.py <num> <sampleIndi>\n\n\t* where <num> is the number of sequences to be sampled \n\t* and <sampleIndi> == 0, if you just want to sample random sequences \n\t  and <sampleIndi> == 1, if you want to sample the sequences of num/2 diploid individuals"
+    sys.exit(1)    
+
+if len(sys.argv) != 3 : 
+    helpMsg()
 
 chrList = [] 
 fixed = []
 mutations = [] 
 
+trueNumSample = int (sys.argv[1])
 numSample = int (sys.argv[1])
 lines = sys.stdin.readlines()
+
+if sys.argv[2] == "1": 
+    sampleIndi = True
+    numSample /= 2 
+elif sys.argv[2] == "0": 
+    sampleIndi = False
+else : 
+    helpMsg()
+
+     
 
 isFirst = True 
 currentBv = []
@@ -37,10 +52,14 @@ for i in range(0,len(chrList)):
     assert(len(chrList[i]) == num)
 
 if(num <= numSample): 
-    print("you want to sample " + str(numSample) + " while there are only " + str(num) + " sequences in this file.")
+    print("you want to sample " + str(trueNumSample) + " while there are only " + str(num) + " sequences in this file.")
     sys.exit(-1)
 
-chosen = range(0,num)
+if(sampleIndi): 
+    chosen = range(0,num / 2 )
+else : 
+    chosen = range(0,num)
+
 random.shuffle(chosen)
 chosen = chosen[0:numSample]
 
@@ -52,4 +71,8 @@ for i in range(0, len(chrList)):
     currentBv = chrList[i]
     
     for j in range(0, len(chosen)): 
-        print currentBv[chosen[j]]
+        if(sampleIndi): 
+            print currentBv[chosen[j] * 2 ]
+            print currentBv[chosen[j] * 2 + 1 ]
+        else : 
+            print currentBv[chosen[j]]
