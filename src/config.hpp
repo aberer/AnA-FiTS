@@ -1,6 +1,6 @@
 #include "version.hpp"
 
-// #define PRODUCTIVE
+#define PRODUCTIVE
 
 ///////////////////
 // OPTIMIZATION  //
