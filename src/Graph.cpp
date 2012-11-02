@@ -280,7 +280,6 @@ void Graph::printRaw(FILE *fh)
 	continue;
       else 
 	node->printRaw(fh);
-      cout << *node << endl; 
     }
 }
 
