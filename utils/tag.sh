@@ -3,9 +3,9 @@
 if [ "$#" != "1"  ]; then
     echo "./script <versionName>"
     exit 
-fi
+fi				# 
 
-git tag -a "$1" -m "stable release verison $1"
+git tag -a "$1" -m "stable release version $1"
 make clean
 make vupdate 
 
