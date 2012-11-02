@@ -3,6 +3,7 @@
 \usepackage{url}
 \usepackage{hyperref}
 \usepackage{amsmath,amssymb}
+\usepackage[parfill]{parskip}
 
 
 \title{Manual to AnA-FiTS}
@@ -10,11 +11,17 @@
 \date{\today}
 
 
+\newcommand{\console}[1]{\newline {\footnotesize \texttt{\$ #1}} \newline}
+\newcommand{\prog}[1]{\texttt{#1}}
+
+
 
 
 \begin{document}
 
 \maketitle
+
+
 
 \begin{abstract}
   This is the manual to AnA-FiTS, the ancestry-aware forward-in-time
@@ -25,62 +32,58 @@
   advanced features on demand. Instead, AnA-FiTS primarily focuses on
   runtime speed and to the best of my knowledge outperforms competing
   software by one to two order(s) of magnitude. In addition to a
-  \texttt{ms}-like sequence output, AnA-FiTS provides the entire
+  \prog{ms}-like sequence output, AnA-FiTS provides the entire
   observable history of the sequences' neutral part (see
   Sect.~\ref{sec:quick-start}), a structure similar to the ancestrial
   recombination graph. 
 \end{abstract}
 
+\newpage 
+
+\tableofcontents
+
+\newpage 
+
 \section{Installation}
 \label{sec:installation}
 
-For the installation of AnA-FiTS, please use a fairly recent \textbf{g++}
+For the installation of AnA-FiTS, please use a fairly recent \prog{g++}
 compiler ($\geq$ 4.6). Other compilers may work, but have not been
 tested. 
 
 Another requirement is the \textbf{boost-library}. In specific, only
-the \texttt{ProgramOptions} package is required. On most ubuntu/debian
+the \prog{ProgramOptions} package is required. On most ubuntu/debian
 system, installing boost is as simple as 
+\console{   sudo apt-get install  libboost-all-dev }
+Otherwise just visit \url{http://www.boost.org/}. 
 
-\texttt{ \$  sudo apt-get install  libboost-all-dev }
-
-\noindent Otherwise just visit \url{http://www.boost.org/}. 
-
-
-\noindent Finally, an installation of python may be required (however this is
+Finally, an installation of python may be required (however this is
 not mandatory). 
 
+For compiling \prog{AnA-FiTS}, enter \console{ make} on the command
+line.  An executable name \prog{AnA-FiTS-\textbf{git-version}} is
+created. The \textit{git-version} suffix in the name of the executable
+helps you (and me) to exactly identify which version of the code was
+used (in case of bugs or for reproducibility).
 
-\noindent For compiling AnA-FiTS, enter 
-
-\texttt{\$ make} 
-
-\noindent on the command line.  An executable name
-\texttt{AnA-FiTS-\textbf{git-version}} is created. The
-\textit{git-version} suffix in the name of the executable helps you
-(and me) to exactly identify which version of the code was used (in
-case of bugs or for reproducibility).
-
-A second executable \texttt{convertSeq} should be produced by your
-\texttt{make} call. This tiny tool converts the binary output of AnA-FiTS into
-human-readable output. 
+An executable \prog{convertSeq} and \prog{convertGraph} should be
+produced by your \prog{make} call. This tiny tool converts the binary
+output of AnA-FiTS into human-readable output.
 
 
 \section{Quick Start}
 \label{sec:quick-start}
 
-\noindent To see AnA-Fits in action, just enter 
-
-\$ ./AnA-FiTS-v0.9-1-gfc23a8c  -n myRun -s 3 
-
-\noindent on the command line. With two mandatory command line
-arguments you provide a run id (\texttt{-n}) and a seed for random
-number generation (\texttt{-s}). All further simulation parameters are
+To see AnA-Fits in action, just enter 
+\console{ ./AnA-FiTS-v0.9-1-gfc23a8c  -n myRun -s 3 }
+on the command line. With two mandatory command line
+arguments you provide a run id (\prog{-n}) and a seed for random
+number generation (\prog{-s}). All further simulation parameters are
 set to default values: in the case above, we simulate a chromosome
 (with length 10 Mbp) for an effective population size ($N_{e}$) of 500
 diploid individuals and a per-site per-sequence recombination/mutation
 rate of 1e-8. 10 \% of the mutations simulated will be under selection
-(with parameter -W \texttt{=2 0.05 10 2000 0.05 1 500}, see
+(with parameter -W \prog{=2 0.05 10 2000 0.05 1 500}, see
 Sect.~\ref{sec:walk-through-options} for details).
 
 \subsection{Output}
@@ -90,14 +93,11 @@ AnA-FiTS produces three output files. The info file contains all
 information relevant to the run. In particular, this makes it possible
 for you to re-create the run later. 
 
-The file anafits\_polymorphisms.myRun contains a \texttt{ms}-like
+The file anafits\_polymorphisms.myRun contains a \prog{ms}-like
 sequence representation in binary format. This means that before
 having a look at the sequences data, you have to convert this file
-first  calling: 
-
-\$  ./convertSeq anafits\_polymorphisms.myRun
-noindent or 
-\$  ./convertSeq myOutput anafits\_polymorphisms.myRun
+first calling: \console{ ./convertSeq anafits\_polymorphisms.myRun}
+or \console{ ./convertSeq myOutput anafits\_polymorphisms.myRun}
 
 For the first call the output is written to your console, in the
 second case, you create a file with name myOutput. 
@@ -105,7 +105,7 @@ second case, you create a file with name myOutput.
 The rationale behind the binary format is runtime speed. Formatting
 the output can take up a considerable part of the total execution
 time. Note, that this is a feature: if you want to run a huge number
-of simulations, you can omit \texttt{convertSeq} and directly parse
+of simulations, you can omit \prog{convertSeq} and directly parse
 the binary output in your application. For instructions on how to
 parse the binary format, please write  me an e-mail or try to extract
 the information from src/sequenceConversion.cpp. 
@@ -114,8 +114,7 @@ Finally, AnA-FiTS also creates a graph file containing the observable
 history of the neutral part of the sequence. This is a by-product of
 the algorithm implemented to speed up simulation of neutral mutations,
 however it also is interesting information on its own. The graph file
-is in binary as well and can be converted with 
-\$ ./convertGraph ./anafits\_graph.myRun
+is in binary as well and can be converted with \console{./convertGraph ./anafits\_graph.myRun}
 
 
 \subsection{Format}
@@ -178,10 +177,9 @@ follow in this section in a future version.
 For the most part, fast execution times of AnA-FiTS come at the cost
 of highly increased memory consumption. You may find AnA-FiTS
 exceeding your desktops main memory, when simulating more than 10,000
-individuals. You can significantly relax memory requirements with
-the \texttt{-M} switch, for instance with 
-
-\$ ./AnA-FiTS-v0.9-1-gfc23a8c -n myRun -s 3  -M 2G 
+individuals. You can significantly relax memory requirements with the
+\prog{-M} switch, for instance with \console{
+  ./AnA-FiTS-v0.9-1-gfc23a8c -n myRun -s 3 -M 2G }
 
 you advise AnA-FiTS not to use more than 2 GB of main memory. This,
 however, is a soft constraint: for some calls, AnA-Fits will allocate
@@ -190,19 +188,19 @@ may be necessary). If less memory is used, the total execution time
 will definitely increase, however in many cases the performance
 penalty is not severe.
 
-Please note, if the \texttt{-M} is used, the same random number seed
+Please note, if the \prog{-M} is used, the same random number seed
 will not result in the exact same run for different values for
-\texttt{-M}. 
+\prog{-M}. 
 
 \subsection{Restricting Memory for Sequence Creation}
 \label{sec:restr-memory-sequ}
 
 Another tuning parameter that can be used in order to save memory is
-\texttt{-R} \textit{num}. The parameter influences, how much memory is
+\prog{-R} \textit{num}. The parameter influences, how much memory is
 used after the BEG graph has been created (see supplementary). In
 specific, it sets the number of references needed for explicitly
 representing nodes in the graph. If no nodes are represented
-explicitly at all (e.g. with -R 1000), runtimes for AnA-FiTS will
+explicitly at all (e.g. with \prog{-R} 1000), runtimes for AnA-FiTS will
 significantly go up. On the other side, the more nodes are
 represented, the more memory is needed. Thus, this step can become
 prohibitive memory-wise. 
@@ -211,7 +209,7 @@ By default, AnA-FiTS sets this parameter automatically, such that not
 more than 5 \% of the nodes of a graph are represented explicitly. If
 you happen to have a particularly large graph (because of high numbers
 of individuals and/or high rates), you may want to adjust this
-parameter (i.e., increase it to for instance -R 10), such that
+parameter (i.e., increase it to for instance \prog{-R} 10), such that
 AnA-FiTS consumes less memory at this stage (while the runtime often
 is not severely increased). Note that this option does not influence
 the simulation and you should always obtain the exact same result, if
@@ -243,17 +241,17 @@ computed as follows:
 \label{sec:simulation-length}
 Usually, in forward simulation, we simulate for $5 \cdot 2 \cdot N_e$
 \textbf{number of generation}s (default value for AnA-FiTS). You can
-influence simulation length with \texttt{--SIM}.
+influence simulation length with \prog{--SIM}.
 
 \subsection{Population Size}
 \label{sec:population-size}
 Initial population size (number of diploid individuals, $N_e$) is
-provided with \texttt{-N}. Note that in all forward simulation, this
+provided with \prog{-N}. Note that in all forward simulation, this
 parameter is particularly expensive (since it also increases the total
 number of generation you have simulate). You can change the
-population size during simulation with the \texttt{--popEvent}
+population size during simulation with the \prog{--popEvent}
 options. Multiple popEvents are possible, just provide the parameter
-with options multiple times. The general format is \texttt{--popEvent
+with options multiple times. The general format is \prog{--popEvent
   <mode> <time> <args>...}, where 
 \begin{itemize}
 \item \textit{time} is the absolute generation number (e.g. generation
@@ -263,7 +261,7 @@ with options multiple times. The general format is \texttt{--popEvent
   \item $c$, with argument $r$. A discrete size change with rate
     $\frac{\textnormal{new}}{\textnormal{old}}$. If you want to model
     a spontaneous population reduction by factor 2 in generation 100,
-    provide \texttt{--popEvent c 100 0.5}.
+    provide \prog{--popEvent c 100 0.5}.
   \item $d$, exponential decay with rate $r$. Note that, AnA-FiTS
     rounds to the next even number of individuals.
   \item $g$, exponential growth with rate $r$ (analogously to $d$)
@@ -275,19 +273,18 @@ with options multiple times. The general format is \texttt{--popEvent
 Another example, if you want to undergo 500 individuals a bottleneck
 in generation 500 that wipes out half of the generation and then
 continue with logistic growth with rate 0.001 in generation 600 until
-2,000 individuals are reached (however simulation ends before this
-is the case), enter: 
-
-\$ ./AnA-FiTS-v0.9-1-gfc23a8c  -T c 500 0.5  -T k 600 2000 0.001  -n run2 -s 3
+2,000 individuals are reached (however simulation ends before this is
+the case), enter: \console{ ./AnA-FiTS-v0.9-1-gfc23a8c -T c 500 0.5 -T
+  k 600 2000 0.001 -n run2 -s 3}
 
 
 \subsection{Multiple Chromosomes }
 \label{sec:mult-chrom-}
 
 You can simulate \textbf{multiple chromosomes} (resp. unlinked loci)
-with \texttt{-L}. Just provide for each the chromosome the length
-
-\$ ./AnA-FiTS-v0.9-1-gfc23a8c -L 1000000 1000000 1000000 1000000 1000000   -n run3 -s 3
+with \prog{-L}. Just provide for each the chromosome the length
+\console{ ./AnA-FiTS-v0.9-1-gfc23a8c -L 1000000 1000000 1000000
+  1000000 1000000 -n run3 -s 3}
 
 In the above call, 5 chromosomes, each of length 1 Mbp are
 simulated. For each chromosome a separate section in the graph and
@@ -300,8 +297,8 @@ first surviving node in graph 2.
 \subsection{Selection Model}
 \label{sec:selection-model}
 
-For simulating a neutral population, use \texttt{-w}. Otherwise, you
-can allow for non-neutral mutations with \texttt{-W}. For runtime, the
+For simulating a neutral population, use \prog{-w}. Otherwise, you
+can allow for non-neutral mutations with \prog{-W}. For runtime, the
 most important thing is the fraction of mutations that are under
 selection. The following modes are available: 
 
@@ -321,15 +318,29 @@ selection. The following modes are available:
   standard deviation $\sigma$.
 \end{itemize}
 
-\noindent So, if for instance we call 
-
-\$ ./AnA-FiTS-v0.9-1-gfc23a8c -W 2 0.05 10 2000 0.05 1 500 -n run4 -s 3
+So, if for instance we call \console{
+  ./AnA-FiTS-v0.9-1-gfc23a8c -W 2 0.05 10 2000 0.05 1 500 -n run4 -s
+  3}
 
 then 10 \% of all mutations are under selection. So effectively, the
 number of mutations that we have to simulate forward in time is
 reduced by a factor of 10. The remaining 90\% of mutations will be
 simulated using the graph based algorithm as described in the main
 paper. 
+
+
+\section{Frequently Asked Questions}
+\label{sec:freq-asked-quest}
+
+\paragraph{AnA-FiTS outputs the entire population, why not sample? }
+\label{sec:why-does-ana}
+
+This is a feature that will be implemented at some point in the future
+(will yield further runtime improvements). For now, please sample on
+your own or use a quick python script like this: \console{
+ ./convertSeq \textit{ana-poly} | ./utils/samplePopulation.py \textit{number}}
+Note that this script merely samples haplotypes (not individuals),
+however it is consistent when used with multi-chromosome datasets.
 
 
 \section{ Acknowledgments }

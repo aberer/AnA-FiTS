@@ -77,7 +77,12 @@ int main(int argc, char **argv)
     helpMessage();
 
 
-  FILE *ifh = fopen(infile, "r"); 
+  FILE *ifh = fopen(infile, "r");   
+  if(NOT ifh)
+    {
+      cerr << "Could not find file >" << infile  << "<"  <<endl; 
+    }
+    
   FILE *ofh = NULL ;
 
   if(NOT toStdout)

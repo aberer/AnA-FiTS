@@ -217,7 +217,12 @@ void SequenceFinalizer::printBinary(FILE *fh)
   BIN_WRITE(num,fh);   
   nat ctr = 0; 
   for(auto bv : finalSequences)
-    bv->printRaw(fh);   
+    {
+#ifdef PRINT_SEQ_STDOUT
+      cout << *bv << endl; 
+#endif
+      bv->printRaw(fh);   
+    }
 }
 
 

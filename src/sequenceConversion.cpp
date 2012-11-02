@@ -99,7 +99,7 @@ void printBitvectors(bool toStdout, FILE *ifh, FILE *ofh, char **precomputed, na
     {
       fprintf(toStdout ? stdout : ofh , "%d\t", i); 
 
-      fread(bv, bvLength, sizeof(uint64_t), ifh);
+      fread(bv, bvLength, sizeof(bvType), ifh);
       
       for(nat j = 0; 
 	  j <  (  NOT spareBits ?  bvLength : bvLength - 1) ; 
@@ -128,7 +128,7 @@ void printBitvectors(bool toStdout, FILE *ifh, FILE *ofh, char **precomputed, na
 
       if(spareBits)
 	{
-	  bvType lastByte = bv[bvLength-1]; 
+	  converter.whole = bv[bvLength-1]; 
 	  
 	  sprintf(tmpChar, 
 #ifdef HAVE_64BIT
@@ -147,11 +147,9 @@ void printBitvectors(bool toStdout, FILE *ifh, FILE *ofh, char **precomputed, na
 		  ,precomputed[converter.part[7]]
 #endif 
 		  ); 
-	  
-	  nat rest = numMut % NUM_BITS; 
-	  tmpChar[rest] = '\0'; 
+
+	  tmpChar[numMut % NUM_BITS] = '\0'; 
 	  fprintf(toStdout ? stdout : ofh, "%s", tmpChar); 
-	  
       }
       
       fprintf(toStdout ? stdout : ofh, "\n"); 
@@ -215,6 +213,13 @@ int main(int argc, char **argv)
 
 
   FILE *ifh = fopen(infile, "r"); 
+  if(NOT ifh)
+    {
+      cerr << "Could not read >" << infile << "<" << endl; 
+      abort();
+    }
+
+
   FILE *ofh = NULL ;
 
   if(NOT toStdout)
@@ -225,11 +230,11 @@ int main(int argc, char **argv)
   for(nat i = 0; i < numChrom; ++i)
     {
       nat numMut = 0; 
-      fprintf(toStdout ? stdout : ofh , "// chromId %d\nfixed:\t", i); 
+      fprintf(toStdout ? stdout : ofh , "// chromId %d\n// fixed\t", i); 
       printMutations(ifh, ofh, toStdout, numMut);
 
       // print mutations 
-      fprintf(toStdout ? stdout : ofh, "\nmutations:\t"); 
+      fprintf(toStdout ? stdout : ofh, "\n// mutations\t"); 
       printMutations(ifh, ofh, toStdout, numMut);
       
       fprintf(toStdout ? stdout : ofh, "\n"); 
