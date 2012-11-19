@@ -141,6 +141,22 @@ The format for the polymorphism file is as follows:
   3) are the two sequences for a diploid individual. 
 \end{itemize}
 
+In rare instances, two distinct mutation events may lead to the same
+polymorphism or a back-and-forth mutation (e.g., $A \rightarrow C
+\rightarrow A$) leads back to the original state. These instances are
+adequately handled in AnA-FiTS, so we implement a true finite-sites
+model. Since we do not want to loose information in the output, both
+cases listed above yield additional columns in the polymorphism
+output. In case 1, we have two adjacent columns with the same mutation
+(i.e., base, location is equal), where some haplotypes have a 1 in one
+column and some in the other (none of them can have both). In the
+second case, haplotypes with a back-and-forth mutation will appear to
+have both the mutation ($\rightarrow$ C) as well as the back-mutation
+($\rightarrow$ A). So keep in mind that for these rare instances the
+output does not directly represent the genotype (instead your script
+has to compensate for that, but on the plus side may use this
+additional information).
+
 
 The format for the graph file is (see Sect~\ref{sec:graph} for further
 information on the graph): 

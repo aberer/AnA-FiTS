@@ -178,7 +178,7 @@ void SequenceFinalizer::computeFinalSequences(vector<BitSetSeq*> rawNeutralSeque
   
   annotateFixedMutations(fixedSelected, fixedRawMut, bvMeaning);  
   annotateRelevantMutations(mutationsNotPresent, fixedRawMut, bvMeaning, selectedSequences); 
-  createMergedBitvectors(mutationsNotPresent, fixedRawMut,  rawNeutralSequences, bvMeaning, selectedSequences); 
+  createMergedBitvectors(mutationsNotPresent, fixedRawMut,  rawNeutralSequences, bvMeaning, selectedSequences);   
 
 #ifndef NDEBUG
   BitSetSeq everywhereTmp(finalSequences[0]->size()); 

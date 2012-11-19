@@ -1,5 +1,6 @@
 #include "NodeManager.hpp"
 #include <algorithm>
+#include "MutationManager.hpp"
 
 
 
@@ -306,6 +307,58 @@ void NodeManager::getCoalStatistic()
 	}
     }
 }
+
+
+
+
+/** 
+    If a site mutates more than once in the ancestry-based simulation,
+    we have to correct for this here. This way, we ensure that we get
+    the same result, as if the DNP/TNP/QNP would have been simulated
+    forward in time. 
+
+    :TRICKY: depends on  sorting in initBvMeaning    
+
+ */ 
+void NodeManager::rectifyMultipleNP(vector<BitSetSeq*> seqs, Randomness &rng)
+{ 
+  nat length = bvMeaning.size(); 
+  
+  // correct the multiple mutations
+  for(nat i = 0; i < length ; ++i)
+    {
+      Node *nodeA = bvMeaning[i] ; 
+
+      nat j = i+1; 
+      for(j = i+ 1 ;  j < length && nodeA->loc == bvMeaning[j]->loc; ++j)
+	{
+	  Node *nodeB = bvMeaning[j]; 
+
+	  assert(nodeA->originGen <= nodeB->originGen); 
+
+	  // check if a haplotype has both mutations
+	  bool isMultiMut = false; 
+	  for(auto seq : seqs)
+	    { 
+	      if(seq->test(i) && seq->test(j))
+		{
+		  isMultiMut = true; 
+		  break; 
+		}
+	    }
+
+	  if(isMultiMut)
+	    {
+	      Base currentBase = nodeB->base; 
+	      nodeB->base = MutationManager::drawBase(rng, nodeA->base); 
+	      assert(nodeA->base != nodeB->base); 
+	      cout << currentBase << "\t"<<  *(bvMeaning[i]) << "\t->\t"  <<  *(bvMeaning[j])  << endl; 
+	      break; 
+	    }
+	}
+    }
+}
+
 
 
 void NodeManager::initBvMeaning()

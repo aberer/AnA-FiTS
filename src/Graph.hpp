@@ -31,6 +31,7 @@ public:
   void touchNode(seqLen_t loc, nat indiNr, nat genNum, NodeType type , bool invertedOrientation); 
   void hookup(const Survivors &survivors,  const Ancestry &ancestry, const PopulationManager &popMan, Chromosome &chrom, Randomness &rng, nat startGen, nat endGen); 
   void createSequencesInGraph(const Chromosome &chromo); 
+  void rectifyMultipleNP(Randomness &rng);
 
   // OBSERVERS
   nat getNumberOfMutations() {return mutNodes.getNumberUsed(); }

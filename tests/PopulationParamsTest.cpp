@@ -6,6 +6,9 @@
 #include <boost/algorithm/string.hpp>
 
 
+#ifndef PRODUCTIVE
+
+
 ProgramOptions *stringHelper(string commandLine)
 {
   vector<string> tok; 
@@ -23,7 +26,7 @@ ProgramOptions *stringHelper(string commandLine)
 
 TEST(PopulationParamsTest, noEvent)
 {
-  ProgramOptions *progOpt = stringHelper("./progname -s 1");
+  ProgramOptions *progOpt = stringHelper("./progname -s 1 -n tmp");
 
   nat popSize = 100; 
   PopulationParams popParam(0, popSize * 10 , popSize, *progOpt);  
@@ -36,7 +39,7 @@ TEST(PopulationParamsTest, noEvent)
 
 TEST(PopulationParamsTest, testConstant)
 {  
-  ProgramOptions *progOpt = stringHelper("./progname -s 1 -T c 101 1");
+  ProgramOptions *progOpt = stringHelper("./progname -s 1 -T c 101 1  -n tmp");
 
   nat popSize = 100; 
   PopulationParams popParam(0, popSize * 10 , popSize, *progOpt);  
@@ -49,7 +52,7 @@ TEST(PopulationParamsTest, testConstant)
 
 TEST(PopulationParamsTest, testLogistic)
 {
-  ProgramOptions *progOpt = stringHelper("./progname -s 1 -T k 101 1000 0.013");
+  ProgramOptions *progOpt = stringHelper("./progname -s 1 -T k 101 1000 0.013  -n tmp");
 
   nat popSize = 100; 
   PopulationParams popParam(0, 200 , popSize, *progOpt);  
@@ -59,7 +62,7 @@ TEST(PopulationParamsTest, testLogistic)
 
 TEST(PopulationParamsTest, testExponentialDecay)
 {  
-  ProgramOptions *progOpt = stringHelper("./progname -s 1 -T d 100 0.013\n");
+  ProgramOptions *progOpt = stringHelper("./progname -s 1 -T d 100 0.013  -n tmp");
 
   nat popSize = 100; 
   PopulationParams popParam(0, 200 , popSize, *progOpt);  
@@ -70,7 +73,7 @@ TEST(PopulationParamsTest, testExponentialDecay)
 
 TEST(PopulationParamsTest, testExponentialGrowth)
 {  
-  ProgramOptions *progOpt = stringHelper("./progname -s 1 -T g 100 0.013\n");
+  ProgramOptions *progOpt = stringHelper("./progname -s 1 -T g 100 0.013  -n tmp");
 
   nat popSize = 100; 
   PopulationParams popParam(0, 200 , popSize, *progOpt);  
@@ -80,14 +83,4 @@ TEST(PopulationParamsTest, testExponentialGrowth)
 
 }
 
-
-// TEST(PopulationParamsTest, testPopSpecific)
-// {  
-//   ProgramOptions *progOpt = stringHelper("./progname -s 1 -T c 100 P 0 2 -T c 120 P 1 2");
-
-//   nat popSize = 100; 
-//   PopulationParams popParam(0, popSize * 10 , popSize, *progOpt);  
-
-//   ASSERT_EQ(200U, popParam.getPopSizeByGeneration(100)); 
-//   ASSERT_EQ(200U, popParam.getPopSizeByGeneration(120)); 
-// }
+#endif

@@ -62,6 +62,7 @@ private:
 inline SelectedMutation& Chromosome::getSelectedMutation(ResizMemArena<SelectedMutation>&mem, Randomness &rng)
 {
   SelectedMutation &mut = mem.allocate();
+  // :TODO: check, if not already fixed 
   mutMan.initSelectedMutation(rng, mut, seqRep);  
   return mut; 
 }

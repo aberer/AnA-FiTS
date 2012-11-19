@@ -41,7 +41,7 @@ void BinaryWriter::writeSequences(Graph &graph, HaploTimeWindow &haplo, Chromoso
   SequenceFinalizer finalizer;
   finalizer.computeFinalSequences(rawNeutralSequences, rawBvMeaning, selectedSeqs, 
 				  chrom.getFixedMutations(0) // TODO pops
-				  );      
+				  ); 
 
   finalizer.printBinary(fh);
 }

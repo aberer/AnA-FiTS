@@ -14,7 +14,7 @@ public:
   // OPERATORS
   void initSelectedMutation(Randomness &rng, SelectedMutation &mut, const SeqRep &seqRep);
   float getSelectProb(){return fFun.getSelectProb();}
-  Base drawBase(Randomness &rng, const Base &refBase); 
+  static Base drawBase(Randomness &rng, const Base &refBase); 
   
   // OBSERVERS
   bool locusIsNeutral(seqLen_t locus); 
@@ -30,6 +30,8 @@ private:
 
   uint8_t getPosByBase(const Base &base, const Base &refBase) const; 
 }; 
+
+
 
 
 

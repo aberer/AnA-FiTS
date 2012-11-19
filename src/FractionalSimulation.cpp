@@ -334,6 +334,7 @@ void FractionalSimulation::finalize(nat chromId)
 
   Graph &graph = *(graphs[chromId]); 
   graph.createSequencesInGraph(*(chromosomes[chromId]));
+  graph.rectifyMultipleNP(tp[0].getRNG());
 }
 
 

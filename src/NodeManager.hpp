@@ -5,6 +5,7 @@
 #include "BitSet.hpp"
 #include "Node.hpp"
 #include "DynArraySequential.hpp"
+#include "Randomness.hpp"
 
 #include <list>
 #include <vector>
@@ -42,6 +43,7 @@ public:
   nat getNumberOfNodesUsed(){return highestId; }
   
   void initBvMeaning();
+  void rectifyMultipleNP(vector<BitSetSeq*> sequences, Randomness &rng);
   void createSequenceForNode(Node *node); 
 
 private:

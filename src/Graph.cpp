@@ -316,8 +316,7 @@ void Graph::createSequencesInGraph(const Chromosome &chromo)
 
       if(node)
 	nodMan.createSequenceForNode(node);  
-    }
-  
+    }    
 }
 
 
@@ -351,6 +350,24 @@ void Graph::insertRecEvents(nat genC, nat chromId,  AddrArrayBackwardIter<Node,t
       if(ancNode1 != ancNode2)  
 	nodeBufferNowGen[indiNr] = hookRecombinations(ancNode1, ancNode2);
     }
+}
+
+
+/** 
+    Takes care of non-SNP mutations. See the respective NodeManager
+    function.
+    :TRICKY: This is still part of the mutation process
+ */ 
+void Graph::rectifyMultipleNP(Randomness &rng)
+{  
+  vector<BitSetSeq*> seqs; 
+  for(Node *node : previousState)
+    {
+      auto info = nodMan.getInfo(node->id);       
+      seqs.push_back(info->bv); 
+    }
+
+  nodMan.rectifyMultipleNP(seqs, rng);   
 }
 
 

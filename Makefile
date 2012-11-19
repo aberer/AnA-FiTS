@@ -17,7 +17,7 @@ INCLUDES = $(RAND_INCLUDE) -Ilib/gtest/include
 
 LANG =  -Wno-sign-compare -Wall -std=c++0x  -Wno-unused-variable -Wextra -Wno-unused-parameter -fpermissive #  -Wstrict-aliasing=2  -Wfloat-equal -flto # is permissive a prolem?  
 
-OPT = -O3 -march=native -mtune=native -funroll-all-loops   -DNDEBUG
+OPT = -O3 -march=native -mtune=native -funroll-all-loops     -DNDEBUG
 
 # specific 
 DEBUG_CFLAGS = $(SSE_FLAG) $(FLAG_64) $(LANG) $(DEBUG) -ggdb 
