@@ -3,7 +3,8 @@
 import os 
 import sys 
 from progressbar import * 
-from multiprocessing import Pool 
+from tempfile import * 
+from multiprocessing import * 
 
 
 numSamp = int(sys.argv[1]) 
@@ -23,15 +24,17 @@ widgets = ['progress: ', Percentage(), ' ', Bar(marker='=',left='[',right=']'),
 pbar = ProgressBar(widgets=widgets, maxval=len(files))
 pbar.start()
 
+
 numSnp = []
 numHaps = []
 pies = []
 sfsDict = {}
 ctr = 1
 for aFile in files  :     
-    os.system("./convertSeq " + aFile +  " | ./utils/statistics.py " + str(numSamp)  + "  > tmp")    
+    tmp = mkstemp()
+    os.system("./convertSeq " + aFile +  " | ./utils/statistics.py " + str(numSamp)  + " > " + tmp[1] )    
 
-    fh = open("tmp", "r")
+    fh = open(tmp[1], "r")
     numSnp.append(fh.readline().strip().split()[1])
     numHaps.append(fh.readline().strip().split()[1]) 
     pies.append( fh.readline().strip().split()[1]) 
@@ -39,6 +42,7 @@ for aFile in files  :
     
     sfsTmp = map(lambda x : x.strip() , fh.readlines())
     fh.close()
+    os.unlink(tmp[1])
 
     for sfs in sfsTmp:         
         sfs = sfs.split()
