@@ -363,8 +363,11 @@ void Graph::rectifyMultipleNP(Randomness &rng)
   vector<BitSetSeq*> seqs; 
   for(Node *node : previousState)
     {
-      auto info = nodMan.getInfo(node->id);       
-      seqs.push_back(info->bv); 
+      if(node)
+	{
+	  auto info = nodMan.getInfo(node->id);       
+	  seqs.push_back(info->bv); 
+	}
     }
 
   nodMan.rectifyMultipleNP(seqs, rng);   

@@ -352,7 +352,7 @@ void NodeManager::rectifyMultipleNP(vector<BitSetSeq*> seqs, Randomness &rng)
 	      Base currentBase = nodeB->base; 
 	      nodeB->base = MutationManager::drawBase(rng, nodeA->base); 
 	      assert(nodeA->base != nodeB->base); 
-	      cout << currentBase << "\t"<<  *(bvMeaning[i]) << "\t->\t"  <<  *(bvMeaning[j])  << endl; 
+	      // cout << currentBase << "\t"<<  *(bvMeaning[i]) << "\t->\t"  <<  *(bvMeaning[j])  << endl; 
 	      break; 
 	    }
 	}

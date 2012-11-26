@@ -176,7 +176,10 @@ void printMutations(FILE *ifh, FILE *ofh, bool toStdout, nat& numMut)
       baseRep[0] = toChar(base);	  
       baseRep[1] = '\0'; 
 
-      fprintf(toStdout ? stdout : ofh, "%d,%d,%f,%s;", pos, generation, fitness, baseRep); 
+      if(fitness == 0.)
+      	fprintf(toStdout ? stdout : ofh, "%d,%d,0,%s;", pos, generation, baseRep); 
+      else 
+	fprintf(toStdout ? stdout : ofh, "%d,%d,%f,%s;", pos, generation,fitness, baseRep); 
     }
 
   numMut = nextNum; 
