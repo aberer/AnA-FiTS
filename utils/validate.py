@@ -6,9 +6,9 @@ from progressbar import *
 from multiprocessing import * 
 
 
-numSim =  10000
+numSim = 5000
 theId = 'noRec' 
-numSamp =  10
+numSamp = 50
 
 files = [ 'numHap.txt',  'numSnp.txt',  'pi.txt',  'sfs.txt' ]
 afFor = ' -W 1 0 0.5 0.5 '
@@ -17,7 +17,7 @@ afAnc = ' -w '
 
 params = ' -r 0  ' 
 # params = ' ' 
-msParam = '  -r 0 10000000 -t ' + str(numSamp * 4)
+msParam = ' -t 200 '  
 
 widgets = ['progress: ', Percentage(), ' ', Bar(marker='=',left='[',right=']'),
            ' ', ETA()] 

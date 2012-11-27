@@ -19,7 +19,7 @@ if len(sys.argv) < 2:
     print USAGE
     sys.exit(0)
 
-widgets = ['progress: ', Percentage(), ' ', Bar(marker='=',left='[',right=']'),
+widgets = ['evaluate: ', Percentage(), ' ', Bar(marker='=',left='[',right=']'),
            ' ', ETA()] 
 
 

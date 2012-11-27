@@ -8,13 +8,14 @@ def nucDiv(haplotypes):
     Computes the nucleotide diversity.
     """
 
+    total = len(haplotypes)
     seqs = set(haplotypes)
 
     seqFreq = {}
     for seq in seqs:
         seqFreq[seq] =  haplotypes.count(seq)
 
-    ctr =  0. 
+    # ctr =  0. 
     pi = 0. 
     for (seqA, seqB) in itertools.combinations(seqs,2):
         difs = 0. 
@@ -23,11 +24,11 @@ def nucDiv(haplotypes):
                 difs += 1.
         difs /= len(seqA)
 
-        occA = seqFreq[seqA]
-        occB = seqFreq[seqB]
+        occA = float(seqFreq[seqA]) / float(total) 
+        occB = float(seqFreq[seqB]) / float(total)
         pi += difs * occA  * occB
-        ctr += occA * occB 
-    pi /= ctr 
+        # ctr += occA * occB 
+    # pi /= ctr 
     return pi 
 
 
