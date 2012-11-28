@@ -1,6 +1,5 @@
 #! /usr/bin/Rscript
 
-## library(sm)
 
 args <- commandArgs(trailingOnly = TRUE)
 
@@ -48,7 +47,6 @@ df = data.frame(mids=histObj$mids, affor = affor.freq,  afmix = afmix.freq,  afa
 
 pdf("segSites.pdf", width=6, height=6)
 matplot(df$mids, df[,c(2,3,4,5)], type="l",lwd=3, lty=1,  xlab="number of segregating sites", ylab="density")
-## matplot(table(data), type="l", lty=1, lwd=3, xlab="number of segregating sites", ylab="frequency")
 legend("topright", legend=levs, fill=1:4)
 bla = dev.off()
 

@@ -6,7 +6,27 @@ from progressbar import *
 from multiprocessing import * 
 
 
-numSim = 5000
+if len(sys.argv) != 2 : 
+    print """USAGE: ./script <case>
+where case is 
+1\tno recombination (neutrality)
+2\trecombination (neutrality)
+3\tbottleneck (neutrality)
+4\tpopulation doubling (neutrality)
+"""
+
+
+case = int(sys.argv[1])
+if case == 1: 
+    params = ' -r 0  ' 
+    msParam = ' -t 200 '  
+elif case == 2: 
+    params = '' 
+    msParam = ' -t 200 -r 200 10000000 '  
+else : 
+    print "not implemented yet" 
+
+numSim = 10000
 theId = 'noRec' 
 numSamp = 50
 
@@ -15,9 +35,6 @@ afFor = ' -W 1 0 0.5 0.5 '
 afMix = ' -W 1 0 0.25 0.25 '
 afAnc = ' -w ' 
 
-params = ' -r 0  ' 
-# params = ' ' 
-msParam = ' -t 200 '  
 
 widgets = ['progress: ', Percentage(), ' ', Bar(marker='=',left='[',right=']'),
            ' ', ETA()] 

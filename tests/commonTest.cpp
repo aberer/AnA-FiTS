@@ -1,6 +1,13 @@
 #include "../src/common.hpp"
 #include <gtest/gtest.h>
 
+TEST(productTest,general)
+{
+#ifndef  PRODUCTIVE
+  ASSERT_EQ(0,1); 
+#endif
+}
+
 TEST(commonTest, general)
 {
   ASSERT_EQ(2,DIVIDE_2(4)); 

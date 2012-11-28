@@ -25,6 +25,7 @@ Base MutationManager::drawBase(Randomness &rng, const Base &refBase)
 
 void MutationManager::initSelectedMutation(Randomness &rng, SelectedMutation &mut, const SeqRep &seqRep)
 {
+  // :TODO: bottleneck?
   bool selected = false; 
   bool enc = false; 
   bool isSaturated = numSelected == table.getBucketsUsed();

@@ -128,6 +128,8 @@ void Ancestry::fillWithRandomIndividuals(ThreadPool &tp)
 
 void Ancestry::insertNeutralMutations(ThreadPool& tp,  Graph &graph, const Survivors &survivors, const PopulationManager &popMan, Chromosome &chrom , const RegionManager &regMan, const nat genNum ) 
 {
+  // :BUG: somehow lambda small is too large (pop shift?) 
+
   Randomness &rng = tp[0].getRNG(); 
   int *start = survivors.getFirstSurvivorForward(genNum); 
   int *end = survivors.getFirstSurvivorForward(genNum-1);
@@ -136,7 +138,7 @@ void Ancestry::insertNeutralMutations(ThreadPool& tp,  Graph &graph, const Survi
   nat numSurvivors = end - start; 
 
   // :TODO: iterate through pops   
-  float lambda = PopulationManager::getLamdbaForParam(popMan[0].getMutationRate(genNum), seqLen, popMan, 0, genNum); 
+  float lambda = PopulationManager::getLamdbaForParam(popMan[0].getMutationRate(genNum), seqLen, popMan, 0, genNum) *  (1 - chrom.getSelectProb()); 
   float lambdaSmall = lambda * numSurvivors  / popMan.getTotalNumHaploByGen(genNum); 
 
   nat numMut = rng.samplePoisson(lambdaSmall);
@@ -153,7 +155,6 @@ void Ancestry::insertNeutralMutations(ThreadPool& tp,  Graph &graph, const Survi
   int ctr = 0; 
   for(nat i = 0 ; i < numMut; ++i)
     {
-      seqLen_t pos = rng.Integer<nat>(seqLen);
       int indiNr = rng.Integer<nat>(numSurvivors);
       indiNr = *(start + indiNr); 
       
@@ -161,7 +162,13 @@ void Ancestry::insertNeutralMutations(ThreadPool& tp,  Graph &graph, const Survi
 	indiNr = REVERT_INT(indiNr); 
       assert(NOT IS_INVERTED(indiNr)); 
 
-      if( regMan.locusSurvivesInPresent(indiNr, pos) && chrom.locusIsNeutral(pos) )
+      // find a position 
+      seqLen_t pos; 
+      do {
+	pos = rng.Integer<nat>(seqLen);
+      }while(NOT chrom.locusIsNeutral(pos)); 
+
+      if( regMan.locusSurvivesInPresent(indiNr, pos) ) // && chrom.locusIsNeutral(pos) 
       	{
 #ifdef DEBUG_UPDATE_GRAPH
 	  cout << "neutral mutation, pos=" << pos  << ", indiNr=" << indiNr << ", genNum=" << genNum << endl; 

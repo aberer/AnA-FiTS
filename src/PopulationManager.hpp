@@ -21,7 +21,7 @@ public:
   const PopulationParams& operator[](nat num) const { return popParams[num]; }  
   nat getNumBytesForGeneration(nat gen) const; 
 
-  static double getLamdbaForParam(float baseParam, seqLen_t seqLen, const PopulationManager &popMan, nat popNum, nat gen) ; 
+  static double getLamdbaForParam(double baseParam, seqLen_t seqLen, const PopulationManager &popMan, nat popNum, nat gen) ; 
   static uint8_t mapToBytesNeeded (nat number); 
   
 private:   
@@ -48,9 +48,7 @@ inline nat PopulationManager::getTotalNumIndiByGen(nat num) const
 }
 
 
-
-
-inline double PopulationManager::getLamdbaForParam(float baseParam, seqLen_t seqLen, const PopulationManager &popMan, nat popNum, nat gen) 
+inline double PopulationManager::getLamdbaForParam(double baseParam, seqLen_t seqLen, const PopulationManager &popMan, nat popNum, nat gen) 
 { 
   return MULT_2(popMan[popNum].getPopSizeByGeneration(gen)) * baseParam * seqLen ; // 2 N_e param seqLen
 }

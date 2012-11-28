@@ -45,7 +45,7 @@ include system/Makefile.build
 
 
 ## building the rng 
-$(RAND_OBJ) : 
+$(RAND_OBJ):
 	@echo [CXX] lib/RandomLib/src/Random.cpp
 	@$(CXX)  -Wall -Wextra -O3 -funroll-loops -finline-functions -fomit-frame-pointer $(SSE_FLAG) $(RAND_INCLUDE) -c -o $@ lib/RandomLib/src/Random.cpp
 
