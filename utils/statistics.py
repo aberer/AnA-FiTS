@@ -48,8 +48,10 @@ newHap = []
 for i in range(0,numSample): 
     newHap.append([])
 
+# print "numMut\t" + str(len(mutations))
+
 for i in range(0,len(mutations)): 
-    bla = map(lambda x : x[i] ,haplotypes)
+    bla = map(lambda x : x[i], haplotypes)
     occ = reduce(lambda x,y: int(x) + int(y) , bla )
     if not (occ == 0 or occ == numSample): 
         for j in range(0,len(haplotypes)) : 
@@ -62,7 +64,7 @@ for h in newHap:
 print "#snp\t%d"  %  len(haplotypes[0])
 print "#h\t%d"  % len(set(map(lambda x : "".join(x), haplotypes))) 
 
-pi = sumStatLib.nucDiv(haplotypes)
+pi = sumStatLib.nucDiv(haplotypes, 10000000 ) # :TRICKY: 
 print "pi\t%f" % pi 
 
 print "sfs"

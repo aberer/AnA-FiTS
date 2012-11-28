@@ -9,7 +9,7 @@ neutral=$1
 
 if [ "$neutral" == "0" ]; then
     fitness="-w"
-else     
+else    
     fitness="-W 1 0.00000001 $neutral $neutral "
 fi
 

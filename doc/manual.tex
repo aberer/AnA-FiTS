@@ -328,10 +328,16 @@ selection. The following modes are available:
   $\beta_2$ mixture of two $\Gamma$ distributions: with probability
   $p_{pos}$ a (either deleterious or benefiicial) selection
   coefficient is drawn from $\Gamma(\alpha_1,\beta_1 )$.
-\item 3  $p_{sel}$ $\mu$ $\sigma$ \\ 
+\item 3  $p_{sel}$ $\mu$ $\sigma$ \\
   a mutation is non-neutral with probability $p_{sel}$ and the
-  coefficient is drawn from a normal distribution with mean $\mu$ and
-  standard deviation $\sigma$.
+  coefficient is drawn from a normal distribution with a
+  \textit{positive} mean $\mu$ and standard deviation $\sigma$.
+\item 4  $p_{sel}$ $\mu$ $\sigma$ \\
+  a normal distribution as in 3, however mean $mu$ is negative this
+  time. This means, instead of \texttt{-W 3 0.1 -0.001 0.001} you have
+  to specify \texttt{-W 4 0.1 0.001 0.001}. This sub-optimal
+  work-around has to be used because of a deficiency in the boost
+  program options parser. 
 \end{itemize}
 
 So, if for instance we call \console{
@@ -343,6 +349,17 @@ number of mutations that we have to simulate forward in time is
 reduced by a factor of 10. The remaining 90\% of mutations will be
 simulated using the graph based algorithm as described in the main
 paper. 
+
+
+\section{Validation}
+\label{sec:validation}
+
+For various cases, we compared summary statistics of data simulated
+under AnA-FiTS to summary statistics simulated under either ms
+(neutrality) or SFS\_CODE. You can reproduce these runs employing the
+\texttt{./utils/validate.py} script. If you encounter a deviation of
+sequences simulated under AnA-FiTS from the expectation, please report
+this as a bug.
 
 
 \section{Frequently Asked Questions}
@@ -359,6 +376,13 @@ your own or use a quick python script like this: \console{
 Note that this script merely samples haplotypes (not individuals),
 however it is consistent when used with multi-chromosome datasets
 (call w/o arguments for help).
+
+\paragraph{What should I do, if I found a bug?}
+\label{sec:i-found-bug}
+
+Please report bugs either via the github ticket system or to andre
+\textit{dot} aberer \textit{at} h-its \textit{dot} org.
+
 
 
 \section{ Acknowledgments }

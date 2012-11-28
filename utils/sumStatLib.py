@@ -3,7 +3,7 @@
 import itertools
 
 
-def nucDiv(haplotypes): 
+def nucDiv(haplotypes, seqLen): 
     """
     Computes the nucleotide diversity.
     """
@@ -13,23 +13,17 @@ def nucDiv(haplotypes):
 
     seqFreq = {}
     for seq in seqs:
-        seqFreq[seq] =  haplotypes.count(seq)
+        seqFreq[seq] = haplotypes.count(seq)
 
-    # ctr =  0. 
     pi = 0. 
     for (seqA, seqB) in itertools.combinations(seqs,2):
         difs = 0. 
         for i in range(0,len(seqB)): 
             if seqA[i] != seqB[i]: 
-                difs += 1.
-        difs /= len(seqA)
-
-        occA = float(seqFreq[seqA]) / float(total) 
-        occB = float(seqFreq[seqB]) / float(total)
-        pi += difs * occA  * occB
-        # ctr += occA * occB 
-    # pi /= ctr 
-    return pi 
+                difs += 1. 
+        difs /=  float(seqLen) 
+        pi += difs * seqFreq[seqA] * seqFreq[seqB]
+    return  2 * pi 
 
 
 def sfs(haplotypes): 
@@ -40,5 +34,5 @@ def sfs(haplotypes):
     sfsDict = {}
     for i in range(0,len(haplotypes[0])): 
         tmp = reduce(lambda x,y : y + x , map(lambda x : int(x[i]), haplotypes))     
-        sfsDict[tmp] = sfsDict[tmp] + 1  if sfsDict.has_key(tmp) else  1 
+        sfsDict[tmp] = (  ( sfsDict[tmp] +   1  )  if sfsDict.has_key(tmp) else  1 ) 
     return sfsDict

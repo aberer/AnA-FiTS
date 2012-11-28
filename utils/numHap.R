@@ -4,22 +4,28 @@
 
 args <- commandArgs(trailingOnly = TRUE)
 
-if (length(args)  != 4) 
+if (length(args)  != 5) 
   print("Usage: ./script <numHapAF-for> <numHapAF-mix> <numHapAF-anc> <numHapMs> ")
 
 
-levs= factor(c("AF-FOR", "AF-MIX", "AF-ANC", "MS"))
 
-af.for = read.table(args[1])
+if (args[1] == "isMS") {
+  levs= factor(c("AF-FOR", "AF-MIX", "AF-ANC", "MS"))
+} else {
+  levs= factor(c("AF-FOR", "AF-MIX", "AF-ANC", "SFS_CODE"))
+}
+
+
+af.for = read.table(args[2])
 af.for[,2] = levs[1]
 
-af.mix = read.table(args[2])
+af.mix = read.table(args[3])
 af.mix[,2] = levs[2]
 
-af.anc = read.table(args[3])
+af.anc = read.table(args[4])
 af.anc[,2] = levs[3]
 
-ms = read.table(args[4])
+ms = read.table(args[5])
 ms[,2] = levs[4]
 
 data = rbind(af.for, af.mix)

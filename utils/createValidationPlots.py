@@ -2,25 +2,29 @@
 
 import os 
 import sys 
+import time 
 from progressbar import * 
 from tempfile import * 
 from multiprocessing import * 
 
 
 numSamp = int(sys.argv[1]) 
-files = sys.argv[2:]
+isSFS =  sys.argv[2] == "SFS"  
+files = sys.argv[3:]
 
 
 USAGE=""" 
-./script <numSamp> <file...>
+./script <numSamp> <isSFS> <file...>
+* numSamp: number of samples 
+* isSFS: either SFS, if the output is from SFS_CODE or anything else
+  to indicate that the output is from AnA-FiTS.
 """
 
-if len(sys.argv) < 2: 
+if len(sys.argv) < 3: 
     print USAGE
     sys.exit(0)
 
-widgets = ['evaluate: ', Percentage(), ' ', Bar(marker='=',left='[',right=']'),
-           ' ', ETA()] 
+widgets = ['evaluate: ', Percentage(), ' ', Bar(marker='=',left='[',right=']'), ' ', ETA()] 
 
 
 def workerInit(q): 
@@ -29,11 +33,15 @@ def workerInit(q):
 def workerFun(afile): 
     tmp = mkstemp()    
     global numSamp
-    cmd = "./convertSeq " + afile +  " | ./utils/statistics.py " + str(numSamp)  + " > " + tmp[1]
+    global isSFS
+    cmd = ""
+    if isSFS: 
+        cmd = './convertSFS_CODE ' + afile + ' --ms | ./utils/washSFS.py | ./utils/statistics.py ' +  str(numSamp ) + ' > ' + tmp[1]
+    else : 
+        cmd = "./convertSeq " + afile +  " | ./utils/statistics.py " + str(numSamp)  + " > " + tmp[1]
     os.system(cmd)
     workerFun.q.put(tmp[1])
     return tmp[1] 
-
 
 numSnp = []
 numHaps = []
@@ -56,22 +64,22 @@ for i in range(len(files)):
     numHaps.append(fh.readline().strip().split()[1]) 
     pies.append( fh.readline().strip().split()[1]) 
     fh.readline()
-    
+
     sfsTmp = map(lambda x : x.strip() , fh.readlines())
+    
     fh.close()
     os.unlink(tmpFile)
 
-    for sfs in sfsTmp:         
+    for sfs in sfsTmp: 
         sfs = sfs.split()
         num = int(sfs[0]) 
         freq = float(sfs[1])
-
         
         if sfsDict.has_key(num): 
             sfsDict[num] += float(freq) 
         else : 
-            sfsDict[num] = float(freq) 
-    
+            sfsDict[num] = float(freq)
+
     pbar.update(ctr)
     ctr += 1 
 pbar.finish()

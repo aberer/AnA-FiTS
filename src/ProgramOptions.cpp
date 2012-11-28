@@ -43,7 +43,7 @@ ProgramOptions::ProgramOptions(int argc, char **argv)
 
   po::options_description sim("Simulation parameters"); 
   sim.add_options()
-    ("SIM,S", po::value<nat>()->default_value(5), "number of generations ( <value> x 2 x popSize)") 
+    ("SIM,S", po::value<double>()->default_value(5.), "number of generations ( <value> x 2 x popSize)") 
     // ("burn,b", po::value<nat>()->default_value(2), "subsequent burn-in times ( x ploidy x popSize)")
     // ("ploidy,P", po::value<nat>()->default_value(2), "ploidy of all populations")
     ("seed,s", 
@@ -89,6 +89,7 @@ ProgramOptions::ProgramOptions(int argc, char **argv)
      "1 <COEF> <p_pos> <p_neg>\ta single coefficient for positive/negative effects occurring with probability <pos> or <neg>\n"
      "2 <p_pos> <alpha> <beta> <n_neg> <alpha> <beta>\tmixture of gamma distributions\n" 
      "3 <p_sel> <mean> <sigma>\tnormal distribution\n"
+     "4 <p_sel> <mean> <sigma>\tnormal distribution (where <mean> < 0)\n"
      // "4 <file>\tnot implemented yet\n")
     // SFS: annotate locus as coding or sexual 
      ) ;
@@ -138,12 +139,14 @@ ProgramOptions::ProgramOptions(int argc, char **argv)
 }
 
 
+#define ROUND(x) floor((x) + 0.5)
+
 nat ProgramOptions::getNumberOfGenerations()
 {
   vector<nat> initPopSizes = vm["popSize"].as<vector<nat> >(); 
   auto maximum = max_element(initPopSizes.begin(), initPopSizes.end());   
-  nat burnin = vm["SIM"].as<nat>() ; 
+  double burnin = vm["SIM"].as<double>() ; 
   // nat ploidy  =vm["ploidy"].as<nat>();
 
-  return 2 * burnin * *maximum; 
+  return ROUND(2 * burnin * *maximum); 
 }

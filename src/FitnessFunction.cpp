@@ -50,7 +50,17 @@ FitnessFunction::FitnessFunction(vector<string> args)
 
       sd = atof(args[3].c_str()); 
     }
-  else if( NOT modeString.compare("4") )
+  else if (NOT modeString.compare("4") )
+    {
+      mode = FitnessModel::NORMAL; 
+      FITNESS_TYPE tmpSel = atof(args[1].c_str());
+      probNeutral = 1 - tmpSel;       
+      mean =   - atof(args[2].c_str());
+      assert(mean < 0); 
+
+      sd = atof(args[3].c_str()); 
+    }
+  else if( NOT modeString.compare("5") )
     {
       mode = FitnessModel::FILE; 
       cerr << "not implemented yet" << endl; 

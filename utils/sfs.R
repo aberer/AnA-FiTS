@@ -3,17 +3,20 @@
 args <- commandArgs(trailingOnly = TRUE)
 
 
-if (length(args)  != 4) 
+if (length(args)  != 5) 
   print("Usage: ./script <sfsAF-for> <sfsAF-mix> <sfsAF-anc> <sfsMs> ")
 
 
-levs= factor(c("AF-FOR", "AF-MIX", "AF-ANC", "MS"))
+if (args[1] == "isMS")  {
+  levs= factor(c("AF-FOR", "AF-MIX", "AF-ANC", "MS"))
+} else  {
+  levs= factor(c("AF-FOR", "AF-MIX", "AF-ANC", "SFS_CODE"))
+}
 
-
-af.for = read.table(args[1])
-af.mix = read.table(args[2])
-af.anc = read.table(args[3])
-ms = read.table(args[4])
+af.for = read.table(args[2])
+af.mix = read.table(args[3])
+af.anc = read.table(args[4])
+ms = read.table(args[5])
 
 theMax = 0
 theMax = max(theMax, af.for[,2])
