@@ -81,7 +81,7 @@ executeCallInParallel(call, numSim)
 os.system('./utils/createValidationPlots.py %d SFS  sfs.%s.*' % (numSamp * 2, theId) ) 
 for elem in files: 
     os.system('mv %s $(basename %s .txt).%s.txt' % (elem, elem, 'sfs'))
-# os.system('rm sfs.%s.*' % theId)
+os.system('rm sfs.%s.*' % theId)
 
 os.system("./utils/segSites-sel.R  numSnp.af-for.txt numSnp.sfs.txt > /dev/null")
 os.system("./utils/numHap-sel.R  numHap.af-for.txt numHap.sfs.txt > /dev/null")
