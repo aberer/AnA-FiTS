@@ -33,7 +33,7 @@ df = data.frame(mids=histObj$mids, affor = affor.freq, sfs = sfs.freq    )
 
 pdf("numHap.pdf", width=6, height=6)
 matplot(df$mids, df[,c(2,3)], type="l",lwd=3, lty=1,  xlab="number of haplotypes", ylab="density")
-legend("topright", legend=levs, fill=1:2)
-legend("topright", legend=levs, fill=1:2)
+legend("topleft", legend=levs, fill=1:2)
+## legend("topright", legend=levs, fill=1:2)
 bla = dev.off()
 

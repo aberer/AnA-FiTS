@@ -127,7 +127,8 @@ template<typename TYPE, bool NEUTRAL> void Ancestry::resampleParentsByFitness(Th
 	  currentNum = 0; 
 	}
 
-      TYPE &elem = array[i]; 
+      TYPE &elem = array[i];       
+      // cout << "checking \t"  << fVals[elem]  << endl; 
       if(elem < numIndisPrev
 	 && (NEUTRAL || rng.Prob<FITNESS_TYPE>(fVals[elem])))
 	++i; 

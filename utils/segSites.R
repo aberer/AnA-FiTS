@@ -31,7 +31,7 @@ data = rbind(data, ms)
 
 names(data) = c("values", "type")
 
-histObj = hist(data$values, plot=F)
+histObj = hist(data$values, plot=F, breaks="Scott")
 myBreaks = histObj$breaks
 
 affor.freq  = hist(data[ data$type == levs[1],1], breaks=myBreaks, plot=F)
@@ -49,8 +49,11 @@ ms.freq = ms.freq$counts / sum(ms.freq$counts )
 df = data.frame(mids=histObj$mids, affor = affor.freq,  afmix = afmix.freq,  afanc = afanc.freq,  ms = ms.freq  )
 
 
-pdf("segSites.pdf", width=6, height=6)
-matplot(df$mids, df[,c(2,3,4,5)], type="l",lwd=3, lty=1,  xlab="number of segregating sites", ylab="density")
+pdf("segSites.pdf", width=5, height=5)
+matplot(df$mids, df[,c(2,3,4,5)], type="l",lwd=3, lty=1,
+        ## xlab="number of segregating sites",
+        xlab="",
+        ylab="density")
 legend("topright", legend=levs, fill=1:4)
 bla = dev.off()
 

@@ -63,5 +63,3 @@ template<typename TYPE> void HaploTimeWindow::propagate(const nat generationNum,
   for(nat i = 0; i < numberToPropagate; ++i)
     newState[i]->setGeneration(generationNum); 
 }
-
-

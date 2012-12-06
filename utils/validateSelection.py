@@ -14,13 +14,13 @@ if len(sys.argv) != 3 :
 """
     sys.exit()
 
-
-sfsCall = './sfs_code  1 1  -a N -A  -L 10 10000 -t 2e-5 -r 2e-5 '
+sfsCall = './sfs_code  1 1    -a N -A  ' 
 
 case = int(sys.argv[1])
 if case == 1: 
-    params = ' -W 1 0.005 0.25 0.25 '
-    sfsParam = ' -W  1 5 0.25 0.25 '
+    params = ' -N 250 -L 10000 -r 1e-6 -m 1e-6   -W 1 0.01 0.5 0.5 '
+    sfsParam = '  -N 250 -L 1 10000 -t  0.001 -r 0.001  -W 1 5 0.5 0.5 '
+
     theId = 'select3PM'
 elif case == 2: 
     # TODO 
@@ -31,7 +31,7 @@ else :
     sys.exit()
     print "not implemented yet" 
 
-numSamp = 50
+numSamp = 20
 numSim = int(sys.argv[2])
 
 files = [ 'numHap.txt',  'numSnp.txt',  'pi.txt',  'sfs.txt' ]
@@ -67,21 +67,25 @@ def executeCallInParallel(call, num):
     p.join()
 
 # forward simulation 
-call = "$( ls ./AnA-FiTS-* | head -n 1  ) -L 100000  %s  -n %s.af-for."  % (params, theId)
+call = "$( ls ./AnA-FiTS-* | head -n 1  )   %s  -n %s.af-for."  % (params, theId)
+print call 
 executeCallInParallel(call, numSim)
 os.system('./utils/createValidationPlots.py %d anafits anafits_polymorphisms.%s.%s.*' % (numSamp, theId, 'af-for'))
 for elem in files: 
     os.system('mv %s $(basename %s .txt).%s.txt' % (elem, elem, 'af-for'))
-os.system('rm anafits_*.%s.*' % theId)
+os.system('rm anafits_poly*.%s.*' % theId)
+os.system('rm anafits_info*.%s.*' % theId)
+os.system('rm anafits_graph*.%s.*' % theId)
 
 # sfs code 
-numSamp = 25 
+numSamp = numSamp / 2  
 call = sfsCall + sfsParam  + " -n " + str(numSamp)  + " -o sfs." + theId   + '.'
+print call 
 executeCallInParallel(call, numSim)
 os.system('./utils/createValidationPlots.py %d SFS  sfs.%s.*' % (numSamp * 2, theId) ) 
 for elem in files: 
     os.system('mv %s $(basename %s .txt).%s.txt' % (elem, elem, 'sfs'))
-os.system('rm sfs.%s.*' % theId)
+os.system('rm sfs.%s.*' % theId) 
 
 os.system("./utils/segSites-sel.R  numSnp.af-for.txt numSnp.sfs.txt > /dev/null")
 os.system("./utils/numHap-sel.R  numHap.af-for.txt numHap.sfs.txt > /dev/null")

@@ -5,7 +5,7 @@
 args <- commandArgs(trailingOnly = TRUE)
 
 if (length(args)  != 5) 
-  print("Usage: ./script <numHapAF-for> <numHapAF-mix> <numHapAF-anc> <numHapMs> ")
+  print("Usage: ./script  <numHapAF-for> <numHapAF-mix> <numHapAF-anc> <numHapMs> ")
 
 
 
@@ -34,29 +34,46 @@ data = rbind(data, ms)
 
 names(data) = c("values", "type")
 
-histObj = hist(data$values, plot=F)
-myBreaks = histObj$breaks
+theRange = range(data$values)
+myBreaks = seq(theRange[1],theRange[2]) 
 
-affor.freq  = hist(data[ data$type == levs[1],1], breaks=myBreaks, plot=F)
-affor.freq = affor.freq$counts / sum(affor.freq$counts )
 
-afmix.freq  = hist(data[ data$type == levs[2],1], breaks=myBreaks, plot=F)
-afmix.freq = afmix.freq$counts / sum(afmix.freq$counts )
+relevant = data[data$type == levs[1],1]
+theSum = sum(relevant)
+affor = c()
+for (elem in myBreaks )  
+  affor  = c(affor, sum(relevant == elem) / theSum)
 
-afanc.freq  = hist(data[ data$type == levs[3],1], breaks=myBreaks, plot=F)
-afanc.freq = afanc.freq$counts / sum(afanc.freq$counts )
 
-ms.freq  = hist(data[ data$type == levs[4],1], breaks=myBreaks, plot=F)
-ms.freq = ms.freq$counts / sum(ms.freq$counts )
+relevant = data[data$type == levs[2],1]
+theSum = sum(relevant)
+afmix = c()
+for (elem in myBreaks )  
+  afmix  = c(afmix, sum(relevant == elem) / theSum)
 
-df = data.frame(mids=histObj$mids, affor = affor.freq,  afmix = afmix.freq,  afanc = afanc.freq,  ms = ms.freq  )
+relevant = data[data$type == levs[3],1]
+theSum = sum(relevant)
+afanc = c()
+for (elem in myBreaks )  
+  afanc  = c(afanc, sum(relevant == elem) / theSum)
 
-pdf("numHap.pdf", width=6, height=6)
-matplot(df$mids, df[,c(2,3,4,5)], type="l",lwd=3, lty=1,  xlab="number of haplotypes", ylab="density")
-legend("topright", legend=levs, fill=1:4)
+relevant = data[data$type == levs[4],1]
+theSum = sum(relevant)
+ms = c()
+for (elem in myBreaks )  
+  ms  = c(ms, sum(relevant == elem) / theSum) 
+
+df = data.frame(mids=myBreaks, affor = affor,  afmix = afmix,  afanc = afanc,  ms = ms  )
+
+pdf("numHap.pdf", width=5, height=5)
+matplot(df$mids, df[,c(2,3,4,5)], type="l",lwd=3, lty=1,
+        ## xlab="number of haplotypes",
+        xlab="",
+        ylab="density")
+legend("topleft", legend=levs, fill=1:4)
 ## print("number of haplotypes")
 ## print(table(data))
 ## matplot(table(data), type="l",lwd=3, lty=1,  xlab="number of distinct haplotypes", ylab="frequency")
-legend("topright", legend=levs, fill=1:4)
+## legend("topleft", legend=levs, fill=1:4)
 bla = dev.off()
 

@@ -35,13 +35,23 @@ def workerFun(afile):
     global numSamp
     global isSFS
     cmd = ""
+
+    # abort
+    # if not os.path.exists(afile) or open(afile.readline()) == "":
+    #     return tmp[1]  
+    
     if isSFS: 
-        cmd = './convertSFS_CODE ' + afile + ' --ms | ./utils/washSFS.py | ./utils/statistics.py ' +  str(numSamp ) + ' > ' + tmp[1]
+        try: 
+            cmd = './convertSFS_CODE ' + afile + ' --ms | ./utils/washSFS.py | ./utils/statistics.py ' +  str(numSamp ) + ' > ' + tmp[1]
+        except Exception: 
+            sys.stderr.write("something wrong with file %s. Skipping.\n" % afile) 
     else : 
         cmd = "./convertSeq " + afile +  " | ./utils/statistics.py " + str(numSamp)  + " > " + tmp[1]
     os.system(cmd)
     workerFun.q.put(tmp[1])
     return tmp[1] 
+
+
 
 numSnp = []
 numHaps = []
@@ -58,8 +68,16 @@ pbar = ProgressBar(widgets=widgets, maxval=len(files))
 pbar.start()
 ctr = 0
 for i in range(len(files)):
-    tmpFile = q.get()
+    tmpFile = q.get() 
     fh = open(tmpFile, "r")
+
+    test = fh.readline()
+    if test == "":
+        sys.stderr.write("something wrong with file %s. Skipping." % fh.name)
+        continue 
+    else : 
+        fh.seek(0)
+    
     numSnp.append(fh.readline().strip().split()[1])
     numHaps.append(fh.readline().strip().split()[1]) 
     pies.append( fh.readline().strip().split()[1]) 

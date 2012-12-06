@@ -84,7 +84,8 @@ void RecombinationManager::precompute(ThreadPool &tp, const PopulationManager &p
       if( numRec)
 	{
 	  // compute a map: how many recs per individual in generation 
-	  nat popSizeL = popMan.getTotalNumHaploByGen(genC);
+	  nat popSizeL = popMan.getTotalNumHaploByGen(genC);	  
+	  // cout << "in gen " << genC << " size is "  << popSizeL << endl; 
 	  size_t byteSize =  sizeof(nat) * popSizeL; 
 
 	  numRecPerIndi = (nat*)myRealloc(numRecPerIndi, byteSize) ; 
@@ -108,7 +109,7 @@ void RecombinationManager::precompute(ThreadPool &tp, const PopulationManager &p
 		  // cout << "\t" << rec.haploIndiNr << endl; 
 		}
 	    }
-	} 
+	}
     } 
   free(numRecPerIndi); 
 }

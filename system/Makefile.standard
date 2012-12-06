@@ -1,7 +1,7 @@
 ##  the standard aliases 
 Q ?= @
 CCACHE := $(shell which ccache)
-CXX :=  $(Q) $(CCACHE) $(lastword $(wildcard /usr/bin/g++-* )) 
+CXX :=  $(Q) $(CCACHE) $(lastword $(wildcard /usr/bin/g++* )) 
 RM := $(Q)rm -fr 
 GITVERSION:=-$(shell cat $(VERSIONFILE)  | cut -f 3 -d ' ' | tr -d '"' )
 

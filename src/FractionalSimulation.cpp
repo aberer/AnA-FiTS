@@ -126,7 +126,7 @@ void FractionalSimulation::createRecombinants(ThreadPool &tp)
 	  nat length = 0; 
 	  
 	  Recombination *start = nullptr;
-	  recMan.obtainRecsForIndividual(start, length);
+	  recMan.obtainRecsForIndividual(start, length, numRec-i);
 	  
 	  if(NOT start)
 	    {
@@ -157,11 +157,14 @@ void FractionalSimulation::createRecombinants(ThreadPool &tp)
 	      assert(recombinant != anc1 && recombinant != anc2); 
 	      recombinant->recombine(*anc1,*anc2, start, length); 
 
-	      haplos.setCurrentConfiguration(start->haploIndiNr, recombinant);
+	      haplos.setCurrentConfiguration(start->haploIndiNr, recombinant);	      
 	      recombinant->computeFitness();
 	    }
 
 	  i += length; 
+
+	  assert(i <= numRec); 
+	  assert(i >= numRec || start->haploIndiNr < (*(start + length)).haploIndiNr ); 
 	}
     }
 }
@@ -171,18 +174,19 @@ void FractionalSimulation::updateFitness()
 {      
   if(isNeutral)
     return; 
-    
+
   nat numChrom = chromosomes.size(); 
   nat currentGen = genCnt.getCurrentGeneration();
 
-  nat totalSize = popMan->getTotalNumIndiByGen(currentGen); 
+  // cout << "================\t" << currentGen << endl; 
+
+  nat totalSize = popMan->getTotalNumIndiByGen(currentGen);
   FITNESS_TYPE *fitnessValues = popMan->getFitnessValues(0); 
   fitnessValues = (FITNESS_TYPE*) myRealloc(fitnessValues, totalSize * sizeof(FITNESS_TYPE)); 
   FITNESS_TYPE maxF = 0.;
   
   for(nat i = 0; i < totalSize; ++i)
-    {      
-      // cout << i << endl; 
+    { 
       FITNESS_TYPE fitness = 1.; 
       for(nat c = 0; c < numChrom; ++c)
 	{
@@ -198,6 +202,8 @@ void FractionalSimulation::updateFitness()
 	  assert(a > 0 && b > 0 && fitness > 0); 
 
 	  fitness *=  a * b;
+
+	  // cout << i << "\t" << a << "\t" << b << "fitness\t" << fitness << endl ; 
 	}
 
       fitnessValues[i] = fitness; 
@@ -206,7 +212,7 @@ void FractionalSimulation::updateFitness()
   maxF = *(max_element(fitnessValues, fitnessValues + totalSize ));   
 
 #ifdef DEBUG_FITNESS
-  cout << "maximum fitness is "  << maxF << " and noramlizing is " << 1.0 / maxF << endl; 
+  cout << "maximum fitness is "  << maxF << " ; normalizing with " << 1.0 / maxF << endl; 
 #endif
 
   maxF = 1.0 / maxF; 

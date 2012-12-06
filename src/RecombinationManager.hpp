@@ -23,7 +23,7 @@ public:
   nat getNumRecByGen(nat gen) const {return numRecPerGen.at(this->getGenIdx(gen));}
   Recombination* getFirstRecByGen(nat gen){return firstRecPerGen.at(this->getGenIdx(gen)); }
   Recombination* getLastRecByGen(nat gen){return firstRecPerGen.at(this->getGenIdx(gen)) +  numRecPerGen.at(this->getGenIdx(gen)); }
-  void obtainRecsForIndividual(Recombination *&start, nat &length); 
+  void obtainRecsForIndividual(Recombination *&start, nat &length, nat alreadyTakenThisGen); 
   
 private: 
   nat totalRec;
@@ -121,7 +121,7 @@ inline void RecombinationManager::precompute_helper<uint32_t>(ThreadPool &tp, ui
     }    
 }
 
-inline void RecombinationManager::obtainRecsForIndividual(Recombination *&start, nat &length)
+inline void RecombinationManager::obtainRecsForIndividual(Recombination *&start, nat &length, nat remainingRecsThisGen)
 {
   if(NOT (recIndex <  totalRec))
     return; 
@@ -129,11 +129,15 @@ inline void RecombinationManager::obtainRecsForIndividual(Recombination *&start,
   start = &(recombs[recIndex]);
   length++; 
   recIndex++; 
+  remainingRecsThisGen--; 
     
-  while(recIndex < totalRec && start->haploIndiNr == recombs[recIndex].haploIndiNr)
+  while(remainingRecsThisGen > 0 
+	&& recIndex < totalRec
+	&& start->haploIndiNr == recombs[recIndex].haploIndiNr)
     {
-      recIndex++; 
-      length++;
+      ++recIndex; 
+      ++length;
+      --remainingRecsThisGen; 
     }
   
   assert(recIndex <= totalRec); 

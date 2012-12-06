@@ -46,7 +46,7 @@ void MutationManager::initSelectedMutation(Randomness &rng, SelectedMutation &mu
   FITNESS_TYPE& fitness =  table[mut.absPos][getPosByBase(mut.base, refBase)]; 
   
   if( ( NOT selected || (selected && fitness == 0.f ) ))
-    fitness = 1 - fFun.drawSelectionCoefficient(rng); 
+    fitness = 1 + fFun.drawSelectionCoefficient(rng); 
 
   if(NOT selected)
     {

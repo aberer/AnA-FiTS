@@ -25,8 +25,11 @@ theMax = max(theMax, af.anc[,2])
 theMax = max(theMax, ms[,2])
 
 
-pdf("sfs.pdf", width=6, height=6)
-matplot(af.for[,1], af.for[,2], xlab="site frequency (in 50 samples)", ylab="frequency", type="p", pch="o", col=1, lty=1, lwd=3, ylim=c(0,theMax))
+pdf("sfs.pdf", width=5, height=5)
+matplot(af.for[,1], af.for[,2],
+        xlab="",
+        ## xlab="site frequency (in 10 samples)",
+        ylab="frequency", type="p", pch="o", col=1, lty=1, lwd=3, ylim=c(0,theMax))
 matlines(af.mix[,1], af.mix[,2], col=2, lty=1, lwd=3, type="p", pch="x" )
 matlines(af.anc[,1], af.anc[,2], col=3, lty=1, lwd=3, type="p", pch="+" )
 matlines(ms[,1], ms[,2], col=4, lty=1, lwd=3, type="p", pch='*' )
