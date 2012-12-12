@@ -32,7 +32,7 @@ elif case == 2:
     theId = 'rec' 
 elif case == 3 : 
     # 500 => 1000 
-    params = ' -T c 4800 2.0 -L 1000000 '
+    params = ' -T c 4600 2.0 -L 1000000 '
     msParam = ' -t 40 -r 40 1000000 -eN 0.1 0.5 '
     theId = 'doubling'
 elif case == 4: 

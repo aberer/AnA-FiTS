@@ -2,9 +2,9 @@
 
 import sys 
 import random 
-# import itertools
-# import nucleotideDiversity
 import sumStatLib
+
+seqLen = 100000 
 
 
 USAGE="""pipe output of convertSeq into this program.
@@ -64,7 +64,7 @@ for h in newHap:
 print "#snp\t%d"  %  len(haplotypes[0])
 print "#h\t%d"  % len(set(map(lambda x : "".join(x), haplotypes))) 
 
-pi = sumStatLib.nucDiv(haplotypes, 1000000 ) # :TRICKY: 
+pi = sumStatLib.nucDiv(haplotypes, seqLen ) # :TRICKY: 
 print "pi\t%f" % pi 
 
 print "sfs"

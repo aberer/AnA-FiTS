@@ -10,6 +10,8 @@ if sys.stdin.isatty() :
     print USAGE 
     sys.exit(1)
 
+seqLen = 100000 
+
 
 
 def oneSample(numSamp): 
@@ -52,7 +54,7 @@ for i in range(0,numRep-1):
     
     numSnp.append(len(haplotypes[0]) ) 
     numHap.append(len(set(haplotypes)))
-    pies.append(sumStatLib.nucDiv(haplotypes, 1000000)) # :TRICKY:
+    pies.append(sumStatLib.nucDiv(haplotypes, seqLen)) # :TRICKY:
     
     tmpDict = sumStatLib.sfs(haplotypes)
     ctr += 1 

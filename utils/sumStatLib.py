@@ -9,14 +9,17 @@ def nucDiv(haplotypes, seqLen):
     """
 
     total = len(haplotypes)
-    seqs = set(haplotypes)
+    seqs = list(set(haplotypes))
 
     seqFreq = {}
     for seq in seqs:
         seqFreq[seq] = haplotypes.count(seq)
 
     pi = 0. 
-    for (seqA, seqB) in itertools.combinations(seqs,2):
+
+    for (a,b) in itertools.combinations(range(0,len(seqs)),2): 
+        seqA = seqs[a]
+        seqB = seqs[b]
         difs = 0. 
         for i in range(0,len(seqB)): 
             if seqA[i] != seqB[i]: 

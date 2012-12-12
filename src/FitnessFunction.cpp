@@ -37,10 +37,8 @@ FitnessFunction::FitnessFunction(vector<string> args)
   else if( NOT modeString.compare("3") )
     {
       mode = FitnessModel::NORMAL; 
-      // cout << "building normal distributtion" << endl; 
       FITNESS_TYPE tmpSel = atof(args[1].c_str());
       probNeutral = 1 - tmpSel; 
-      // cout << "probability of neutral mutation is " << probNeutral << endl;       
       mean = atof(args[2].c_str());
       if(mean > 1 )
 	{

@@ -98,7 +98,6 @@ void SequenceFinalizer::annotateRelevantMutations(BitSetSeq &notPresent, BitSetS
 	   {
 	     // :TRICKY: very strange ... occurs with -T g 500 1e-3
 	     return a->indiNr < b->indiNr ;  
-	     // return false; 
 	   }
        } ); 
 }
