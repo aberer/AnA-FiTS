@@ -53,9 +53,13 @@ tested.
 
 Another requirement is the \textbf{boost-library}. In specific, only
 the \prog{ProgramOptions} package is required. On most ubuntu/debian
-system, installing boost is as simple as 
-\console{   sudo apt-get install  libboost-all-dev }
-Otherwise just visit \url{http://www.boost.org/}. 
+system, installing boost is as simple as \console{ sudo apt-get
+  install libboost-all-dev } Otherwise just visit
+\url{http://www.boost.org/}. You may encounter problems with old
+boost-versions. If the program fails to compile with your version of
+boost, comment the line \texttt{\#define PRODUCTIVE} in
+\texttt{src/config.hpp}.
+
 
 Finally, an installation of python may be required (however this is
 not mandatory). 
