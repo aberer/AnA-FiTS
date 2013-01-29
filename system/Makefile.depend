@@ -12,6 +12,6 @@ depend :
 	@makedepend $(DEPFLAGS) -a  -p build/profile$(GITVERSION)/ -- $(CFLAGS) -- $(SRC_FILES)  > /dev/zero 2> /dev/zero
 	@cat $(DEPFILE) | sed "s/\/src\///" | sed "s/\/tests\///" > tmp 
 	@mv tmp $(DEPFILE)
-	@cd src;  ctags -Re * 
+	@cd src; if [ "$(which ctags) " != "" ] ; then  if [ "$(ctags --version | grep Exu )" != "" ] ; then  ctags  -Re *  ; fi  ; fi 
 
 sinclude $(DEPFILE) 

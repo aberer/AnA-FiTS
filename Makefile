@@ -36,10 +36,12 @@ SRC_EXCLUDE:=%sequenceConversion.cpp %graphConversion.cpp %_flymake.cpp %_flymak
 RAND_OBJ=lib/RandomLib/src/Random.o 
 TEST_OBJS+=$(RAND_OBJ)
 
+
+
 ## a hack
 firstTarget : release 
 
-standardTargets :     convertSeq convertGraph   vupdate  cmpMessage depend
+standardTargets : convertSeq convertGraph vupdate  cmpMessage depend
 
 include system/Makefile.build
 
