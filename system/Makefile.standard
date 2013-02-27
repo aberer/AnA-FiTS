@@ -1,5 +1,5 @@
 ##  the standard aliases 
-Q ?= @
+Q ?= 
 CCACHE := $(shell which ccache)
 CXX :=  $(Q) $(CCACHE) $(lastword $(wildcard /usr/bin/g++* )) 
 RM := $(Q)rm -fr 
