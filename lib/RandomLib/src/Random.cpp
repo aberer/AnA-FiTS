@@ -52,6 +52,10 @@
  * information, see http://randomlib.sourceforge.net/
  **********************************************************************/
 
+
+#include "config.h"
+
+
 #define RANDOMLIB_RANDOM_CPP "$Id$"
 
 /**
@@ -758,7 +762,7 @@ namespace RandomLib {
     check = c;
   }
 
-#if defined(HAVE_SSE2) && HAVE_SSE2 
+#if defined(HAVE_SSE2) 
 
   // Transition is from Saito's Master's Thesis
   // http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/SFMT/M062821.pdf

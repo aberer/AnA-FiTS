@@ -19,14 +19,8 @@ AC_PROG_MAKE_SET
 
 AX_EXT
 
-AX_BOOST_BASE( [1.48], [], [
- AC_MSG_ERROR(Please install the boost library version 1.48 or higher. ) 
-])
-
-AX_BOOST_PROGRAM_OPTIONS([], [], [
-AC_MSG_ERROR(Please make sure your boost installation also includes the program_options package.) 
-]) 
-
+AX_BOOST_BASE( [1.48], [], [ AC_MSG_ERROR(Please install the boost library version 1.48 or higher. ) ])
+AX_BOOST_PROGRAM_OPTIONS([], [], [AC_MSG_ERROR(Please make sure your boost installation also includes the program_options package.) ]) 
 
 
 AC_ARG_ENABLE(productive,
@@ -42,7 +36,6 @@ AM_CONDITIONAL([ARE_PRODUCTIVE], [test  "x$PRODUCTIVE_DEBUG" = "xyes"])
 AC_DEFINE([ARE_PRODUCTIVE], [0], ["is 1, if in productive mode "])
 AS_IF([test "x$ARE_PRODUCTIVE" = "xyes"], AC_DEFINE(ARE_PRODUCTIVE, 1) )
 AM_CONDITIONAL([ARE_PRODUCTIVE], [test  "x$ARE_PRODUCTIVE" = "xyes"])
-
 
 
 # Checks for header files.

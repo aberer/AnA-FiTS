@@ -17,7 +17,7 @@
 #include <limits>
 #include <string>
 #include <algorithm>
-#if defined(HAVE_SSE2) && HAVE_SSE2 && defined(_MSC_VER) && !defined(_WIN64)
+#if defined(HAVE_SSE2)  && defined(_MSC_VER) && !defined(_WIN64)
 #include <new>
 #endif
 
@@ -282,7 +282,7 @@ namespace RandomLib {
     result_type operator()() throw() { return Ran(); }
     ///@}
 
-#if defined(HAVE_SSE2) && HAVE_SSE2 && defined(_MSC_VER) && !defined(_WIN64)
+#if defined(HAVE_SSE2)  && defined(_MSC_VER) && !defined(_WIN64)
     /**
      * new operator with alignment (needed for Visual Studio)
      **********************************************************************/

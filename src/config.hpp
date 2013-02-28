@@ -1,10 +1,9 @@
-// #include "config.h"
+#include "config.h"
 
+#ifdef ARE_PRODUCTIVE
+#define PRODUCTIVE
+#endif
 
- 
-#include "version.hpp"
-
-// #define PRODUCTIVE
 
 ///////////////////
 // OPTIMIZATION  //

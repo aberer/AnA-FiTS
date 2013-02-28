@@ -15,6 +15,8 @@
 #define RANDOMLIB_RANDOM_HPP \
   "$Id$"
 
+
+
 #include <RandomLib/Config.h>
 
 #if defined(_MSC_VER)

@@ -20,11 +20,11 @@
 #include <RandomLib/RandomType.hpp>
 #include <stdexcept>
 #include <string>
-#if defined(HAVE_SSE2) && HAVE_SSE2
+#if defined(HAVE_SSE2)
 #include <emmintrin.h>
 #endif
 
-#if (defined(HAVE_SSE2) && HAVE_SSE2) && (defined(HAVE_ALTIVEC) && HAVE_ALTIVEC)
+#if defined(HAVE_SSE2) && (defined(HAVE_ALTIVEC) && HAVE_ALTIVEC)
 #error "HAVE_SSE2 and HAVE_ALTIVEC should not both be defined"
 #endif
 
@@ -232,7 +232,7 @@ namespace RandomLib {
      * The result RandomType
      **********************************************************************/
     typedef RandomType engine_t;
-#if defined(HAVE_SSE2) && HAVE_SSE2
+#if defined(HAVE_SSE2)
     typedef __m128i internal_type;
 #elif defined(HAVE_ALTIVEC) && HAVE_ALTIVEC
     typedef vector unsigned internal_type;
@@ -273,7 +273,7 @@ namespace RandomLib {
        **********************************************************************/
       M = M128 * R
     };
-#if (defined(HAVE_SSE2) && HAVE_SSE2) || (defined(HAVE_ALTIVEC) && HAVE_ALTIVEC)
+#if (defined(HAVE_SSE2) ) || (defined(HAVE_ALTIVEC) && HAVE_ALTIVEC)
     static const Random_u32::type magic0 = 0x1fffefUL;
     static const Random_u32::type magic1 = 0x1ecb7fUL;
     static const Random_u32::type magic2 = 0x1affffUL;

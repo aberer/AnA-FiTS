@@ -3,13 +3,8 @@ AUTOMAKE_OPTIONS=foreign
 WARN_FLAGS= -Wno-sign-compare -Wall  -Wno-unused-variable -Wextra -Wno-unused-parameter -fpermissive
 LANG_FLAGS= -std=c++0x 
 
-# TODO they cannot be serious with that...this is the only way of getting rid of the default -O2 -g  
-# CFLAGS= 
-# CXXFLAGS= -Ilib/RandomLib/include -Ilib -DHAVE_64BIT -DHAVE_SSE2 -msse2
-
-OPT = -O3 -march=native -mtune=native -funroll-all-loops -finline-functions -fomit-frame-pointer $(SIMD_FLAGS)  #  -DNDEBUG
-
-AM_CXXFLAGS = $(LANG_FLAGS) $(WARN_FLAGS) $(OPT) -Ilib/RandomLib/include -Ilib -DHAVE_64BIT #   -DHAVE_SSE2
+OPT = -O3 -march=native -mtune=native -funroll-all-loops -finline-functions -fomit-frame-pointer  $(SIMD_FLAGS)  #  -DNDEBUG
+AM_CXXFLAGS = $(LANG_FLAGS) $(WARN_FLAGS) $(OPT) -Ilib/RandomLib/include -Ilib  # -DHAVE_64BIT #
 AM_LDFLAGS= -lboost_program_options
 
 
