@@ -17,10 +17,23 @@ AC_PROG_MAKE_SET
 
 # Checks for libraries.
 
+AX_BOOST_BASE( [1.40], [], [ AC_MSG_ERROR(Please install the boost library version 1.40 or higher. ) ])
+AX_BOOST_PROGRAM_OPTIONS([], [], [AC_MSG_ERROR(Please make sure your boost installation also includes the program_options package.) ]) 
+
+
+
 AX_EXT
 
-AX_BOOST_BASE( [1.48], [], [ AC_MSG_ERROR(Please install the boost library version 1.48 or higher. ) ])
-AX_BOOST_PROGRAM_OPTIONS([], [], [AC_MSG_ERROR(Please make sure your boost installation also includes the program_options package.) ]) 
+dnl AC_ARG_ENABLE(simd,
+dnl [ --disable-simd  disable usage of streaming simd extensions   ],
+dnl   [case "${enableval}" in
+dnl   yes | no ) TRY_SIMD="${enableval}" ;;
+dnl      *) AC_MSG_ERROR(bad value ${enableval} for --disable-simd) ;;
+dnl    esac],
+dnl [TRY_SIMD="yes"]
+dnl )
+dnl AS_IF( [test "x$TRY_SIMD" = "xyes"], AX_EXT )
+
 
 
 AC_ARG_ENABLE(productive,
