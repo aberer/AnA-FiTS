@@ -16,3 +16,20 @@ Anafits_SOURCES =  src/Ancestry.cpp src/Chromosome.cpp src/FreeRing.cpp src/Hapl
 convertSeq_SOURCES = src/sequenceConversion.cpp src/BitSet.cpp
 convertGraph_SOURCES = src/graphConversion.cpp
 
+
+
+EXTRA_DIST=utils src/*.hpp
+
+
+
+
+#  src/AddrArray.hpp     src/DynArray.hpp              src/InfoFile.hpp           src/Randomness.hpp            src/SequenceFinalizer.hpp
+# src/Ancestry.hpp      src/DynArraySequential.hpp    src/JudyArray.hpp          src/RandomnessImpl.hpp        src/Simulation.hpp
+# src/Base.hpp          src/Events.hpp                src/LoadBalancer.hpp       src/RandomnessImplSSE.hpp     src/SseWrapper.hpp
+# src/BinaryWriter.hpp  src/FitnessFunction.hpp       src/Mutation.hpp           src/Recombination.hpp         src/StopWatch.hpp
+# src/BitSet.hpp        src/FractionalSimulation.hpp  src/MutationManager.hpp    src/RecombinationManager.hpp  src/Survivors.hpp
+# src/ChromConfig.hpp   src/FreeRing.hpp              src/Node.hpp               src/Region.hpp                src/System.hpp
+# src/Chromosome.hpp    src/GenerationCounter.hpp     src/NodeManager.hpp        src/RegionManager.hpp         src/Thread.hpp
+# src/common.hpp        src/Graph.hpp                 src/PopulationManager.hpp  src/ResizMemArena.hpp         src/ThreadPool.hpp
+# src/config.hpp        src/HaploTimeWindow.hpp       src/PopulationParams.hpp   src/SeqRep.hpp                src/TimeSection.hpp
+# src/CycleCounter.hpp  src/HashTable.hpp             src/ProgramOptions.hpp     src/SequenceArray.hpp         src/types.hpp
