@@ -1,6 +1,6 @@
 #include "config.h"
 
-#ifdef ARE_PRODUCTIVE
+#if ARE_PRODUCTIVE  == 1 
 #define PRODUCTIVE
 #endif
 

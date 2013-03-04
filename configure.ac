@@ -6,8 +6,10 @@ AC_INIT([AnA-FiTS], [1.0.2], [andre.aberer-AT-h-its.org])
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADERS([src/config.h])
 
-AM_INIT_AUTOMAKE(  AnA-FiTS  , 1.0.2 )
+AM_INIT_AUTOMAKE(  [1.9 foreign ] )
 # AM_SILENT_RULES([yes])
+
+AC_LANG_PUSH([C++])
 
 # Checks for programs.
 AC_PROG_CXX
@@ -17,10 +19,9 @@ AC_PROG_MAKE_SET
 
 # Checks for libraries.
 
-AX_BOOST_BASE( [1.40], [], [ AC_MSG_ERROR(Please install the boost library version 1.40 or higher. ) ])
-AX_BOOST_PROGRAM_OPTIONS([], [], [AC_MSG_ERROR(Please make sure your boost installation also includes the program_options package.) ]) 
-
-
+AX_BOOST_BASE( [1.46], [], [ AC_MSG_ERROR(Please install the boost library version 1.46 or higher. ) ])
+AX_BOOST_PROGRAM_OPTIONS
+dnl ([1.46], [], [AC_MSG_ERROR(Please make sure your boost installation also includes the program_options package.) ]) 
 
 AX_EXT
 
@@ -44,7 +45,7 @@ AC_ARG_ENABLE(productive,
    esac],
   [ARE_PRODUCTIVE="yes"]
 )
-AM_CONDITIONAL([ARE_PRODUCTIVE], [test  "x$PRODUCTIVE_DEBUG" = "xyes"])
+AM_CONDITIONAL([ARE_PRODUCTIVE], [test  "x$ARE_PRODUCTIVE" = "xyes"])
 
 AC_DEFINE([ARE_PRODUCTIVE], [0], ["is 1, if in productive mode "])
 AS_IF([test "x$ARE_PRODUCTIVE" = "xyes"], AC_DEFINE(ARE_PRODUCTIVE, 1) )
