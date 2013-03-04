@@ -6,15 +6,22 @@ AC_INIT([AnA-FiTS], [1.0.2], [andre.aberer-AT-h-its.org])
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADERS([src/config.h])
 
-AM_INIT_AUTOMAKE(  [1.9 foreign ] )
+AM_INIT_AUTOMAKE(  [1.11 foreign ] )
 # AM_SILENT_RULES([yes])
 
 AC_LANG_PUSH([C++])
 
 # Checks for programs.
+
+OLD_CXXFLAGS=$CXXFLAGS
+
+
+AC_PROG_CXXCPP
 AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_MAKE_SET
+
+CXXFLAGS=$OLD_CXXFLAGS
 
 
 # Checks for libraries.
