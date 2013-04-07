@@ -51,6 +51,9 @@ void printInfo(InfoFile &info, int argc, char **argv)
 
 int main(int argc, char **argv)
 {
+
+  assert(sizeof(uint32_t) != sizeof(uint64_t)); 
+
   System sys;
   StopWatch watch ; 
   watch.start();

@@ -50,6 +50,9 @@ void Thread::workerLife(nat id)
 
 void Thread::bindThreadToCacheGroup(nat tid)
 {  
+
+  // excluding this: trouble on mac 
+#if 0 
   cpu_set_t mask; 
   int ret;   
   CPU_ZERO(&mask);   
@@ -64,6 +67,7 @@ void Thread::bindThreadToCacheGroup(nat tid)
       cout << "something went wrong binding thread " << tid << " error code " << ret << endl; 
       abort();
     }
+#endif
 }
 
 

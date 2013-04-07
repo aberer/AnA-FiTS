@@ -14,23 +14,29 @@ AC_LANG_PUSH([C++])
 # Checks for programs.
 
 OLD_CXXFLAGS=$CXXFLAGS
-
-
 AC_PROG_CXXCPP
 AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_MAKE_SET
-
 CXXFLAGS=$OLD_CXXFLAGS
-
 
 # Checks for libraries.
 
 AX_BOOST_BASE( [1.46], [], [ AC_MSG_ERROR(Please install the boost library version 1.46 or higher. ) ])
 AX_BOOST_PROGRAM_OPTIONS
 dnl ([1.46], [], [AC_MSG_ERROR(Please make sure your boost installation also includes the program_options package.) ]) 
-
 AX_EXT
+
+AC_ARG_ENABLE(mydebug, 
+  [ --enable-mydebug    developmental version of the code ],
+  [case "${enableval}" in
+     yes | no ) mydebug="${enableval}" ;;
+     *) AC_MSG_ERROR(bad value ${enableval} for --enable-mydebug) ;;
+   esac],
+  [ mydebug="no" ]
+)
+AM_CONDITIONAL([WITH_DEBUG], [test "x$mydebug" = "xyes"])
+
 
 dnl AC_ARG_ENABLE(simd,
 dnl [ --disable-simd  disable usage of streaming simd extensions   ],

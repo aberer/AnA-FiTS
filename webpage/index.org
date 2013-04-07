@@ -1,0 +1,48 @@
+AnA-FiTS:  Efficient Forward-in-Time Simulation of Polymorphism Data
+
+AnA-FiTS is an efficient tool for simulating polymorphism data
+forward-in-time on the chromosome and genome level. 
+
+** Installation 
+  
+For installing AnA-FiTS, simply download the source tarball from [[][]]. 
+
+** Requirements
+
+Currently, AnA-FiTS requires a 64-bit Linux system and a recent C++
+compiler (gcc > 4.6 should do). Furthermore, you must have installed
+the boost library.
+
+For instance on Debian/Ubuntu, this should be as easy as  typing 
+
+#+BEGIN_SRC bash
+sudo aptitude install  libboost-all-dev
+#+END_SRC
+
+If boost is missing or too old, the /./configure/ will fail.
+
+
+** Quick Start
+
+
+
+** Documentation  
+
+For an overview over the basic options, just call with the help flag 
+#+BEGIN_SRC bash 
+ ./Anafits --help 
+#+END_SRC
+
+A walk-through and more detailed documentation (including some
+discussion about tuning parameters) can be found under in the manual
+that is included in the AnA-FiTS distribution (tarball).
+
+Alternatively, check out the latest version of this manual in the
+[[https://github.com/aberer/AnA-FiTS/blob/master/doc/manual.pdf][github repository]].
+
+
+** Contact
+
+For feature requests or bug reports, please send an email to andre
+/dot/ aberer /at/ h-its /dot/ org (and of course replace everything in
+italique with the respective characters).

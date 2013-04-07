@@ -106,7 +106,7 @@ void printBitvectors(bool toStdout, FILE *ifh, FILE *ofh, char **precomputed, na
 	  ++j)
 	{
 	  converter.whole = bv[j]; 
-	  
+
 	  fprintf(toStdout ?  stdout : ofh,	
 #ifdef HAVE_64BIT
 		  "%s%s%s%s%s%s%s%s",		

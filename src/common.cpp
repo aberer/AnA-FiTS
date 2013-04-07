@@ -37,14 +37,25 @@ string getBinary(int tmp, nat numBits)
 
 void* malloc_aligned(size_t size, size_t align)
 {
+
   void *ptr = (void *)NULL;  
   int res;
+
+#if defined(__APPLE__)
+  ptr = malloc(size); 
+  memset(ptr, 0, sizeof(size));   
+
+  if(ptr == NULL)
+    assert(0); 
+#else 
 
   res = posix_memalign( &ptr, align, size );
   memset(ptr, 0, size); 
 
   if(res != 0) 
     assert(0); 
+
+#endif
 
   return ptr;
 }
