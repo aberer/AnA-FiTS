@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.67])
-AC_INIT([AnA-FiTS], [1.0.2], [andre.aberer-AT-h-its.org])
+AC_INIT([AnA-FiTS], [1.0.3], [andre.aberer-AT-h-its.org])
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADERS([src/config.h])
 
@@ -64,6 +64,8 @@ AC_DEFINE([ARE_PRODUCTIVE], [0], ["is 1, if in productive mode "])
 AS_IF([test "x$ARE_PRODUCTIVE" = "xyes"], AC_DEFINE(ARE_PRODUCTIVE, 1) )
 AM_CONDITIONAL([ARE_PRODUCTIVE], [test  "x$ARE_PRODUCTIVE" = "xyes"])
 
+
+AM_SILENT_RULES([yes])
 
 # Checks for header files.
 AC_CHECK_HEADERS([fcntl.h stdint.h stdlib.h sys/time.h unistd.h])

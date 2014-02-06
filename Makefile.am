@@ -1,4 +1,4 @@
-AUTOMAKE_OPTIONS=foreign
+AUTOMAKE_OPTIONS=foreign subdir-objects
 
 WARN_FLAGS=-Wno-unused-result  -Wno-sign-compare -Wall  -Wno-unused-variable -Wextra -Wno-unused-parameter -fpermissive
 LANG_FLAGS=-std=c++0x 

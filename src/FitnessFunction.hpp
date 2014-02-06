@@ -47,10 +47,16 @@ inline float FitnessFunction::drawSelectionCoefficient(Randomness &rng)
       switch(mode)
 	{
 	case FitnessModel::FIXED_S:
-	  result = rng.Prob(probPos) ? fixedS : -fixedS; 
+	  {
+	    result = rng.Prob(probPos) ? fixedS : -fixedS; 
+	    // std::cout << result << std::endl; 
+	  }
 	  break; 
 	case FitnessModel::MIXTURE_GAMMA:      
-	  result = rng.Prob(probPos) ? - rng.sampleGamma(alpha[0], beta[0]) : rng.sampleGamma(alpha[1], beta[1]); 
+	  {
+	    result = rng.Prob(probPos) ?  rng.sampleGamma(alpha[0], beta[0]) :  - rng.sampleGamma(alpha[1], beta[1]); 
+	    // std::cout <<  result << std::endl; 
+	  }
 	  break; 
 	case FitnessModel::NORMAL: 
 	  result = rng.sampleNormal(mean, sd); 
